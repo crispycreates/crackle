@@ -138,6 +138,28 @@
   .otip-ch{font-size:.68rem;color:var(--y);letter-spacing:.1em;font-weight:bold;margin-bottom:3px;}
   .otip-body{font-size:.66rem;color:rgba(200,255,200,.6);line-height:1.55;}
   #ctxStatus{font-size:.6rem;color:var(--p);margin-top:5px;letter-spacing:.08em;min-height:14px;}
+  .vsec{margin-top:14px;padding:12px 14px;background:rgba(0,245,255,.03);
+    border:1px solid rgba(0,245,255,.15);border-radius:5px;}
+  .vsec-title{font-size:.6rem;color:var(--c);letter-spacing:.18em;text-transform:uppercase;
+    text-shadow:0 0 5px var(--c);margin-bottom:9px;}
+  .vlinks{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px;}
+  .vbtn{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:3px;
+    font-family:'Courier New',monospace;font-size:.62rem;letter-spacing:.1em;text-decoration:none;
+    border:1px solid rgba(0,245,255,.3);color:var(--c);background:rgba(0,245,255,.05);
+    transition:all .2s;cursor:pointer;}
+  .vbtn:hover{background:rgba(0,245,255,.12);box-shadow:0 0 8px rgba(0,245,255,.25);}
+  .vbtn.vbtn-warn{border-color:rgba(255,204,0,.3);color:var(--y);background:rgba(255,204,0,.04);}
+  .vbtn.vbtn-warn:hover{background:rgba(255,204,0,.1);}
+  .vdisclaim{font-size:.6rem;color:rgba(255,204,0,.6);letter-spacing:.07em;line-height:1.5;
+    padding-top:7px;border-top:1px solid rgba(255,204,0,.1);margin-top:5px;}
+  .rcheck{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:12px;
+    font-size:.62rem;letter-spacing:.09em;font-weight:bold;}
+  .rc-hi{border:1px solid #00ff41;color:#00ff41;background:rgba(0,255,65,.07);}
+  .rc-md{border:1px solid #ffcc00;color:#ffcc00;background:rgba(255,204,0,.06);}
+  .rc-lo{border:1px solid #ff6b35;color:#ff6b35;background:rgba(255,107,53,.06);}
+  .disclaimer-bar{background:rgba(255,204,0,.06);border:1px solid rgba(255,204,0,.2);
+    border-radius:6px;padding:10px 16px;margin-bottom:16px;font-size:.66rem;
+    color:rgba(255,220,80,.8);letter-spacing:.07em;line-height:1.6;}
   @media(max-width:900px){
     .grid{grid-template-columns:1fr;}.sticky{position:relative;}.logo{font-size:2.4rem;}
     .igrid{grid-template-columns:1fr;}}
@@ -332,17 +354,87 @@ async function go(){
   if(incProv)locNote.push(`Province/State: ${incProv}`);
   const siteNote=site?`\nThe digital agency's website is: ${site}. For each lead add "matchScore" (int 1-10) and "matchReason" (1 sentence).`:'';
   const fileNote=fileCtx?`\n\nAGENCY CONTEXT (from uploaded document):\n${fileCtx}`:'';
-  const sys=`You are a senior business intelligence analyst for a digital marketing agency.${fileNote}\n\nTASK: Generate ${n} realistic contractor leads from these types: ${ctypeStr}. Mix the types proportionally if multiple selected.\n\nCRITERIA:\n- ${locNote.join('\n- ')}${excNote}\n- Revenue: $500K–$1.5M (established, NOT start-ups or enterprises)\n- Revenue evidence: fleet vehicles, equipment, years operating, steady reviews\n- Digital weaknesses: NOT on Google page 1, outdated website, zero blog, weak social, no Google Ads\n- Owner/operator decision-maker (1–3 owners, 5–20 staff)\n${siteNote}\n\nReturn ONLY a valid JSON object with key "leads" containing an array of ${n} objects. No markdown.\n\nEach object MUST have:\n{\n  "companyName": string,\n  "ownerName": string,\n  "businessType": string,\n  "city": string,\n  "province": string,\n  "phone": string,\n  "email": string,\n  "website": string or null,\n  "yearsInBusiness": number,\n  "employeeCount": string,\n  "googleReviews": number,\n  "googleRating": number,\n  "revenueSignals": [3-5 strings],\n  "digitalWeaknesses": [3-5 strings],\n  "recommendedServices": [strings from: ${svcs.join(', ')}],\n  "leadScore": number 1-10,\n  "emailSubject": string,\n  "emailBody": string (3 short personalized paragraphs)${site?',\n  "matchScore": number 1-10,\n  "matchReason": string':''}\n}`;
+  const locEnforced=locNote.length?locNote.join(' AND '):'any location';
+  const sys=`You are a business intelligence analyst generating contractor lead profiles for a digital marketing agency.${fileNote}
+
+⚠️ LOCATION RULE — THIS IS MANDATORY:
+Every single lead MUST be physically located in: ${locEnforced}.
+DO NOT place any business in ${excNote?'the excluded cities or ':''} any other city, state, province, or region.
+If you cannot produce ${n} leads in that location, return FEWER leads. Never substitute a different location.
+Double-check every lead's city and province/state before including it.
+
+TASK: Generate up to ${n} contractor leads from these types: ${ctypeStr}. Mix proportionally if multiple types.
+
+LEAD CRITERIA:
+- Location: ${locEnforced}${excNote}
+- Revenue range: $500K–$1.5M (established businesses, NOT startups or large enterprises)
+- Evidence of revenue: fleet vehicles, branded trucks, equipment, 5+ years operating, consistent reviews
+- Digital weaknesses present: poor Google ranking, outdated/no website, no blog, weak social, no ads
+- Owner-operated: 1–3 decision-makers, 5–20 employees
+${siteNote}
+
+REALISM RULES:
+- Use realistic local phone area codes for the specified location
+- Company names must sound like real local contractor businesses (e.g. "Mike's Roofing" not "Apex Digital Solutions")
+- Some businesses WILL have a basic website (even a poor one) — do not set all websites to null
+- Google review counts should be realistic (15–180 range typical for this size)
+- "realityCheck" must honestly reflect how plausible this lead profile is
+
+Return ONLY a valid JSON object with key "leads". No markdown, no explanation.
+
+Each lead object MUST have exactly these fields:
+{
+  "companyName": string,
+  "ownerName": string,
+  "businessType": string,
+  "city": string — MUST match requested location,
+  "province": string — MUST match requested location,
+  "phone": string — use correct area code for that city,
+  "email": string,
+  "website": string or null,
+  "yearsInBusiness": number,
+  "employeeCount": string,
+  "googleReviews": number,
+  "googleRating": number,
+  "revenueSignals": [3-5 strings],
+  "digitalWeaknesses": [3-5 strings],
+  "recommendedServices": [strings from: ${svcs.join(', ')}],
+  "leadScore": number 1-10,
+  "realityCheck": one of ["Likely real — verify on Google Maps","Possibly real — worth checking","AI-estimated — research carefully"],
+  "emailSubject": string,
+  "emailBody": string (3 short personalized paragraphs)${site?',\n  "matchScore": number 1-10,\n  "matchReason": string':''}
+}`;
   try{
     const res=await fetch('https://api.openai.com/v1/chat/completions',{
       method:'POST',
       headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
-      body:JSON.stringify({model:'gpt-4o',messages:[{role:'system',content:sys},{role:'user',content:`Generate ${n} contractor leads [${ctypeStr}] in [${locLabel||'any location'}]. JSON only.`}],temperature:.72,max_tokens:5000,response_format:{type:'json_object'}})
+      body:JSON.stringify({model:'gpt-4o',messages:[{role:'system',content:sys},{role:'user',content:`Generate ${n} contractor leads [${ctypeStr}]. ALL must be in: ${locEnforced}. JSON only.`}],temperature:.45,max_tokens:7000,response_format:{type:'json_object'}})
     });
     if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
     const data=await res.json();
     const raw=JSON.parse(data.choices[0].message.content);
     leads=Array.isArray(raw)?raw:(raw.leads||Object.values(raw).find(v=>Array.isArray(v))||[]);
+    // Location filter — remove leads that clearly don't match requested location
+    if(inc||incProv){
+      const locTokens=[
+        ...inc.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean),
+        ...incProv.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean)
+      ];
+      if(locTokens.length){
+        const excTokens=exc.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
+        const filtered=leads.filter(l=>{
+          const lCity=(l.city||'').toLowerCase();
+          const lProv=(l.province||'').toLowerCase();
+          const locStr=lCity+' '+lProv;
+          const inExclude=excTokens.some(e=>lCity.includes(e));
+          if(inExclude)return false;
+          return locTokens.some(t=>locStr.includes(t));
+        });
+        if(filtered.length>0)leads=filtered;
+        // If filter removed everything, keep originals but flag them
+        if(filtered.length===0)leads=leads.map(l=>({...l,locationFlagged:true}));
+      }
+    }
     render(leads,site);
   }catch(err){showErr(`Error: ${err.message}`);}
   finally{setBtn(false,'⚡ CRACK THE LEADS');}
@@ -352,11 +444,16 @@ function render(arr,site){
   if(!arr.length){document.getElementById('results').innerHTML='<div class="empty"><div class="etxt">No leads returned. Try different criteria.</div></div>';return;}
   const _ctypes=getCtypes().join(', ')||'Mixed';
   const _loc=[document.getElementById('incCity').value,document.getElementById('incProv').value].filter(Boolean).join(' / ')||'Any';
-  let html=`<div class="rhdr"><div><div class="rtitle">⚡ ${arr.length} LEADS CRACKED</div><div class="rsub">${_ctypes} · ${_loc}</div></div><div class="rbtns"><button class="btn-c" onclick="exportPDF()">⬇ EXPORT PDF</button><button class="btn-r" onclick="clearAll()">✕ CLEAR</button></div></div>`;
+  const hasFlag=arr.some(l=>l.locationFlagged);
+  let html=`<div class="rhdr"><div><div class="rtitle">⚡ ${arr.length} LEADS CRACKED</div><div class="rsub">${_ctypes} · ${_loc}</div></div><div class="rbtns"><button class="btn-c" onclick="exportPDF()">⬇ EXPORT PDF</button><button class="btn-r" onclick="clearAll()">✕ CLEAR</button></div></div>
+  <div class="disclaimer-bar">⚠ These are <strong>AI-generated lead profiles</strong> — not scraped from live databases. Company names, contacts, and review counts may be illustrative. Use the <strong>🔍 Verify</strong> buttons on each card to cross-check on Google Maps and Google Search before reaching out.${hasFlag?' <strong style="color:#ff6b35"> · Location filter removed some off-target leads — review remaining results carefully.</strong>':''}</div>`;
   arr.forEach((l,i)=>{
     const sc=scoreClass(l.leadScore);
     const ws=l.website?(l.website.startsWith('http')?l.website:'https://'+l.website):null;
-    html+=`<div class="lcard" id="c${i}"><div class="lchead" onclick="toggle(${i})"><div><div class="cname">${l.companyName}</div><div class="ctype">${l.businessType} · ${l.city}, ${l.province}</div></div><div style="display:flex;align-items:center;gap:10px;"><div class="badge ${sc}">LEAD ${l.leadScore}/10</div><span class="chev" id="chev${i}">▼</span></div></div><div class="lcbody" id="b${i}"><div class="igrid"><div class="ii"><label>OWNER</label><div class="val">${l.ownerName||'Owner'}</div></div><div class="ii"><label>PHONE</label><div class="val">${l.phone||'—'}</div></div><div class="ii"><label>EMAIL</label><div class="val">${l.email||'—'}</div></div><div class="ii"><label>WEBSITE</label><div class="val">${ws?`<a href="${ws}" target="_blank">${l.website}</a>`:'<span style="color:var(--pk)">No website</span>'}</div></div><div class="ii"><label>YEARS ACTIVE</label><div class="val">${l.yearsInBusiness||'—'} yrs</div></div><div class="ii"><label>TEAM SIZE</label><div class="val">${l.employeeCount||'—'}</div></div><div class="ii"><label>GOOGLE REVIEWS</label><div class="val"><span class="stars">${stars(l.googleRating)}</span> ${l.googleRating||''} <span style="color:var(--dim)">(${l.googleReviews||0})</span></div></div></div><div style="margin-bottom:13px"><label class="lbl" style="margin-bottom:5px">💰 Revenue Signals</label><div class="tags">${(l.revenueSignals||[]).map(s=>`<span class="tag ts">${s}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:#ff7aac;margin-bottom:5px">⚠ Digital Weaknesses</label><div class="tags">${(l.digitalWeaknesses||[]).map(w=>`<span class="tag tw">${w}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:var(--c);margin-bottom:5px">⬡ Recommended Services</label><div class="tags">${(l.recommendedServices||[]).map(s=>`<span class="tag tg">${s}</span>`).join('')}</div></div>${site&&l.matchScore!==undefined?`<div class="mbox"><div class="mlbl">⬡ YOUR SITE MATCH LIKELIHOOD</div><div class="mbar"><div class="mbarbg"><div class="mbarfill" style="width:${l.matchScore*10}%"></div></div><div class="mval">${l.matchScore}/10</div></div><div class="mreason">${l.matchReason||''}</div></div>`:''}<div class="esec"><label class="lbl" style="color:var(--g);margin-bottom:8px">📧 Draft Cold Email</label><div class="esubj"><span style="color:var(--dim);font-size:.6rem">SUBJECT: </span>${l.emailSubject}</div><div class="ebody">${l.emailBody}</div><div class="ebtns"><button class="btn-c" onclick="copyEmail(${i})" id="cp${i}" style="font-size:.62rem;padding:6px 13px">⬡ COPY EMAIL</button><button class="btn-p" onclick="regenEmail(${i})" style="font-size:.62rem;padding:6px 13px">↺ REGENERATE</button></div></div><div class="osec"><div class="osec-title">🚀 Other Outreach Strategies — Beyond Cold Email</div>${[
+    const rcClass=l.realityCheck&&l.realityCheck.includes('Likely')?'rc-hi':l.realityCheck&&l.realityCheck.includes('Possibly')?'rc-md':'rc-lo';
+    const rcLabel=l.realityCheck||'AI-estimated — research carefully';
+    const locWarn=l.locationFlagged?'<span style="font-size:.58rem;color:#ff6b35;margin-left:6px;">⚠ location unverified</span>':'';
+    html+=`<div class="lcard" id="c${i}"><div class="lchead" onclick="toggle(${i})"><div><div class="cname">${l.companyName}${locWarn}</div><div class="ctype">${l.businessType} · ${l.city}, ${l.province}</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;"><span class="rcheck ${rcClass}" title="${rcLabel}">🔍 ${rcLabel.split('—')[0].trim()}</span><div class="badge ${sc}">LEAD ${l.leadScore}/10</div><span class="chev" id="chev${i}">▼</span></div></div><div class="lcbody" id="b${i}"><div class="igrid"><div class="ii"><label>OWNER</label><div class="val">${l.ownerName||'Owner'}</div></div><div class="ii"><label>PHONE</label><div class="val">${l.phone||'—'}</div></div><div class="ii"><label>EMAIL</label><div class="val">${l.email||'—'}</div></div><div class="ii"><label>WEBSITE</label><div class="val">${ws?`<a href="${ws}" target="_blank">${l.website}</a>`:'<span style="color:var(--pk)">No website</span>'}</div></div><div class="ii"><label>YEARS ACTIVE</label><div class="val">${l.yearsInBusiness||'—'} yrs</div></div><div class="ii"><label>TEAM SIZE</label><div class="val">${l.employeeCount||'—'}</div></div><div class="ii"><label>GOOGLE REVIEWS</label><div class="val"><span class="stars">${stars(l.googleRating)}</span> ${l.googleRating||''} <span style="color:var(--dim)">(${l.googleReviews||0})</span></div></div></div><div class="vsec"><div class="vsec-title">🔍 Verify This Lead — Check Before You Reach Out</div><div class="vlinks"><a class="vbtn" href="https://www.google.com/search?q=${encodeURIComponent(l.companyName+' '+l.city+' '+l.province)}" target="_blank">🌐 Google Search</a><a class="vbtn" href="https://www.google.com/maps/search/${encodeURIComponent(l.companyName+' '+l.city)}" target="_blank">📍 Google Maps</a><a class="vbtn" href="https://www.google.com/search?q=${encodeURIComponent(l.companyName+' '+l.city)}+site:maps.google.com+OR+site:facebook.com+OR+site:yellowpages.ca" target="_blank">📋 Business Listings</a>${ws?`<a class="vbtn vbtn-warn" href="${ws}" target="_blank">🔗 Their Website</a>`:''}</div><div class="vdisclaim">⚠ AI-generated profile — always confirm on Google Maps before contacting. Check: business name matches, phone is listed, city is correct. Rating of <strong>${l.googleRating}★ (${l.googleReviews} reviews)</strong> is estimated.</div></div><div style="margin-bottom:13px"><label class="lbl" style="margin-bottom:5px">💰 Revenue Signals</label><div class="tags">${(l.revenueSignals||[]).map(s=>`<span class="tag ts">${s}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:#ff7aac;margin-bottom:5px">⚠ Digital Weaknesses</label><div class="tags">${(l.digitalWeaknesses||[]).map(w=>`<span class="tag tw">${w}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:var(--c);margin-bottom:5px">⬡ Recommended Services</label><div class="tags">${(l.recommendedServices||[]).map(s=>`<span class="tag tg">${s}</span>`).join('')}</div></div>${site&&l.matchScore!==undefined?`<div class="mbox"><div class="mlbl">⬡ YOUR SITE MATCH LIKELIHOOD</div><div class="mbar"><div class="mbarbg"><div class="mbarfill" style="width:${l.matchScore*10}%"></div></div><div class="mval">${l.matchScore}/10</div></div><div class="mreason">${l.matchReason||''}</div></div>`:''}<div class="esec"><label class="lbl" style="color:var(--g);margin-bottom:8px">📧 Draft Cold Email</label><div class="esubj"><span style="color:var(--dim);font-size:.6rem">SUBJECT: </span>${l.emailSubject}</div><div class="ebody">${l.emailBody}</div><div class="ebtns"><button class="btn-c" onclick="copyEmail(${i})" id="cp${i}" style="font-size:.62rem;padding:6px 13px">⬡ COPY EMAIL</button><button class="btn-p" onclick="regenEmail(${i})" style="font-size:.62rem;padding:6px 13px">↺ REGENERATE</button></div></div><div class="osec"><div class="osec-title">🚀 Other Outreach Strategies — Beyond Cold Email</div>${[
   {i:'🔗',ch:'LinkedIn DM',tip:`Find ${l.ownerName} on LinkedIn — connect with a short note (no pitch). Message 4-5 days later referencing a specific digital gap, e.g. "${(l.digitalWeaknesses||['weak online presence'])[0]}".`},
   {i:'📞',ch:'Cold Call',tip:`Trades owners respond well to direct calls. Lead with a stat or observation about ${l.businessType}s in ${l.city} missing Google page 1 — makes it feel like research, not a sales call.`},
   {i:'📱',ch:'Meta / Facebook Ads',tip:`Run a hyper-targeted ad in ${l.city} to business owners in ${l.businessType} — use a case study headline like "We got [similar client] 3x more calls in 60 days." Warm leads before you ever reach out.`},
@@ -429,7 +526,11 @@ function exportPDF(){
     doc.text(`LEAD SCORE: ${l.leadScore}/10`,W-M,y+5,{align:'right'});
     y+=16;
     // Info grid — dark text on white
-    [[' Type',l.businessType],['Location',`${l.city}, ${l.province}`],['Owner',l.ownerName],['Phone',l.phone],['Email',l.email],['Website',l.website||'No website'],['Years Active',`${l.yearsInBusiness} yrs`],['Team Size',l.employeeCount],['Google',`${l.googleRating}★ (${l.googleReviews} reviews)`]].forEach(([k,v])=>{
+    const rcPdf=l.realityCheck||'AI-estimated — research carefully';
+    ck(6);doc.setFontSize(7);doc.setFont('courier','normal');
+    doc.setTextColor(120,80,0);doc.text('VERIFY: google.com/maps/search/'+encodeURIComponent((l.companyName+' '+l.city).slice(0,40)),M,y);y+=5;
+    doc.setTextColor(100,100,100);doc.text('Reality Check: '+rcPdf,M,y);y+=6;
+    [[' Type',l.businessType],['Location',`${l.city}, ${l.province}`],['Owner',l.ownerName],['Phone',l.phone],['Email',l.email],['Website',l.website||'No website'],['Years Active',`${l.yearsInBusiness} yrs`],['Team Size',l.employeeCount],['Google',`${l.googleRating}★ (${l.googleReviews} reviews) — ESTIMATED`]].forEach(([k,v])=>{
       ck(6);doc.setFontSize(8);doc.setFont('courier','normal');
       doc.setTextColor(90,90,90);doc.text(k+':',M,y);
       doc.setTextColor(20,20,20);doc.text(String(v||'—'),M+32,y);y+=5.2;
