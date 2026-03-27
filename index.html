@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ CRACKLE — Agency Lead Finder</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<style>
+  :root {
+    --g: #00ff41;--c: #00f5ff;--p: #bf00ff;--pk: #ff006e;--y: #ffcc00;
+    --bg: #030803;--border: rgba(0,255,65,0.18);--dim: rgba(180,255,180,0.45);--text: #c8ffc8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;min-height:100vh;overflow-x:hidden;}
+  #rain{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.13;}
+  .wrap{position:relative;z-index:10;max-width:1440px;margin:0 auto;padding:20px;}
+  .hdr{text-align:center;padding:36px 20px 28px;border-bottom:1px solid var(--border);margin-bottom:28px;}
+  .logo{font-size:3.6rem;font-weight:900;letter-spacing:.35em;color:var(--g);
+    text-shadow:0 0 14px var(--g),0 0 40px var(--g),0 0 80px rgba(0,255,65,.4);animation:flicker 5s infinite;}
+  @keyframes flicker{0%,93%,100%{opacity:1}94%{opacity:.7}95%{opacity:1}97%{opacity:.5}98%{opacity:1}}
+  .sub{color:var(--c);font-size:.75rem;letter-spacing:.3em;margin-top:6px;text-shadow:0 0 8px var(--c);}
+  .grid{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start;}
+  .sticky{position:sticky;top:20px;}
+  .panel{background:rgba(3,12,3,.88);border:1px solid var(--border);border-radius:8px;
+    padding:22px;backdrop-filter:blur(12px);box-shadow:0 0 22px rgba(0,255,65,.04),inset 0 0 18px rgba(0,255,65,.015);}
+  .ptitle{font-size:.68rem;letter-spacing:.22em;color:var(--c);text-transform:uppercase;
+    margin-bottom:18px;padding-bottom:9px;border-bottom:1px solid rgba(0,245,255,.18);text-shadow:0 0 7px var(--c);}
+  .fg{margin-bottom:18px;}
+  label.lbl{display:block;font-size:.65rem;letter-spacing:.16em;color:var(--c);margin-bottom:7px;text-transform:uppercase;}
+  input[type=text],input[type=url],input[type=password],select,textarea{
+    width:100%;background:rgba(0,0,0,.65);border:1px solid rgba(0,255,65,.28);color:var(--g);
+    padding:9px 13px;border-radius:4px;font-family:'Courier New',monospace;font-size:.82rem;outline:none;
+    transition:border-color .2s,box-shadow .2s;}
+  input:focus,select:focus,textarea:focus{border-color:var(--g);box-shadow:0 0 10px rgba(0,255,65,.28);}
+  select option{background:#071007;color:var(--g);}
+  .rel{position:relative;}
+  .eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;
+    color:var(--dim);cursor:pointer;font-family:'Courier New',monospace;font-size:.62rem;letter-spacing:.08em;}
+  .cbg{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+  .cb{display:flex;align-items:center;gap:8px;cursor:pointer;}
+  .cb input{width:14px;height:14px;accent-color:var(--g);cursor:pointer;flex-shrink:0;}
+  .cb span{font-size:.76rem;color:var(--text);}
+  input[type=range]{width:100%;accent-color:var(--g);background:transparent;border:none;padding:0;}
+  .rl{display:flex;justify-content:space-between;font-size:.6rem;color:var(--dim);margin-top:3px;}
+  hr.div{border:none;border-top:1px solid rgba(0,255,65,.09);margin:18px 0;}
+  .btn-fire{width:100%;padding:13px;background:transparent;border:2px solid var(--g);color:var(--g);
+    font-family:'Courier New',monospace;font-size:.88rem;font-weight:bold;letter-spacing:.28em;
+    text-transform:uppercase;cursor:pointer;border-radius:4px;text-shadow:0 0 8px var(--g);
+    box-shadow:0 0 14px rgba(0,255,65,.18),inset 0 0 14px rgba(0,255,65,.04);transition:all .2s;margin-top:8px;}
+  .btn-fire:hover{background:rgba(0,255,65,.09);box-shadow:0 0 28px rgba(0,255,65,.38),inset 0 0 18px rgba(0,255,65,.09);}
+  .btn-fire:disabled{opacity:.35;cursor:not-allowed;}
+  .btn-c{padding:9px 18px;background:transparent;border:1px solid var(--c);color:var(--c);
+    font-family:'Courier New',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+    cursor:pointer;border-radius:4px;transition:all .2s;text-shadow:0 0 6px var(--c);}
+  .btn-c:hover{background:rgba(0,245,255,.07);box-shadow:0 0 13px rgba(0,245,255,.28);}
+  .btn-p{padding:9px 18px;background:transparent;border:1px solid var(--p);color:var(--p);
+    font-family:'Courier New',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+    cursor:pointer;border-radius:4px;transition:all .2s;}
+  .btn-p:hover{background:rgba(191,0,255,.07);}
+  .btn-r{padding:9px 18px;background:transparent;border:1px solid var(--pk);color:var(--pk);
+    font-family:'Courier New',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+    cursor:pointer;border-radius:4px;}
+  .loading{text-align:center;padding:70px 40px;}
+  .ltxt{color:var(--g);font-size:.82rem;letter-spacing:.2em;animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+  .lbar{width:220px;height:2px;background:rgba(0,255,65,.15);margin:18px auto;overflow:hidden;border-radius:2px;}
+  .lbarfill{height:100%;background:var(--g);box-shadow:0 0 8px var(--g);animation:lm 2s infinite;}
+  @keyframes lm{0%{width:0%;margin-left:0%}50%{width:55%;margin-left:22%}100%{width:0%;margin-left:100%}}
+  .lsteps{font-size:.62rem;color:var(--dim);margin-top:16px;letter-spacing:.1em;line-height:2;}
+  .rhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
+  .rtitle{font-size:1.05rem;color:var(--g);text-shadow:0 0 8px rgba(0,255,65,.4);}
+  .rsub{font-size:.68rem;color:var(--dim);letter-spacing:.13em;margin-top:2px;}
+  .rbtns{display:flex;gap:10px;flex-wrap:wrap;}
+  .lcard{background:rgba(0,4,0,.9);border:1px solid rgba(0,255,65,.16);border-radius:8px;
+    margin-bottom:14px;overflow:hidden;transition:border-color .25s;}
+  .lcard:hover{border-color:rgba(0,255,65,.42);}
+  .lchead{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;
+    cursor:pointer;background:rgba(0,255,65,.025);user-select:none;}
+  .lchead:hover{background:rgba(0,255,65,.045);}
+  .cname{font-size:1.02rem;font-weight:bold;color:var(--g);text-shadow:0 0 7px rgba(0,255,65,.35);}
+  .ctype{font-size:.65rem;color:var(--c);letter-spacing:.1em;margin-top:2px;}
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:.65rem;letter-spacing:.09em;
+    padding:3px 9px;border-radius:20px;font-weight:bold;white-space:nowrap;}
+  .bhi{border:1px solid #00ff41;color:#00ff41;background:rgba(0,255,65,.09);}
+  .bmd{border:1px solid #ffcc00;color:#ffcc00;background:rgba(255,204,0,.07);}
+  .blo{border:1px solid #ff6b35;color:#ff6b35;background:rgba(255,107,53,.07);}
+  .chev{transition:transform .2s;color:var(--dim);font-size:.75rem;margin-left:10px;}
+  .chev.open{transform:rotate(180deg);}
+  .lcbody{padding:18px;display:none;border-top:1px solid rgba(0,255,65,.09);}
+  .lcbody.open{display:block;}
+  .igrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  .ii label{font-size:.58rem;color:var(--dim);margin-bottom:3px;display:block;letter-spacing:.1em;}
+  .ii .val{font-size:.8rem;color:var(--text);}
+  .ii .val a{color:var(--c);text-decoration:none;}
+  .ii .val a:hover{text-decoration:underline;}
+  .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;}
+  .tag{font-size:.62rem;padding:3px 8px;border-radius:3px;letter-spacing:.07em;}
+  .tg{background:rgba(0,245,255,.07);border:1px solid rgba(0,245,255,.25);color:var(--c);}
+  .tw{background:rgba(255,0,110,.08);border:1px solid rgba(255,0,110,.25);color:#ff7aac;}
+  .ts{background:rgba(255,204,0,.07);border:1px solid rgba(255,204,0,.25);color:var(--y);}
+  .mbox{margin-top:10px;padding:11px 14px;background:rgba(191,0,255,.05);
+    border:1px solid rgba(191,0,255,.2);border-radius:5px;}
+  .mlbl{font-size:.6rem;color:var(--p);letter-spacing:.16em;text-shadow:0 0 6px var(--p);margin-bottom:6px;}
+  .mbar{display:flex;align-items:center;gap:10px;}
+  .mbarbg{flex:1;height:5px;background:rgba(191,0,255,.15);border-radius:3px;overflow:hidden;}
+  .mbarfill{height:100%;background:linear-gradient(90deg,var(--p),var(--c));
+    box-shadow:0 0 5px var(--p);border-radius:3px;transition:width 1.1s ease;}
+  .mval{font-size:.82rem;font-weight:bold;color:var(--p);min-width:28px;text-align:right;}
+  .mreason{font-size:.68rem;color:rgba(191,0,255,.75);margin-top:5px;line-height:1.5;}
+  .esec{margin-top:15px;padding-top:15px;border-top:1px solid rgba(0,255,65,.09);}
+  .esubj{font-size:.78rem;color:var(--c);padding:8px 12px;background:rgba(0,245,255,.04);
+    border-left:2px solid var(--c);border-radius:2px;margin-bottom:9px;line-height:1.5;}
+  .ebody{font-size:.76rem;line-height:1.75;color:rgba(200,255,200,.72);white-space:pre-wrap;
+    background:rgba(0,0,0,.45);padding:13px;border-radius:4px;
+    border:1px solid rgba(0,255,65,.09);max-height:230px;overflow-y:auto;}
+  .ebtns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+  .empty{text-align:center;padding:90px 40px;}
+  .eico{font-size:2.8rem;margin-bottom:14px;opacity:.3;}
+  .etxt{font-size:.76rem;letter-spacing:.16em;color:var(--dim);}
+  .alert{padding:9px 13px;border-radius:4px;font-size:.72rem;margin-bottom:14px;letter-spacing:.05em;}
+  .aw{background:rgba(255,204,0,.07);border:1px solid rgba(255,204,0,.28);color:var(--y);}
+  .ae{background:rgba(255,0,0,.07);border:1px solid rgba(255,0,0,.28);color:#ff5555;}
+  .stars{color:var(--y);}
+  ::-webkit-scrollbar{width:4px;}
+  ::-webkit-scrollbar-track{background:rgba(0,0,0,.3);}
+  ::-webkit-scrollbar-thumb{background:rgba(0,255,65,.25);border-radius:2px;}
+  input[type=file]{width:100%;background:rgba(0,0,0,.65);border:1px solid rgba(191,0,255,.28);color:var(--p);
+    padding:8px 13px;border-radius:4px;font-family:'Courier New',monospace;font-size:.72rem;cursor:pointer;}
+  input[type=file]::file-selector-button{background:transparent;border:1px solid rgba(191,0,255,.4);color:var(--p);
+    font-family:'Courier New',monospace;font-size:.62rem;padding:4px 10px;border-radius:3px;cursor:pointer;margin-right:10px;}
+  .osec{margin-top:15px;padding-top:15px;border-top:1px solid rgba(255,204,0,.13);}
+  .osec-title{font-size:.6rem;color:var(--y);letter-spacing:.18em;text-transform:uppercase;text-shadow:0 0 6px var(--y);margin-bottom:9px;}
+  .otip{background:rgba(0,0,0,.32);border:1px solid rgba(0,255,65,.08);border-radius:5px;padding:9px 12px;margin-bottom:7px;display:flex;gap:10px;align-items:flex-start;}
+  .otip-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
+  .otip-inner{flex:1;}
+  .otip-ch{font-size:.68rem;color:var(--y);letter-spacing:.1em;font-weight:bold;margin-bottom:3px;}
+  .otip-body{font-size:.66rem;color:rgba(200,255,200,.6);line-height:1.55;}
+  #ctxStatus{font-size:.6rem;color:var(--p);margin-top:5px;letter-spacing:.08em;min-height:14px;}
+  @media(max-width:900px){
+    .grid{grid-template-columns:1fr;}.sticky{position:relative;}.logo{font-size:2.4rem;}
+    .igrid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<canvas id="rain"></canvas>
+<div class="wrap">
+  <div class="hdr">
+    <div class="logo">⚡ CRACKLE</div>
+    <div class="sub">// AGENCY LEAD INTELLIGENCE SYSTEM · BY CRISPY MARKETING //</div>
+  </div>
+  <div class="grid">
+    <div class="sticky">
+      <div class="panel">
+        <div class="ptitle">⬡ System Configuration</div>
+        <div class="fg">
+          <label class="lbl">OpenAI API Key</label>
+          <div class="rel">
+            <input type="password" id="apiKey" placeholder="sk-..." />
+            <button class="eye" onclick="toggleKey()">SHOW</button>
+          </div>
+          <div class="alert aw" style="margin-top:8px;font-size:.6rem;">⚠ Key stays in your browser only. Never shared.</div>
+        </div>
+        <hr class="div">
+        <div class="fg">
+          <label class="lbl">Services You Offer</label>
+          <div class="cbg">
+            <label class="cb"><input type="checkbox" name="svc" value="Web Design" checked><span>Web Design</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="SEO" checked><span>SEO</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="Custom Web Apps"><span>Custom Web Apps</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="Paid Ads"><span>Paid Ads</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="CRM Implementation"><span>CRM Setup</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="Social Media"><span>Social Media</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="Content Creation"><span>Content Creation</span></label>
+          </div>
+        </div>
+        <hr class="div">
+        <div class="fg">
+          <label class="lbl">Target Contractor Type <span style="color:var(--dim)">(select multiple)</span></label>
+          <div class="cbg">
+            <label class="cb"><input type="checkbox" name="ctype" value="Roofing Contractors" checked><span>Roofers</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Insulation Contractors"><span>Insulators</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Spray Foam Insulation Contractors"><span>Spray Foam</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Plumbing Contractors"><span>Plumbers</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="HVAC Contractors"><span>HVAC</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Electrical Contractors"><span>Electricians</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Home Remodeling Contractors"><span>Home Remodeling</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="General Contractors"><span>General Contractors</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Painting Contractors"><span>Painters</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Landscaping Companies"><span>Landscapers</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Concrete &amp; Foundation Contractors"><span>Concrete / Foundation</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Flooring Contractors"><span>Flooring</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Welding &amp; Metal Fabrication Shops"><span>Welders / Metal Fab</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Siding &amp; Exterior Contractors"><span>Siding</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Fence Contractors"><span>Fencing</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Window &amp; Door Contractors"><span>Windows &amp; Doors</span></label>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Include Cities <span style="color:var(--dim)">(comma separated, optional)</span></label>
+          <input type="text" id="incCity" placeholder="Edmonton, Sherwood Park..." value="Edmonton, Sherwood Park, St. Albert">
+        </div>
+        <div class="fg">
+          <label class="lbl">Include Province / State <span style="color:var(--dim)">(comma separated, optional)</span></label>
+          <input type="text" id="incProv" placeholder="Alberta, BC, Ontario...">
+          <div style="font-size:.6rem;color:var(--dim);margin-top:4px;letter-spacing:.08em;">↳ Use city, province, both, or neither</div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Exclude Cities</label>
+          <input type="text" id="exCity" placeholder="Calgary, Red Deer...">
+        </div>
+        <div class="fg">
+          <label class="lbl">Lead Count: <span id="lcd" style="color:var(--g)">8</span></label>
+          <input type="range" id="lcount" min="3" max="50" value="8"
+            oninput="document.getElementById('lcd').textContent=this.value">
+          <div class="rl"><span>3</span><span>50</span></div>
+        </div>
+        <hr class="div">
+        <div class="fg">
+          <label class="lbl" style="color:var(--p);text-shadow:0 0 6px var(--p);">⬡ My Agency Website <span style="color:var(--dim)">(optional)</span></label>
+          <input type="url" id="mysite" placeholder="https://crispymarketing.ca">
+          <div style="font-size:.6rem;color:var(--dim);margin-top:5px;letter-spacing:.08em;">↳ Adds match likelihood score to every lead</div>
+        </div>
+        <div class="fg">
+          <label class="lbl" style="color:var(--p);text-shadow:0 0 6px var(--p);">⬡ Agency Context File <span style="color:var(--dim)">(optional)</span></label>
+          <input type="file" id="ctxFile" accept=".pdf,.doc,.docx,.txt" onchange="handleFileSelect(this)">
+          <div style="font-size:.6rem;color:var(--dim);margin-top:5px;letter-spacing:.08em;">↳ PDF, Word doc, or TXT — enriches AI context beyond your website</div>
+          <div id="ctxStatus"></div>
+        </div>
+        <button class="btn-fire" id="fireBtn" onclick="go()">⚡ CRACK THE LEADS</button>
+      </div>
+    </div>
+
+    <div id="results">
+      <div class="empty">
+        <div class="eico">⬡</div>
+        <div class="etxt">CONFIGURE CRITERIA &amp; FIRE TO FIND LEADS</div>
+        <div style="font-size:.62rem;color:rgba(180,255,180,.25);margin-top:10px;letter-spacing:.1em;">
+          AI analyses contractor profiles · revenue signals · digital gaps · cold email drafts
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const cv=document.getElementById('rain'),cx=cv.getContext('2d');
+let drops=[];
+const ch='ｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵカキクケコ0123456789⚡⬡◈ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+function initRain(){
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  const cols=Math.floor(cv.width/16);
+  drops=Array.from({length:cols},()=>Math.random()*-80);
+}
+function drawRain(){
+  cx.fillStyle='rgba(3,8,3,0.048)';cx.fillRect(0,0,cv.width,cv.height);
+  drops.forEach((d,i)=>{
+    const isCyan=Math.random()>.97,bright=Math.random()>.96;
+    cx.fillStyle=isCyan?(bright?'#00f5ff':'rgba(0,245,255,0.6)'):(bright?'#ccffcc':'rgba(0,255,65,0.55)');
+    cx.font='13px "Courier New"';
+    cx.fillText(ch[Math.floor(Math.random()*ch.length)],i*16,d*16);
+    if(d*16>cv.height&&Math.random()>.975)drops[i]=0;
+    drops[i]+=0.45;
+  });
+}
+initRain();setInterval(drawRain,48);window.addEventListener('resize',initRain);
+
+let leads=[];
+function toggleKey(){
+  const inp=document.getElementById('apiKey'),btn=document.querySelector('.eye');
+  if(inp.type==='password'){inp.type='text';btn.textContent='HIDE';}
+  else{inp.type='password';btn.textContent='SHOW';}
+}
+function getServices(){return[...document.querySelectorAll('input[name=svc]:checked')].map(c=>c.value);}
+function getCtypes(){return[...document.querySelectorAll('input[name=ctype]:checked')].map(c=>c.value);}
+
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+async function extractFileText(){
+  const file=document.getElementById('ctxFile').files[0];
+  if(!file)return'';
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(ext==='txt'){return new Promise(r=>{const fr=new FileReader();fr.onload=e=>r(e.target.result.slice(0,4000));fr.readAsText(file);});}
+  if(ext==='pdf'){
+    try{
+      const ab=await file.arrayBuffer();
+      const pdf=await pdfjsLib.getDocument(ab).promise;
+      let txt='';
+      for(let i=1;i<=Math.min(pdf.numPages,6);i++){const pg=await pdf.getPage(i);const ct=await pg.getTextContent();txt+=ct.items.map(x=>x.str).join(' ')+'\n';}
+      return txt.slice(0,4000);
+    }catch(e){return'';}
+  }
+  if(ext==='docx'||ext==='doc'){
+    try{const ab=await file.arrayBuffer();const r=await mammoth.extractRawText({arrayBuffer:ab});return r.value.slice(0,4000);}
+    catch(e){return'';}
+  }
+  return'';
+}
+
+function handleFileSelect(inp){
+  const st=document.getElementById('ctxStatus');
+  if(inp.files[0]){st.textContent='✓ '+inp.files[0].name+' ready';st.style.color='var(--g)';}
+  else{st.textContent='';}
+}
+function setBtn(s,t){const b=document.getElementById('fireBtn');b.disabled=s;b.textContent=t;}
+function showErr(m){document.getElementById('results').innerHTML=`<div class="panel"><div class="alert ae">${m}</div></div>`;setBtn(false,'⚡ CRACK THE LEADS');}
+function scoreClass(s){return s>=8?'bhi':s>=5?'bmd':'blo';}
+function stars(r){if(!r)return'';const f=Math.round(r);return'★'.repeat(f)+'☆'.repeat(5-f);}
+
+async function go(){
+  const key=document.getElementById('apiKey').value.trim();
+  const ctypes=getCtypes();
+  const inc=document.getElementById('incCity').value.trim();
+  const incProv=document.getElementById('incProv').value.trim();
+  const exc=document.getElementById('exCity').value.trim();
+  const n=document.getElementById('lcount').value;
+  const site=document.getElementById('mysite').value.trim();
+  const svcs=getServices();
+  if(!key)return showErr('⚠ Enter your OpenAI API key to continue.');
+  if(!ctypes.length)return showErr('⚠ Select at least one contractor type.');
+  if(!inc&&!incProv)return showErr('⚠ Add at least one city or province/state to search in.');
+  if(!svcs.length)return showErr('⚠ Select at least one service you offer.');
+  setBtn(true,'⚡ SCANNING...');
+  const ctypeStr=ctypes.join(', ');
+  const locLabel=[inc,incProv].filter(Boolean).join(' / ');
+  const fileCtx=await extractFileText();
+  document.getElementById('results').innerHTML=`<div class="loading"><div class="ltxt">INFILTRATING LOCAL MARKET DATA...</div><div class="lbar"><div class="lbarfill"></div></div><div class="lsteps">⬡ Targeting: ${ctypeStr}<br>⬡ Location: ${locLabel||'Any'}<br>⬡ Filtering for revenue signals ($500K–$1.5M)<br>⬡ Detecting digital weaknesses &amp; SEO gaps<br>⬡ Crafting personalized cold outreach emails</div></div>`;
+  const excNote=exc?`\nEXCLUDE businesses in: ${exc}.`:'';
+  const locNote=[]
+  if(inc)locNote.push(`Cities: ${inc}`);
+  if(incProv)locNote.push(`Province/State: ${incProv}`);
+  const siteNote=site?`\nThe digital agency's website is: ${site}. For each lead add "matchScore" (int 1-10) and "matchReason" (1 sentence).`:'';
+  const fileNote=fileCtx?`\n\nAGENCY CONTEXT (from uploaded document):\n${fileCtx}`:'';
+  const sys=`You are a senior business intelligence analyst for a digital marketing agency.${fileNote}\n\nTASK: Generate ${n} realistic contractor leads from these types: ${ctypeStr}. Mix the types proportionally if multiple selected.\n\nCRITERIA:\n- ${locNote.join('\n- ')}${excNote}\n- Revenue: $500K–$1.5M (established, NOT start-ups or enterprises)\n- Revenue evidence: fleet vehicles, equipment, years operating, steady reviews\n- Digital weaknesses: NOT on Google page 1, outdated website, zero blog, weak social, no Google Ads\n- Owner/operator decision-maker (1–3 owners, 5–20 staff)\n${siteNote}\n\nReturn ONLY a valid JSON object with key "leads" containing an array of ${n} objects. No markdown.\n\nEach object MUST have:\n{\n  "companyName": string,\n  "ownerName": string,\n  "businessType": string,\n  "city": string,\n  "province": string,\n  "phone": string,\n  "email": string,\n  "website": string or null,\n  "yearsInBusiness": number,\n  "employeeCount": string,\n  "googleReviews": number,\n  "googleRating": number,\n  "revenueSignals": [3-5 strings],\n  "digitalWeaknesses": [3-5 strings],\n  "recommendedServices": [strings from: ${svcs.join(', ')}],\n  "leadScore": number 1-10,\n  "emailSubject": string,\n  "emailBody": string (3 short personalized paragraphs)${site?',\n  "matchScore": number 1-10,\n  "matchReason": string':''}\n}`;
+  try{
+    const res=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
+      body:JSON.stringify({model:'gpt-4o',messages:[{role:'system',content:sys},{role:'user',content:`Generate ${n} contractor leads [${ctypeStr}] in [${locLabel||'any location'}]. JSON only.`}],temperature:.72,max_tokens:5000,response_format:{type:'json_object'}})
+    });
+    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
+    const data=await res.json();
+    const raw=JSON.parse(data.choices[0].message.content);
+    leads=Array.isArray(raw)?raw:(raw.leads||Object.values(raw).find(v=>Array.isArray(v))||[]);
+    render(leads,site);
+  }catch(err){showErr(`Error: ${err.message}`);}
+  finally{setBtn(false,'⚡ CRACK THE LEADS');}
+}
+
+function render(arr,site){
+  if(!arr.length){document.getElementById('results').innerHTML='<div class="empty"><div class="etxt">No leads returned. Try different criteria.</div></div>';return;}
+  const _ctypes=getCtypes().join(', ')||'Mixed';
+  const _loc=[document.getElementById('incCity').value,document.getElementById('incProv').value].filter(Boolean).join(' / ')||'Any';
+  let html=`<div class="rhdr"><div><div class="rtitle">⚡ ${arr.length} LEADS CRACKED</div><div class="rsub">${_ctypes} · ${_loc}</div></div><div class="rbtns"><button class="btn-c" onclick="exportPDF()">⬇ EXPORT PDF</button><button class="btn-r" onclick="clearAll()">✕ CLEAR</button></div></div>`;
+  arr.forEach((l,i)=>{
+    const sc=scoreClass(l.leadScore);
+    const ws=l.website?(l.website.startsWith('http')?l.website:'https://'+l.website):null;
+    html+=`<div class="lcard" id="c${i}"><div class="lchead" onclick="toggle(${i})"><div><div class="cname">${l.companyName}</div><div class="ctype">${l.businessType} · ${l.city}, ${l.province}</div></div><div style="display:flex;align-items:center;gap:10px;"><div class="badge ${sc}">LEAD ${l.leadScore}/10</div><span class="chev" id="chev${i}">▼</span></div></div><div class="lcbody" id="b${i}"><div class="igrid"><div class="ii"><label>OWNER</label><div class="val">${l.ownerName||'Owner'}</div></div><div class="ii"><label>PHONE</label><div class="val">${l.phone||'—'}</div></div><div class="ii"><label>EMAIL</label><div class="val">${l.email||'—'}</div></div><div class="ii"><label>WEBSITE</label><div class="val">${ws?`<a href="${ws}" target="_blank">${l.website}</a>`:'<span style="color:var(--pk)">No website</span>'}</div></div><div class="ii"><label>YEARS ACTIVE</label><div class="val">${l.yearsInBusiness||'—'} yrs</div></div><div class="ii"><label>TEAM SIZE</label><div class="val">${l.employeeCount||'—'}</div></div><div class="ii"><label>GOOGLE REVIEWS</label><div class="val"><span class="stars">${stars(l.googleRating)}</span> ${l.googleRating||''} <span style="color:var(--dim)">(${l.googleReviews||0})</span></div></div></div><div style="margin-bottom:13px"><label class="lbl" style="margin-bottom:5px">💰 Revenue Signals</label><div class="tags">${(l.revenueSignals||[]).map(s=>`<span class="tag ts">${s}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:#ff7aac;margin-bottom:5px">⚠ Digital Weaknesses</label><div class="tags">${(l.digitalWeaknesses||[]).map(w=>`<span class="tag tw">${w}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:var(--c);margin-bottom:5px">⬡ Recommended Services</label><div class="tags">${(l.recommendedServices||[]).map(s=>`<span class="tag tg">${s}</span>`).join('')}</div></div>${site&&l.matchScore!==undefined?`<div class="mbox"><div class="mlbl">⬡ YOUR SITE MATCH LIKELIHOOD</div><div class="mbar"><div class="mbarbg"><div class="mbarfill" style="width:${l.matchScore*10}%"></div></div><div class="mval">${l.matchScore}/10</div></div><div class="mreason">${l.matchReason||''}</div></div>`:''}<div class="esec"><label class="lbl" style="color:var(--g);margin-bottom:8px">📧 Draft Cold Email</label><div class="esubj"><span style="color:var(--dim);font-size:.6rem">SUBJECT: </span>${l.emailSubject}</div><div class="ebody">${l.emailBody}</div><div class="ebtns"><button class="btn-c" onclick="copyEmail(${i})" id="cp${i}" style="font-size:.62rem;padding:6px 13px">⬡ COPY EMAIL</button><button class="btn-p" onclick="regenEmail(${i})" style="font-size:.62rem;padding:6px 13px">↺ REGENERATE</button></div></div><div class="osec"><div class="osec-title">🚀 Other Outreach Strategies — Beyond Cold Email</div>${[
+  {i:'🔗',ch:'LinkedIn DM',tip:`Find ${l.ownerName} on LinkedIn — connect with a short note (no pitch). Message 4-5 days later referencing a specific digital gap, e.g. "${(l.digitalWeaknesses||['weak online presence'])[0]}".`},
+  {i:'📞',ch:'Cold Call',tip:`Trades owners respond well to direct calls. Lead with a stat or observation about ${l.businessType}s in ${l.city} missing Google page 1 — makes it feel like research, not a sales call.`},
+  {i:'📱',ch:'Meta / Facebook Ads',tip:`Run a hyper-targeted ad in ${l.city} to business owners in ${l.businessType} — use a case study headline like "We got [similar client] 3x more calls in 60 days." Warm leads before you ever reach out.`},
+  {i:'🔍',ch:'Google Ads (their keywords)',tip:`Target the exact searches ${l.businessType}s in ${l.city} rely on for new jobs. A landing page offering a free audit or quote gets inbound leads before they know you exist.`},
+  {i:'🤝',ch:'Local Networking / BNI',tip:`BNI chapters and local contractor associations in ${l.city} are goldmines. Contractors trust referrals 10x more than cold outreach — one warm intro beats 50 cold emails.`},
+  {i:'📮',ch:'Direct Mail',tip:`A physical postcard or one-page flyer to ${l.companyName}'s address stands out when everyone else is emailing. Include a QR code to a quick-win offer (free SEO report, website audit, etc).`}
+].map(t=>`<div class="otip"><div class="otip-icon">${t.i}</div><div class="otip-inner"><div class="otip-ch">${t.ch}</div><div class="otip-body">${t.tip}</div></div></div>`).join('')}</div></div></div></div>`;
+  });
+  document.getElementById('results').innerHTML=html;
+  setTimeout(()=>{document.querySelectorAll('.mbarfill').forEach(b=>{const w=b.style.width;b.style.width='0%';requestAnimationFrame(()=>{b.style.width=w;});});},100);
+}
+
+function toggle(i){document.getElementById('b'+i).classList.toggle('open');document.getElementById('chev'+i).classList.toggle('open');}
+function clearAll(){leads=[];document.getElementById('results').innerHTML='<div class="empty"><div class="eico">⬡</div><div class="etxt">CONFIGURE CRITERIA &amp; FIRE TO FIND LEADS</div></div>';}
+function copyEmail(i){
+  const l=leads[i];
+  navigator.clipboard.writeText(`Subject: ${l.emailSubject}\n\n${l.emailBody}`).then(()=>{
+    const b=document.getElementById('cp'+i);b.textContent='✓ COPIED!';
+    setTimeout(()=>b.textContent='⬡ COPY EMAIL',2000);
+  });
+}
+async function regenEmail(i){
+  const key=document.getElementById('apiKey').value.trim();
+  if(!key)return alert('API key required');
+  const l=leads[i],btn=document.querySelector(`#c${i} .btn-p`);
+  btn.textContent='↺ WRITING...';btn.disabled=true;
+  try{
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4o',messages:[{role:'system',content:'Write concise personalized B2B cold emails for a digital marketing agency. Return JSON with keys: emailSubject (string), emailBody (string, 3 short paragraphs).'},{role:'user',content:`New cold email for: ${l.companyName}, owner ${l.ownerName}, ${l.city}. Type: ${l.businessType}. Weaknesses: ${(l.digitalWeaknesses||[]).join(', ')}. Services: ${(l.recommendedServices||[]).join(', ')}.`}],temperature:.85,max_tokens:600,response_format:{type:'json_object'}})});
+    const d=await r.json();const upd=JSON.parse(d.choices[0].message.content);
+    leads[i].emailSubject=upd.emailSubject;leads[i].emailBody=upd.emailBody;
+    document.querySelector(`#c${i} .esubj`).innerHTML=`<span style="color:var(--dim);font-size:.6rem">SUBJECT: </span>${upd.emailSubject}`;
+    document.querySelector(`#c${i} .ebody`).textContent=upd.emailBody;
+  }catch(e){alert('Failed: '+e.message);}
+  btn.textContent='↺ REGENERATE';btn.disabled=false;
+}
+
+function exportPDF(){
+  if(!leads.length)return;
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),M=14,CW=W-M*2;
+  let y=M;
+  const np=()=>{doc.addPage();doc.setFillColor(255,255,255);doc.rect(0,0,W,H,'F');y=M;};
+  const ck=(n=12)=>{if(y+n>H-M)np();};
+  // ── COVER PAGE (dark themed) ──
+  doc.setFillColor(3,8,3);doc.rect(0,0,W,H,'F');
+  doc.setTextColor(0,255,65);doc.setFontSize(26);doc.setFont('courier','bold');
+  doc.text('CRACKLE',W/2,46,{align:'center'});
+  doc.setFontSize(8);doc.setTextColor(0,220,220);
+  doc.text('AGENCY LEAD INTELLIGENCE REPORT',W/2,56,{align:'center'});
+  doc.setFontSize(8);doc.setTextColor(140,200,140);
+  const _ctStr=getCtypes().join(', ')||'Contractors';
+  const _incCity=document.getElementById('incCity').value;
+  const _incProv=document.getElementById('incProv').value;
+  const _locStr=[_incCity,_incProv].filter(Boolean).join(' / ')||'Any Location';
+  let cy=66;
+  doc.text(`Generated: ${new Date().toLocaleDateString('en-CA')}`,W/2,cy,{align:'center'});cy+=7;
+  doc.text(`Types: ${_ctStr}`,W/2,cy,{align:'center'});cy+=7;
+  doc.text(`Location: ${_locStr}`,W/2,cy,{align:'center'});cy+=7;
+  doc.text(`Total Leads: ${leads.length}`,W/2,cy,{align:'center'});
+  // ── LEAD PAGES (white background, dark text) ──
+  leads.forEach((l,idx)=>{
+    np();
+    // Header bar
+    doc.setFillColor(20,20,20);doc.rect(M-2,y-3,CW+4,13,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(12);doc.setFont('courier','bold');
+    doc.text(`${idx+1}. ${l.companyName}`,M,y+5);
+    const sc=l.leadScore>=8?[0,140,60]:l.leadScore>=5?[160,110,0]:[180,30,30];
+    doc.setTextColor(...sc);doc.setFontSize(8);
+    doc.text(`LEAD SCORE: ${l.leadScore}/10`,W-M,y+5,{align:'right'});
+    y+=16;
+    // Info grid — dark text on white
+    [[' Type',l.businessType],['Location',`${l.city}, ${l.province}`],['Owner',l.ownerName],['Phone',l.phone],['Email',l.email],['Website',l.website||'No website'],['Years Active',`${l.yearsInBusiness} yrs`],['Team Size',l.employeeCount],['Google',`${l.googleRating}★ (${l.googleReviews} reviews)`]].forEach(([k,v])=>{
+      ck(6);doc.setFontSize(8);doc.setFont('courier','normal');
+      doc.setTextColor(90,90,90);doc.text(k+':',M,y);
+      doc.setTextColor(20,20,20);doc.text(String(v||'—'),M+32,y);y+=5.2;
+    });
+    y+=3;
+    // Revenue Signals
+    ck(18);doc.setTextColor(140,80,0);doc.setFont('courier','bold');doc.setFontSize(8);
+    doc.text('REVENUE SIGNALS:',M,y);y+=5;
+    doc.setFont('courier','normal');doc.setTextColor(100,60,0);
+    (l.revenueSignals||[]).forEach(s=>{ck(5);doc.text('• '+s,M+3,y);y+=4.8;});
+    y+=3;
+    // Digital Weaknesses
+    ck(18);doc.setTextColor(160,0,40);doc.setFont('courier','bold');doc.setFontSize(8);
+    doc.text('DIGITAL WEAKNESSES:',M,y);y+=5;
+    doc.setFont('courier','normal');doc.setTextColor(130,20,50);
+    (l.digitalWeaknesses||[]).forEach(w=>{ck(5);doc.text('• '+w,M+3,y);y+=4.8;});
+    y+=3;
+    // Recommended Services
+    ck(14);doc.setTextColor(0,80,150);doc.setFont('courier','bold');doc.setFontSize(8);
+    doc.text('RECOMMENDED SERVICES:',M,y);y+=5;
+    doc.setFont('courier','normal');doc.setTextColor(20,60,130);
+    doc.splitTextToSize((l.recommendedServices||[]).join(' · '),CW).forEach(line=>{ck(5);doc.text(line,M+3,y);y+=4.8;});
+    y+=3;
+    // Match Score (if present)
+    if(l.matchScore!==undefined){
+      ck(14);doc.setTextColor(100,0,180);doc.setFont('courier','bold');doc.setFontSize(8);
+      doc.text(`SITE MATCH SCORE: ${l.matchScore}/10`,M,y);y+=5;
+      doc.setFont('courier','normal');doc.setTextColor(80,20,150);
+      doc.splitTextToSize(l.matchReason||'—',CW).forEach(line=>{ck(5);doc.text(line,M+3,y);y+=4.8;});
+      y+=3;
+    }
+    // Cold Email — black text, clearly readable
+    ck(22);
+    doc.setFillColor(245,245,245);doc.rect(M-2,y-2,CW+4,6,'F');
+    doc.setTextColor(20,20,20);doc.setFont('courier','bold');doc.setFontSize(8);
+    doc.text('COLD EMAIL DRAFT:',M,y+2);y+=8;
+    doc.setFillColor(250,250,250);
+    doc.setTextColor(40,40,40);doc.setFont('courier','normal');doc.setFontSize(8);
+    doc.text('SUBJECT: '+l.emailSubject,M,y);y+=6;
+    doc.setTextColor(20,20,20);doc.setFontSize(7.5);
+    doc.splitTextToSize(l.emailBody,CW).forEach(line=>{ck(5);doc.text(line,M,y);y+=4.4;});
+    y+=4;
+    // Outreach Alternatives
+    ck(16);
+    doc.setFillColor(240,240,240);doc.rect(M-2,y-2,CW+4,6,'F');
+    doc.setTextColor(20,20,20);doc.setFont('courier','bold');doc.setFontSize(8);
+    doc.text('OTHER OUTREACH STRATEGIES:',M,y+2);y+=8;
+    const tips=[
+      ['LinkedIn DM',`Find ${l.ownerName} on LinkedIn — connect first, pitch 4-5 days later referencing: "${(l.digitalWeaknesses||[''])[0]}"`],
+      ['Cold Call',`Direct calls work well for trades. Lead with a stat about ${l.businessType}s missing Google page 1 in ${l.city}.`],
+      ['Meta Ads',`Target business owners in ${l.businessType} in ${l.city} with a case study ad before direct outreach.`],
+      ['Local Networking / BNI',`BNI + contractor associations in ${l.city}. One warm referral beats 50 cold emails.`],
+      ['Direct Mail',`Postcard to ${l.companyName} with a QR code to a free audit offer — stands out in a digital-only world.`]
+    ];
+    doc.setFont('courier','normal');doc.setTextColor(30,30,30);doc.setFontSize(7.5);
+    tips.forEach(([ch,tip])=>{
+      ck(8);
+      doc.setFont('courier','bold');doc.setTextColor(0,80,150);doc.text(ch+': ',M+3,y);
+      const chW=doc.getTextWidth(ch+': ');
+      doc.setFont('courier','normal');doc.setTextColor(40,40,40);
+      doc.splitTextToSize(tip,CW-6).forEach((line,li)=>{ck(5);doc.text(li===0?line:line,li===0?M+3+chW:M+6,y);y+=4.4;});
+      y+=1.5;
+    });
+  });
+  doc.save(`CRACKLE_Leads_${new Date().toISOString().split('T')[0]}.pdf`);
+}
+</script>
+</body>
+</html>
