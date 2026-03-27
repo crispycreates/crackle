@@ -171,6 +171,7 @@
   <div class="hdr">
     <div class="logo">⚡ CRACKLE</div>
     <div class="sub">// AGENCY LEAD INTELLIGENCE SYSTEM · BY CRISPY MARKETING //</div>
+    <div style="font-size:.65rem;color:rgba(0,255,65,.35);letter-spacing:.25em;margin-top:6px;font-family:'Courier New',monospace;">v 3.3</div>
   </div>
   <div class="grid">
     <div class="sticky">
@@ -183,6 +184,30 @@
             <button class="eye" onclick="toggleKey()">SHOW</button>
           </div>
           <div class="alert aw" style="margin-top:8px;font-size:.6rem;">⚠ Key stays in your browser only. Never shared.</div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Model <span style="color:var(--dim)">(same key, tier determines access)</span></label>
+          <select id="modelSel">
+            <optgroup label="── GPT-5.4 · Latest Frontier (Mar 2026)">
+              <option value="gpt-5.4" selected>GPT-5.4 · Best quality — recommended ⭐</option>
+              <option value="gpt-5.4-mini">GPT-5.4 Mini · Fast + strong, lower cost</option>
+              <option value="gpt-5.4-nano">GPT-5.4 Nano · Cheapest 5.4-class</option>
+            </optgroup>
+            <optgroup label="── GPT-5 · Previous Frontier">
+              <option value="gpt-5">GPT-5 · Excellent quality</option>
+              <option value="gpt-5-mini">GPT-5 Mini · Cost-efficient</option>
+            </optgroup>
+            <optgroup label="── GPT-4.1 · Stable + Smart">
+              <option value="gpt-4.1">GPT-4.1 · Smartest non-reasoning</option>
+              <option value="gpt-4.1-mini">GPT-4.1 Mini · Smaller + faster</option>
+              <option value="gpt-4.1-nano">GPT-4.1 Nano · Fastest 4.1</option>
+            </optgroup>
+            <optgroup label="── GPT-4o · Older / Cheapest">
+              <option value="gpt-4o">GPT-4o · Reliable, widely available</option>
+              <option value="gpt-4o-mini">GPT-4o Mini · Lowest cost option</option>
+            </optgroup>
+          </select>
+          <div style="font-size:.6rem;color:var(--dim);margin-top:5px;letter-spacing:.08em;">↳ Higher models = better lead quality &amp; stricter location. Key tier determines access.</div>
         </div>
         <hr class="div">
         <div class="fg">
@@ -320,6 +345,20 @@ async function extractFileText(){
   return'';
 }
 
+function vOpen(type,btn){
+  const nm=btn.getAttribute('data-name')||'';
+  const cy=btn.getAttribute('data-city')||'';
+  const pr=btn.getAttribute('data-prov')||'';
+  const q=encodeURIComponent(nm+' '+cy+' '+pr);
+  const qc=encodeURIComponent(nm+' '+cy);
+  const urls={
+    search:'https://www.google.com/search?q='+q,
+    maps:'https://www.google.com/maps/search/?api=1&query='+q,
+    listings:'https://www.google.com/search?q='+qc+'+site:facebook.com+OR+site:yellowpages.ca+OR+site:yelp.com',
+    website:'https://www.google.com/search?q='+encodeURIComponent(nm+' '+cy+' official website')
+  };
+  window.open(urls[type],'_blank');
+}
 function handleFileSelect(inp){
   const st=document.getElementById('ctxStatus');
   if(inp.files[0]){st.textContent='✓ '+inp.files[0].name+' ready';st.style.color='var(--g)';}
@@ -347,7 +386,7 @@ async function go(){
   const ctypeStr=ctypes.join(', ');
   const locLabel=[inc,incProv].filter(Boolean).join(' / ');
   const fileCtx=await extractFileText();
-  document.getElementById('results').innerHTML=`<div class="loading"><div class="ltxt">INFILTRATING LOCAL MARKET DATA...</div><div class="lbar"><div class="lbarfill"></div></div><div class="lsteps">⬡ Targeting: ${ctypeStr}<br>⬡ Location: ${locLabel||'Any'}<br>⬡ Filtering for revenue signals ($500K–$1.5M)<br>⬡ Detecting digital weaknesses &amp; SEO gaps<br>⬡ Crafting personalized cold outreach emails</div></div>`;
+  document.getElementById('results').innerHTML=`<div class="loading"><div class="ltxt">INFILTRATING LOCAL MARKET DATA... [${document.getElementById('modelSel').value}]</div><div class="lbar"><div class="lbarfill"></div></div><div class="lsteps">⬡ Targeting: ${ctypeStr}<br>⬡ Location: ${locLabel||'Any'}<br>⬡ Filtering for revenue signals ($500K–$1.5M)<br>⬡ Detecting digital weaknesses &amp; SEO gaps<br>⬡ Crafting personalized cold outreach emails</div></div>`;
   const excNote=exc?`\nEXCLUDE businesses in: ${exc}.`:'';
   const locNote=[]
   if(inc)locNote.push(`Cities: ${inc}`);
@@ -445,7 +484,7 @@ function render(arr,site){
   const _ctypes=getCtypes().join(', ')||'Mixed';
   const _loc=[document.getElementById('incCity').value,document.getElementById('incProv').value].filter(Boolean).join(' / ')||'Any';
   const hasFlag=arr.some(l=>l.locationFlagged);
-  let html=`<div class="rhdr"><div><div class="rtitle">⚡ ${arr.length} LEADS CRACKED</div><div class="rsub">${_ctypes} · ${_loc}</div></div><div class="rbtns"><button class="btn-c" onclick="exportPDF()">⬇ EXPORT PDF</button><button class="btn-r" onclick="clearAll()">✕ CLEAR</button></div></div>
+  let html=`<div class="rhdr"><div><div class="rtitle">⚡ ${arr.length} LEADS CRACKED</div><div class="rsub">${_ctypes} · ${_loc} · ${document.getElementById('modelSel').value}</div></div><div class="rbtns"><button class="btn-c" onclick="exportPDF()">⬇ EXPORT PDF</button><button class="btn-r" onclick="clearAll()">✕ CLEAR</button></div></div>
   <div class="disclaimer-bar">⚠ These are <strong>AI-generated lead profiles</strong> — not scraped from live databases. Company names, contacts, and review counts may be illustrative. Use the <strong>🔍 Verify</strong> buttons on each card to cross-check on Google Maps and Google Search before reaching out.${hasFlag?' <strong style="color:#ff6b35"> · Location filter removed some off-target leads — review remaining results carefully.</strong>':''}</div>`;
   arr.forEach((l,i)=>{
     const sc=scoreClass(l.leadScore);
@@ -453,7 +492,7 @@ function render(arr,site){
     const rcClass=l.realityCheck&&l.realityCheck.includes('Likely')?'rc-hi':l.realityCheck&&l.realityCheck.includes('Possibly')?'rc-md':'rc-lo';
     const rcLabel=l.realityCheck||'AI-estimated — research carefully';
     const locWarn=l.locationFlagged?'<span style="font-size:.58rem;color:#ff6b35;margin-left:6px;">⚠ location unverified</span>':'';
-    html+=`<div class="lcard" id="c${i}"><div class="lchead" onclick="toggle(${i})"><div><div class="cname">${l.companyName}${locWarn}</div><div class="ctype">${l.businessType} · ${l.city}, ${l.province}</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;"><span class="rcheck ${rcClass}" title="${rcLabel}">🔍 ${rcLabel.split('—')[0].trim()}</span><div class="badge ${sc}">LEAD ${l.leadScore}/10</div><span class="chev" id="chev${i}">▼</span></div></div><div class="lcbody" id="b${i}"><div class="igrid"><div class="ii"><label>OWNER</label><div class="val">${l.ownerName||'Owner'}</div></div><div class="ii"><label>PHONE</label><div class="val">${l.phone||'—'}</div></div><div class="ii"><label>EMAIL</label><div class="val">${l.email||'—'}</div></div><div class="ii"><label>WEBSITE</label><div class="val">${ws?`<a href="${ws}" target="_blank">${l.website}</a>`:'<span style="color:var(--pk)">No website</span>'}</div></div><div class="ii"><label>YEARS ACTIVE</label><div class="val">${l.yearsInBusiness||'—'} yrs</div></div><div class="ii"><label>TEAM SIZE</label><div class="val">${l.employeeCount||'—'}</div></div><div class="ii"><label>GOOGLE REVIEWS</label><div class="val"><span class="stars">${stars(l.googleRating)}</span> ${l.googleRating||''} <span style="color:var(--dim)">(${l.googleReviews||0})</span></div></div></div><div class="vsec"><div class="vsec-title">🔍 Verify This Lead — Check Before You Reach Out</div><div class="vlinks"><a class="vbtn" href="https://www.google.com/search?q=${encodeURIComponent(l.companyName+' '+l.city+' '+l.province)}" target="_blank">🌐 Google Search</a><a class="vbtn" href="https://www.google.com/maps/search/${encodeURIComponent(l.companyName+' '+l.city)}" target="_blank">📍 Google Maps</a><a class="vbtn" href="https://www.google.com/search?q=${encodeURIComponent(l.companyName+' '+l.city)}+site:maps.google.com+OR+site:facebook.com+OR+site:yellowpages.ca" target="_blank">📋 Business Listings</a>${ws?`<a class="vbtn vbtn-warn" href="${ws}" target="_blank">🔗 Their Website</a>`:''}</div><div class="vdisclaim">⚠ AI-generated profile — always confirm on Google Maps before contacting. Check: business name matches, phone is listed, city is correct. Rating of <strong>${l.googleRating}★ (${l.googleReviews} reviews)</strong> is estimated.</div></div><div style="margin-bottom:13px"><label class="lbl" style="margin-bottom:5px">💰 Revenue Signals</label><div class="tags">${(l.revenueSignals||[]).map(s=>`<span class="tag ts">${s}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:#ff7aac;margin-bottom:5px">⚠ Digital Weaknesses</label><div class="tags">${(l.digitalWeaknesses||[]).map(w=>`<span class="tag tw">${w}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:var(--c);margin-bottom:5px">⬡ Recommended Services</label><div class="tags">${(l.recommendedServices||[]).map(s=>`<span class="tag tg">${s}</span>`).join('')}</div></div>${site&&l.matchScore!==undefined?`<div class="mbox"><div class="mlbl">⬡ YOUR SITE MATCH LIKELIHOOD</div><div class="mbar"><div class="mbarbg"><div class="mbarfill" style="width:${l.matchScore*10}%"></div></div><div class="mval">${l.matchScore}/10</div></div><div class="mreason">${l.matchReason||''}</div></div>`:''}<div class="esec"><label class="lbl" style="color:var(--g);margin-bottom:8px">📧 Draft Cold Email</label><div class="esubj"><span style="color:var(--dim);font-size:.6rem">SUBJECT: </span>${l.emailSubject}</div><div class="ebody">${l.emailBody}</div><div class="ebtns"><button class="btn-c" onclick="copyEmail(${i})" id="cp${i}" style="font-size:.62rem;padding:6px 13px">⬡ COPY EMAIL</button><button class="btn-p" onclick="regenEmail(${i})" style="font-size:.62rem;padding:6px 13px">↺ REGENERATE</button></div></div><div class="osec"><div class="osec-title">🚀 Other Outreach Strategies — Beyond Cold Email</div>${[
+    html+=`<div class="lcard" id="c${i}"><div class="lchead" onclick="toggle(${i})"><div><div class="cname">${l.companyName}${locWarn}</div><div class="ctype">${l.businessType} · ${l.city}, ${l.province}</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;"><span class="rcheck ${rcClass}" title="${rcLabel}">🔍 ${rcLabel.split('—')[0].trim()}</span><div class="badge ${sc}">LEAD ${l.leadScore}/10</div><span class="chev" id="chev${i}">▼</span></div></div><div class="lcbody" id="b${i}"><div class="igrid"><div class="ii"><label>OWNER</label><div class="val">${l.ownerName||'Owner'}</div></div><div class="ii"><label>PHONE</label><div class="val">${l.phone||'—'}</div></div><div class="ii"><label>EMAIL</label><div class="val">${l.email||'—'}</div></div><div class="ii"><label>WEBSITE</label><div class="val">${ws?`<a href="${ws}" target="_blank">${l.website}</a>`:'<span style="color:var(--pk)">No website</span>'}</div></div><div class="ii"><label>YEARS ACTIVE</label><div class="val">${l.yearsInBusiness||'—'} yrs</div></div><div class="ii"><label>TEAM SIZE</label><div class="val">${l.employeeCount||'—'}</div></div><div class="ii"><label>GOOGLE REVIEWS</label><div class="val"><span class="stars">${stars(l.googleRating)}</span> ${l.googleRating||''} <span style="color:var(--dim)">(${l.googleReviews||0})</span></div></div></div><div class="vsec"><div class="vsec-title">🔍 Verify This Lead — Check Before You Reach Out</div><div class="vlinks"><button class="vbtn" onclick="vOpen('search',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">🌐 Google Search</button><button class="vbtn" onclick="vOpen('maps',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">📍 Google Maps</button><button class="vbtn" onclick="vOpen('listings',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">📋 Business Listings</button><button class="vbtn vbtn-warn" onclick="vOpen('website',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">🔍 Find Website on Google</button></div><div class="vdisclaim">⚠ AI-generated profile — always confirm on Google Maps before contacting. Check: business name matches, phone is listed, city is correct. Rating of <strong>${l.googleRating}★ (${l.googleReviews} reviews)</strong> is estimated.</div></div><div style="margin-bottom:13px"><label class="lbl" style="margin-bottom:5px">💰 Revenue Signals</label><div class="tags">${(l.revenueSignals||[]).map(s=>`<span class="tag ts">${s}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:#ff7aac;margin-bottom:5px">⚠ Digital Weaknesses</label><div class="tags">${(l.digitalWeaknesses||[]).map(w=>`<span class="tag tw">${w}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:var(--c);margin-bottom:5px">⬡ Recommended Services</label><div class="tags">${(l.recommendedServices||[]).map(s=>`<span class="tag tg">${s}</span>`).join('')}</div></div>${site&&l.matchScore!==undefined?`<div class="mbox"><div class="mlbl">⬡ YOUR SITE MATCH LIKELIHOOD</div><div class="mbar"><div class="mbarbg"><div class="mbarfill" style="width:${l.matchScore*10}%"></div></div><div class="mval">${l.matchScore}/10</div></div><div class="mreason">${l.matchReason||''}</div></div>`:''}<div class="esec"><label class="lbl" style="color:var(--g);margin-bottom:8px">📧 Draft Cold Email</label><div class="esubj"><span style="color:var(--dim);font-size:.6rem">SUBJECT: </span>${l.emailSubject}</div><div class="ebody">${l.emailBody}</div><div class="ebtns"><button class="btn-c" onclick="copyEmail(${i})" id="cp${i}" style="font-size:.62rem;padding:6px 13px">⬡ COPY EMAIL</button><button class="btn-p" onclick="regenEmail(${i})" style="font-size:.62rem;padding:6px 13px">↺ REGENERATE</button></div></div><div class="osec"><div class="osec-title">🚀 Other Outreach Strategies — Beyond Cold Email</div>${[
   {i:'🔗',ch:'LinkedIn DM',tip:`Find ${l.ownerName} on LinkedIn — connect with a short note (no pitch). Message 4-5 days later referencing a specific digital gap, e.g. "${(l.digitalWeaknesses||['weak online presence'])[0]}".`},
   {i:'📞',ch:'Cold Call',tip:`Trades owners respond well to direct calls. Lead with a stat or observation about ${l.businessType}s in ${l.city} missing Google page 1 — makes it feel like research, not a sales call.`},
   {i:'📱',ch:'Meta / Facebook Ads',tip:`Run a hyper-targeted ad in ${l.city} to business owners in ${l.businessType} — use a case study headline like "We got [similar client] 3x more calls in 60 days." Warm leads before you ever reach out.`},
@@ -481,7 +520,7 @@ async function regenEmail(i){
   const l=leads[i],btn=document.querySelector(`#c${i} .btn-p`);
   btn.textContent='↺ WRITING...';btn.disabled=true;
   try{
-    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4o',messages:[{role:'system',content:'Write concise personalized B2B cold emails for a digital marketing agency. Return JSON with keys: emailSubject (string), emailBody (string, 3 short paragraphs).'},{role:'user',content:`New cold email for: ${l.companyName}, owner ${l.ownerName}, ${l.city}. Type: ${l.businessType}. Weaknesses: ${(l.digitalWeaknesses||[]).join(', ')}. Services: ${(l.recommendedServices||[]).join(', ')}.`}],temperature:.85,max_tokens:600,response_format:{type:'json_object'}})});
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model:document.getElementById('modelSel').value,messages:[{role:'system',content:'Write concise personalized B2B cold emails for a digital marketing agency. Return JSON with keys: emailSubject (string), emailBody (string, 3 short paragraphs).'},{role:'user',content:`New cold email for: ${l.companyName}, owner ${l.ownerName}, ${l.city}. Type: ${l.businessType}. Weaknesses: ${(l.digitalWeaknesses||[]).join(', ')}. Services: ${(l.recommendedServices||[]).join(', ')}.`}],temperature:.85,max_tokens:600,response_format:{type:'json_object'}})});
     const d=await r.json();const upd=JSON.parse(d.choices[0].message.content);
     leads[i].emailSubject=upd.emailSubject;leads[i].emailBody=upd.emailBody;
     document.querySelector(`#c${i} .esubj`).innerHTML=`<span style="color:var(--dim);font-size:.6rem">SUBJECT: </span>${upd.emailSubject}`;
