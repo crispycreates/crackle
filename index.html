@@ -8,12 +8,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      /* Miami Vice palette: Mesa Pink, Teal, Magnolia, sunset orange. [web:39] */
-      --bg-deep: #02101b;
-      --bg-night: #01121f;
+      --bg-deep: #020518;
+      --bg-night: #050816;
       --cyan: #1be7ff;
       --magenta: #ff6ec7;
-      --hot-pink: #fe6dc6;
+      --hot-pink: #ff2e92;
       --teal: #008080;
       --sunset: #ff5733;
       --white: #ffffff;
@@ -22,6 +21,7 @@
       --panel-border: rgba(27, 231, 255, 0.6);
       --panel-glow: rgba(255, 110, 199, 0.55);
       --success: #00ffb4;
+      --error: #ff4b81;
     }
 
     * {
@@ -35,9 +35,9 @@
       font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--text-main);
       background:
-        radial-gradient(circle at 15% -20%, rgba(254, 109, 198, 0.6) 0%, transparent 55%),
-        radial-gradient(circle at 85% 120%, rgba(27, 231, 255, 0.5) 0%, transparent 55%),
-        linear-gradient(180deg, #02101b 0%, #01121f 55%, #000000 100%);
+        radial-gradient(circle at 15% -20%, rgba(254, 109, 198, 0.65) 0%, transparent 55%),
+        radial-gradient(circle at 85% 120%, rgba(27, 231, 255, 0.55) 0%, transparent 55%),
+        linear-gradient(180deg, #020518 0%, #050816 52%, #000000 100%);
       overflow-x: hidden;
       overflow-y: auto;
     }
@@ -49,29 +49,29 @@
       overflow: hidden;
       background:
         radial-gradient(circle at 10% -18%, rgba(254, 109, 198, 0.7) 0%, transparent 60%),
-        radial-gradient(circle at 90% 120%, rgba(27, 231, 255, 0.55) 0%, transparent 55%),
-        radial-gradient(circle at 0% 120%, rgba(255, 87, 51, 0.4) 0%, transparent 55%),
-        linear-gradient(180deg, #02101b 0%, #01121f 55%, #000000 100%);
-      animation: hueShift 26s linear infinite alternate;
+        radial-gradient(circle at 90% 120%, rgba(27, 231, 255, 0.6) 0%, transparent 55%),
+        radial-gradient(circle at 0% 120%, rgba(255, 87, 51, 0.45) 0%, transparent 55%),
+        linear-gradient(180deg, #020518 0%, #050816 60%, #000000 100%);
+      animation: hueShift 30s linear infinite alternate;
     }
 
     @keyframes hueShift {
       0% { filter: hue-rotate(0deg) brightness(1); }
-      50% { filter: hue-rotate(10deg) brightness(1.05); }
+      50% { filter: hue-rotate(8deg) brightness(1.05); }
       100% { filter: hue-rotate(-8deg) brightness(0.98); }
     }
 
     .sun {
       position: absolute;
-      top: -120px;
+      top: -140px;
       left: 50%;
-      width: 420px;
-      height: 420px;
+      width: 460px;
+      height: 460px;
       transform: translateX(-50%);
       background:
-        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 246, 191, 0.7) 28%, transparent 60%),
-        radial-gradient(circle at 50% 70%, rgba(255, 110, 199, 0.8) 0%, transparent 60%);
-      opacity: 0.7;
+        radial-gradient(circle at 50% 30%, rgba(255,255,255,0.9) 0%, rgba(255,246,191,0.75) 26%, transparent 60%),
+        radial-gradient(circle at 50% 70%, rgba(255,110,199,0.85) 0%, transparent 60%);
+      opacity: 0.8;
       filter: blur(1px);
       mix-blend-mode: screen;
     }
@@ -79,62 +79,62 @@
     .grid {
       position: absolute;
       left: 50%;
-      bottom: -40px;
-      width: 150vw;
-      height: 55vh;
-      transform: translateX(-50%) perspective(650px) rotateX(72deg);
+      bottom: -60px;
+      width: 170vw;
+      height: 60vh;
+      transform: translateX(-50%) perspective(700px) rotateX(74deg);
       background:
         linear-gradient(to right, rgba(27, 231, 255, 0.25) 1px, transparent 1px),
         linear-gradient(to top, rgba(27, 231, 255, 0.25) 1px, transparent 1px);
-      background-size: 40px 40px;
+      background-size: 42px 42px;
       background-position: center bottom;
-      box-shadow: 0 0 60px rgba(27, 231, 255, 0.55);
-      opacity: 0.7;
+      box-shadow: 0 0 70px rgba(27, 231, 255, 0.6);
+      opacity: 0.75;
       animation: gridDrift 18s linear infinite;
     }
 
     @keyframes gridDrift {
       0% { background-position: center bottom; }
-      100% { background-position: center calc(100% + 80px); }
+      100% { background-position: center calc(100% + 90px); }
     }
 
     .city-strip {
       position: absolute;
-      bottom: 22vh;
-      width: 170%;
-      left: -35%;
-      height: 120px;
+      bottom: 24vh;
+      width: 180%;
+      left: -40%;
+      height: 130px;
       background-image: linear-gradient(
         to right,
-        rgba(0, 0, 0, 0) 0,
-        rgba(0, 0, 0, 0.9) 5%,
-        rgba(0, 0, 0, 1) 13%,
-        rgba(0, 0, 0, 0.8) 20%,
-        transparent 24%
+        rgba(0,0,0,0) 0,
+        rgba(0,0,0,0.9) 5%,
+        rgba(0,0,0,1) 15%,
+        rgba(0,0,0,0.85) 22%,
+        transparent 26%
       );
-      background-size: 190px 100%;
+      background-size: 210px 100%;
       opacity: 0.9;
-      filter: drop-shadow(0 0 12px rgba(27, 231, 255, 0.45));
+      filter: drop-shadow(0 0 14px rgba(27, 231, 255, 0.5));
       animation: skylineScroll 40s linear infinite;
     }
 
     .city-strip:nth-child(2) {
-      bottom: 26vh;
-      height: 90px;
+      bottom: 29vh;
+      height: 100px;
       opacity: 0.7;
       animation-duration: 55s;
     }
 
     .city-strip:nth-child(3) {
-      bottom: 30vh;
-      height: 60px;
+      bottom: 33vh;
+      height: 70px;
       opacity: 0.55;
       animation-duration: 70s;
     }
 
     @keyframes skylineScroll {
       0% { transform: translateX(0); }
-      100% { transform: translateX(-140px); }
+      100% { transform: translateX(-170px); }
     }
 
     .particle {
@@ -143,7 +143,7 @@
       background: radial-gradient(circle, rgba(255, 255, 255, 0.95), transparent 60%);
       opacity: 0.28;
       mix-blend-mode: screen;
-      animation: floatUp 16s linear infinite;
+      animation: floatUp 18s linear infinite;
     }
 
     .particle:nth-child(4) { width: 4px; height: 16px; left: 12%; bottom: -80px; animation-duration: 17s; }
@@ -169,17 +169,17 @@
 
     .panel {
       width: 100%;
-      max-width: 1160px;
+      max-width: 1180px;
       background:
         radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.18), transparent 65%),
         radial-gradient(circle at 100% 100%, rgba(255, 110, 199, 0.18), transparent 55%),
-        linear-gradient(145deg, rgba(2, 5, 28, 0.96), rgba(2, 2, 14, 0.98));
+        linear-gradient(145deg, rgba(2, 5, 32, 0.96), rgba(3, 2, 18, 0.98));
       border-radius: 22px;
       border: 1px solid var(--panel-border);
       box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(0,0,0,0.85),
         0 0 45px var(--panel-glow),
-        0 30px 120px rgba(0, 0, 0, 0.95);
+        0 30px 120px rgba(0,0,0,0.95);
       padding: 26px 22px 26px;
       backdrop-filter: blur(18px);
     }
@@ -212,10 +212,10 @@
       position: relative;
       color: var(--white);
       text-shadow:
-        0 0 6px rgba(255, 255, 255, 0.8),
-        0 0 16px rgba(27, 231, 255, 0.9),
-        0 0 32px rgba(255, 110, 199, 1),
-        0 0 60px rgba(255, 110, 199, 0.9);
+        0 0 6px rgba(255,255,255,0.8),
+        0 0 16px rgba(27,231,255,0.9),
+        0 0 32px rgba(255,110,199,1),
+        0 0 60px rgba(255,110,199,0.9);
       animation: neonFlicker 4.5s infinite;
     }
 
@@ -224,10 +224,10 @@
       position: absolute;
       inset: -6px -12px;
       border-radius: 14px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255,255,255,0.2);
       box-shadow:
-        0 0 18px rgba(27, 231, 255, 0.85),
-        0 0 32px rgba(255, 110, 199, 0.9);
+        0 0 18px rgba(27,231,255,0.85),
+        0 0 32px rgba(255,110,199,0.9);
       opacity: 0.6;
       pointer-events: none;
     }
@@ -236,10 +236,10 @@
       0%, 18%, 20%, 22%, 55%, 100% {
         opacity: 1;
         text-shadow:
-          0 0 4px rgba(255, 255, 255, 0.9),
-          0 0 12px rgba(27, 231, 255, 1),
-          0 0 26px rgba(255, 110, 199, 1),
-          0 0 72px rgba(255, 110, 199, 0.9);
+          0 0 4px rgba(255,255,255,0.9),
+          0 0 12px rgba(27,231,255,1),
+          0 0 26px rgba(255,110,199,1),
+          0 0 72px rgba(255,110,199,0.9);
       }
       19%, 21%, 23% {
         opacity: 0.25;
@@ -269,10 +269,10 @@
       gap: 8px;
       padding: 7px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(27, 231, 255, 0.7);
+      border: 1px solid rgba(27,231,255,0.7);
       background:
-        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.35), transparent 60%),
-        rgba(2, 6, 26, 0.98);
+        radial-gradient(circle at 0 0, rgba(27,231,255,0.35), transparent 60%),
+        rgba(2,6,26,0.98);
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.18em;
@@ -284,7 +284,7 @@
       height: 9px;
       border-radius: 999px;
       background: radial-gradient(circle, #00ffb4, #00a86b);
-      box-shadow: 0 0 10px rgba(0, 255, 180, 1);
+      box-shadow: 0 0 10px rgba(0,255,180,1);
       animation: pulseDot 1.4s ease-in-out infinite;
     }
 
@@ -309,13 +309,13 @@
       border-radius: 18px;
       padding: 16px 16px 18px;
       background:
-        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.12), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(255, 110, 199, 0.12), transparent 60%),
-        rgba(3, 6, 30, 0.97);
-      border: 1px solid rgba(27, 231, 255, 0.65);
+        radial-gradient(circle at 0 0, rgba(27,231,255,0.12), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(255,110,199,0.12), transparent 60%),
+        rgba(3,6,30,0.97);
+      border: 1px solid rgba(27,231,255,0.65);
       box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.85),
-        0 20px 55px rgba(0, 0, 0, 0.9);
+        0 0 0 1px rgba(0,0,0,0.85),
+        0 20px 55px rgba(0,0,0,0.9);
       position: relative;
       overflow: hidden;
     }
@@ -326,15 +326,15 @@
       inset: -50%;
       background: conic-gradient(
         from 90deg,
-        rgba(27, 231, 255, 0.22),
+        rgba(27,231,255,0.22),
         transparent 35%,
-        rgba(255, 110, 199, 0.22),
+        rgba(255,110,199,0.22),
         transparent 65%,
-        rgba(255, 87, 51, 0.2)
+        rgba(255,87,51,0.2)
       );
       opacity: 0;
       mix-blend-mode: screen;
-      animation: sweep 14s linear infinite;
+      animation: sweep 16s linear infinite;
       pointer-events: none;
     }
 
@@ -364,8 +364,8 @@
       font-size: 10px;
       padding: 4px 9px;
       border-radius: 999px;
-      border: 1px solid rgba(27, 231, 255, 0.65);
-      background: rgba(1, 5, 24, 0.96);
+      border: 1px solid rgba(27,231,255,0.65);
+      background: rgba(1,5,24,0.96);
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.17em;
@@ -379,7 +379,7 @@
       height: 6px;
       border-radius: 999px;
       background: radial-gradient(circle, var(--magenta), var(--hot-pink));
-      box-shadow: 0 0 6px rgba(255, 110, 199, 1);
+      box-shadow: 0 0 6px rgba(255,110,199,1);
     }
 
     .muted {
@@ -399,33 +399,33 @@
       position: relative;
       padding: 11px 11px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(27, 231, 255, 0.55);
+      border: 1px solid rgba(27,231,255,0.55);
       background:
-        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.17), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(255, 110, 199, 0.17), transparent 60%),
-        rgba(2, 6, 28, 0.98);
+        radial-gradient(circle at 0 0, rgba(27,231,255,0.17), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(255,110,199,0.17), transparent 60%),
+        rgba(2,6,28,0.98);
       cursor: pointer;
       transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, border-color 0.18s ease-out, background 0.18s ease-out;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.9);
     }
 
     .model-card:hover {
       transform: translateY(-3px);
       box-shadow:
-        0 0 0 1px rgba(27, 231, 255, 0.4),
-        0 24px 70px rgba(0, 0, 0, 1);
+        0 0 0 1px rgba(27,231,255,0.4),
+        0 24px 70px rgba(0,0,0,1);
     }
 
     .model-card.selected {
-      border-color: rgba(255, 110, 199, 0.9);
+      border-color: rgba(255,110,199,0.9);
       box-shadow:
-        0 0 0 1px rgba(255, 110, 199, 0.65),
-        0 0 30px rgba(255, 110, 199, 0.75),
-        0 26px 80px rgba(0, 0, 0, 1);
+        0 0 0 1px rgba(255,110,199,0.65),
+        0 0 30px rgba(255,110,199,0.75),
+        0 26px 80px rgba(0,0,0,1);
       background:
-        radial-gradient(circle at 0 0, rgba(255, 110, 199, 0.22), transparent 60%),
-        radial-gradient(circle at 120% 160%, rgba(27, 231, 255, 0.22), transparent 60%),
-        rgba(3, 7, 34, 0.98);
+        radial-gradient(circle at 0 0, rgba(255,110,199,0.22), transparent 60%),
+        radial-gradient(circle at 120% 160%, rgba(27,231,255,0.22), transparent 60%),
+        rgba(3,7,34,0.98);
     }
 
     .model-name-line {
@@ -447,11 +447,11 @@
       font-size: 9px;
       padding: 2px 7px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.22);
+      border: 1px solid rgba(255,255,255,0.22);
       text-transform: uppercase;
       letter-spacing: 0.16em;
       color: var(--cyan);
-      background: rgba(2, 7, 26, 0.96);
+      background: rgba(2,7,26,0.96);
     }
 
     .model-section-label {
@@ -539,7 +539,7 @@
       width: 20px;
       height: 3px;
       border-radius: 999px;
-      background: rgba(27, 231, 255, 0.3);
+      background: rgba(27,231,255,0.3);
       overflow: hidden;
       position: relative;
     }
@@ -594,35 +594,46 @@
     }
 
     input[type="text"],
-    input[type="number"],
     input[type="file"],
-    select,
     textarea {
       width: 100%;
       padding: 8px 9px;
       border-radius: 9px;
-      border: 1px solid rgba(27, 231, 255, 0.7);
+      border: 1px solid rgba(27,231,255,0.7);
       background:
-        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.12), transparent 55%),
-        rgba(1, 5, 24, 0.98);
+        radial-gradient(circle at 0 0, rgba(27,231,255,0.12), transparent 55%),
+        rgba(1,5,24,0.98);
       color: var(--text-main);
       font-family: inherit;
       font-size: 13px;
       outline: none;
       box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.7),
-        0 10px 30px rgba(0, 0, 0, 0.9);
+        0 0 0 1px rgba(0,0,0,0.7),
+        0 10px 30px rgba(0,0,0,0.9);
     }
 
     input::placeholder,
     textarea::placeholder {
-      color: rgba(158, 176, 224, 0.75);
+      color: rgba(158,176,224,0.75);
     }
 
     textarea {
       resize: vertical;
       min-height: 60px;
       max-height: 150px;
+    }
+
+    input[type="file"] {
+      padding: 6px 9px;
+      cursor: pointer;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: rgba(255,110,199,0.9);
+      box-shadow:
+        0 0 0 1px rgba(255,110,199,0.75),
+        0 12px 36px rgba(0,0,0,1);
     }
 
     .checkbox-group {
@@ -643,20 +654,6 @@
 
     .checkbox-group input[type="checkbox"] {
       accent-color: var(--hot-pink);
-    }
-
-    input[type="file"] {
-      padding: 6px 9px;
-      cursor: pointer;
-    }
-
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: rgba(255, 110, 199, 0.9);
-      box-shadow:
-        0 0 0 1px rgba(255, 110, 199, 0.75),
-        0 12px 36px rgba(0, 0, 0, 1);
     }
 
     .slider-row {
@@ -698,40 +695,40 @@
       gap: 8px;
       padding: 8px 16px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.22);
+      border: 1px solid rgba(255,255,255,0.22);
       background:
-        radial-gradient(circle at 0 0, rgba(255, 110, 199, 0.22), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(27, 231, 255, 0.3), transparent 60%),
-        rgba(2, 6, 30, 0.98);
+        radial-gradient(circle at 0 0, rgba(255,110,199,0.22), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(27,231,255,0.3), transparent 60%),
+        rgba(2,6,30,0.98);
       color: #fff;
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.18em;
       cursor: pointer;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.95);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.95);
       transition: transform 0.16s ease-out, box-shadow 0.16s ease-out, background 0.16s ease-out;
     }
 
     .btn-primary {
-      border-color: rgba(27, 231, 255, 0.95);
+      border-color: rgba(27,231,255,0.95);
       background:
-        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.45), transparent 60%),
-        radial-gradient(circle at 100% 120%, rgba(255, 110, 199, 0.5), transparent 60%),
+        radial-gradient(circle at 0 0, rgba(27,231,255,0.45), transparent 60%),
+        radial-gradient(circle at 100% 120%, rgba(255,110,199,0.5), transparent 60%),
         linear-gradient(135deg, #041c40, #001b5a);
     }
 
     .btn:hover {
       transform: translateY(-1px);
       box-shadow:
-        0 0 22px rgba(27, 231, 255, 0.4),
-        0 26px 80px rgba(0, 0, 0, 1);
+        0 0 22px rgba(27,231,255,0.4),
+        0 26px 80px rgba(0,0,0,1);
     }
 
     .btn:active {
       transform: translateY(0);
       box-shadow:
-        0 0 10px rgba(27, 231, 255, 0.3),
-        0 14px 44px rgba(0, 0, 0, 1);
+        0 0 10px rgba(27,231,255,0.3),
+        0 14px 44px rgba(0,0,0,1);
     }
 
     .btn-icon-dot {
@@ -739,12 +736,12 @@
       height: 10px;
       border-radius: 999px;
       background: radial-gradient(circle, #00ffb4, #00a86b);
-      box-shadow: 0 0 9px rgba(0, 255, 180, 1);
+      box-shadow: 0 0 9px rgba(0,255,180,1);
     }
 
     .btn-secondary {
-      background: rgba(2, 6, 26, 0.96);
-      border-color: rgba(101, 117, 201, 0.9);
+      background: rgba(2,6,26,0.96);
+      border-color: rgba(101,117,201,0.9);
       color: var(--text-muted);
     }
 
@@ -760,18 +757,22 @@
       width: 8px;
       height: 8px;
       border-radius: 999px;
-      border: 1px solid rgba(27, 231, 255, 0.9);
-      box-shadow: 0 0 9px rgba(27, 231, 255, 1);
+      border: 1px solid rgba(27,231,255,0.9);
+      box-shadow: 0 0 9px rgba(27,231,255,1);
       animation: pulseDot 1.5s ease-in-out infinite;
+    }
+
+    .status-text.error {
+      color: var(--error);
     }
 
     .loading-overlay {
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(circle at 15% 0, rgba(27, 231, 255, 0.22), transparent 55%),
-        radial-gradient(circle at 85% 100%, rgba(255, 110, 199, 0.28), transparent 60%),
-        rgba(1, 2, 16, 0.97);
+        radial-gradient(circle at 15% 0, rgba(27,231,255,0.22), transparent 55%),
+        radial-gradient(circle at 85% 100%, rgba(255,110,199,0.28), transparent 60%),
+        rgba(1,2,16,0.97);
       display: none;
       align-items: center;
       justify-content: center;
@@ -787,15 +788,15 @@
       max-width: 440px;
       padding: 22px 22px 20px;
       border-radius: 18px;
-      border: 1px solid rgba(27, 231, 255, 0.8);
+      border: 1px solid rgba(27,231,255,0.8);
       background:
-        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.2), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(255, 110, 199, 0.24), transparent 60%),
-        rgba(3, 6, 30, 0.98);
+        radial-gradient(circle at 0 0, rgba(27,231,255,0.2), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(255,110,199,0.24), transparent 60%),
+        rgba(3,6,30,0.98);
       box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.9),
-        0 30px 86px rgba(0, 0, 0, 1),
-        0 0 70px rgba(27, 231, 255, 0.7);
+        0 0 0 1px rgba(0,0,0,0.9),
+        0 30px 86px rgba(0,0,0,1),
+        0 0 70px rgba(27,231,255,0.7);
     }
 
     .loader-bar {
@@ -803,7 +804,7 @@
       width: 100%;
       height: 6px;
       border-radius: 999px;
-      background: rgba(5, 9, 46, 0.95);
+      background: rgba(5,9,46,0.95);
       overflow: hidden;
       margin-top: 8px;
       margin-bottom: 10px;
@@ -846,7 +847,7 @@
     .results-panel {
       margin-top: 16px;
       padding-top: 10px;
-      border-top: 1px solid rgba(27, 231, 255, 0.55);
+      border-top: 1px solid rgba(27,231,255,0.55);
     }
 
     .results-header {
@@ -875,20 +876,20 @@
     .result-card {
       border-radius: 12px;
       padding: 10px 11px;
-      border: 1px solid rgba(27, 231, 255, 0.48);
+      border: 1px solid rgba(27,231,255,0.48);
       background:
-        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.18), transparent 55%),
-        rgba(2, 7, 28, 0.98);
+        radial-gradient(circle at 0 0, rgba(27,231,255,0.18), transparent 55%),
+        rgba(2,7,28,0.98);
       cursor: pointer;
       transition: background 0.16s ease-out, transform 0.12s ease-out, box-shadow 0.12s ease-out;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 1);
+      box-shadow: 0 16px 40px rgba(0,0,0,1);
     }
 
     .result-card:hover {
       transform: translateY(-1px);
       box-shadow:
-        0 0 18px rgba(27, 231, 255, 0.45),
-        0 26px 78px rgba(0, 0, 0, 1);
+        0 0 18px rgba(27,231,255,0.45),
+        0 26px 78px rgba(0,0,0,1);
     }
 
     .result-topline {
@@ -908,9 +909,9 @@
       font-size: 11px;
       padding: 3px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(0, 255, 180, 0.9);
+      border: 1px solid rgba(0,255,180,0.9);
       color: var(--success);
-      background: rgba(0, 16, 14, 0.98);
+      background: rgba(0,16,14,0.98);
       font-variant-numeric: tabular-nums;
     }
 
@@ -926,8 +927,8 @@
     .meta-chip {
       padding: 2px 7px;
       border-radius: 999px;
-      border: 1px solid rgba(100, 129, 210, 0.9);
-      background: rgba(3, 7, 30, 0.98);
+      border: 1px solid rgba(100,129,210,0.9);
+      background: rgba(3,7,30,0.98);
     }
 
     .result-fit {
@@ -938,7 +939,7 @@
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 10, 0.9);
+      background: rgba(0,0,10,0.9);
       display: none;
       align-items: center;
       justify-content: center;
@@ -955,22 +956,22 @@
       max-height: 80vh;
       overflow: hidden;
       border-radius: 20px;
-      border: 1px solid rgba(27, 231, 255, 0.9);
+      border: 1px solid rgba(27,231,255,0.9);
       background:
-        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.22), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(255, 110, 199, 0.26), transparent 60%),
-        rgba(2, 6, 30, 0.98);
+        radial-gradient(circle at 0 0, rgba(27,231,255,0.22), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(255,110,199,0.26), transparent 60%),
+        rgba(2,6,30,0.98);
       box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 1),
-        0 30px 86px rgba(0, 0, 0, 1),
-        0 0 70px rgba(27, 231, 255, 0.7);
+        0 0 0 1px rgba(0,0,0,1),
+        0 30px 86px rgba(0,0,0,1),
+        0 0 70px rgba(27,231,255,0.7);
       display: flex;
       flex-direction: column;
     }
 
     .modal-header {
       padding: 14px 18px 10px;
-      border-bottom: 1px solid rgba(27, 231, 255, 0.55);
+      border-bottom: 1px solid rgba(27,231,255,0.55);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -989,7 +990,7 @@
 
     .modal-close {
       border: none;
-      background: rgba(2, 6, 26, 0.98);
+      background: rgba(2,6,26,0.98);
       color: var(--text-muted);
       border-radius: 999px;
       padding: 6px 10px;
@@ -997,7 +998,7 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.16em;
-      border: 1px solid rgba(98, 124, 210, 0.95);
+      border: 1px solid rgba(98,124,210,0.95);
     }
 
     .modal-body {
@@ -1040,8 +1041,8 @@
       margin-top: 6px;
       padding: 8px 9px;
       border-radius: 9px;
-      border: 1px dashed rgba(112, 136, 222, 0.95);
-      background: rgba(2, 6, 26, 0.98);
+      border: 1px dashed rgba(112,136,222,0.95);
+      background: rgba(2,6,26,0.98);
       font-size: 12px;
       white-space: pre-wrap;
     }
@@ -1053,7 +1054,7 @@
 
     .modal-footer {
       padding: 8px 18px 12px;
-      border-top: 1px solid rgba(27, 231, 255, 0.55);
+      border-top: 1px solid rgba(27,231,255,0.55);
       display: flex;
       justify-content: flex-end;
       gap: 8px;
@@ -1064,8 +1065,8 @@
       font-size: 10px;
       padding: 2px 7px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      background: rgba(2, 6, 26, 0.98);
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(2,6,26,0.98);
       text-transform: uppercase;
       letter-spacing: 0.17em;
     }
@@ -1092,7 +1093,7 @@
       <div class="logo-stack">
         <div class="logo-main">THE&nbsp;CRACKLE</div>
         <h2 class="subtitle">AI Lead Generator</h2>
-        <div class="byline">by Crispy Media · Miami‑night neon for contractor prospecting</div>
+        <div class="byline">by Crispy Media · Downtown neon, contractor lead intelligence</div>
       </div>
       <div class="header-pill">
         <div class="header-pill-dot"></div>
@@ -1101,12 +1102,11 @@
     </header>
 
     <main>
-      <!-- Model selector -->
       <section class="panel-block" id="model-panel">
         <div class="panel-header">
           <div>
             <div class="panel-title">Step 1 · Pick your engine</div>
-            <div class="muted">Choose how The Crackle thinks and searches: reasoning, browser, hybrid, or raw search.</div>
+            <div class="muted">Choose how The Crackle finds and scores leads: pure reasoning, browser, hybrid, or raw search.</div>
           </div>
           <div class="pill-small">
             <span class="pill-dot"></span>
@@ -1122,15 +1122,15 @@
             </div>
             <div class="model-section-label">Pros</div>
             <ul class="model-list">
-              <li>Fast lead criteria, scoring, and cold email drafts.</li>
-              <li>Lowest UI and infra complexity.</li>
+              <li>Fast and simple.</li>
+              <li>Great for lead criteria, scoring logic, and cold email drafts.</li>
             </ul>
             <div class="model-section-label">Cons</div>
             <ul class="model-list">
-              <li>No live website or pixel verification.</li>
-              <li>Best for planning, not factual discovery.</li>
+              <li>No live verification.</li>
+              <li>Can hallucinate if you ask it to invent leads.</li>
             </ul>
-            <div class="model-tagline">Run on your strongest reasoning model (GPT‑5.4, etc.).</div>
+            <div class="model-tagline">Use your strongest reasoning model, like GPT‑5.4.</div>
           </article>
 
           <article class="model-card" data-mode="agent-computer">
@@ -1140,15 +1140,15 @@
             </div>
             <div class="model-section-label">Pros</div>
             <ul class="model-list">
-              <li>Inspects live sites for Meta Pixel, tags, and funnels.</li>
-              <li>Handles multi‑step click paths more reliably.</li>
+              <li>Inspects real websites for Meta Pixel and Google tags.</li>
+              <li>Can follow multi‑step navigation and funnels.</li>
             </ul>
             <div class="model-section-label">Cons</div>
             <ul class="model-list">
-              <li>Slower, more brittle when sites block bots.</li>
-              <li>Requires more compute and tighter prompting.</li>
+              <li>Slower and more brittle when sites block automation.</li>
+              <li>Needs careful prompting and more compute.</li>
             </ul>
-            <div class="model-tagline">Use a tool‑capable agent like GPT‑5.4 w/ browser tools.</div>
+            <div class="model-tagline">Use a tool‑capable agent (GPT‑5.4 + browser tools).</div>
           </article>
 
           <article class="model-card" data-mode="perplexity-openai">
@@ -1158,15 +1158,15 @@
             </div>
             <div class="model-section-label">Pros</div>
             <ul class="model-list">
-              <li>Fresh, citation‑backed data for every lead.</li>
-              <li>OpenAI handles synthesis and formatting.</li>
+              <li>Fresh, citation‑backed live web data.</li>
+              <li>OpenAI handles synthesis and scoring.</li>
             </ul>
             <div class="model-section-label">Cons</div>
             <ul class="model-list">
               <li>More moving parts and integration work.</li>
-              <li>Overkill for tiny, quick‑hit lists.</li>
+              <li>Overkill for tiny lists.</li>
             </ul>
-            <div class="model-tagline">Strong synthesis model + Perplexity retrieval.</div>
+            <div class="model-tagline">Perfect when you care about freshness and citations.</div>
           </article>
 
           <article class="model-card" data-mode="openai-only">
@@ -1176,15 +1176,15 @@
             </div>
             <div class="model-section-label">Pros</div>
             <ul class="model-list">
-              <li>Fastest path for copy and internal reasoning.</li>
-              <li>Minimal external dependencies.</li>
+              <li>Fastest to wire up.</li>
+              <li>Great for copy, subject lines, and reasoning.</li>
             </ul>
             <div class="model-section-label">Cons</div>
             <ul class="model-list">
-              <li>No live business or pixel checks.</li>
-              <li>Can sound confident on unverified data.</li>
+              <li>No live verification.</li>
+              <li>No direct pixel or tag checks.</li>
             </ul>
-            <div class="model-tagline">Use GPT‑5.4 or similar for premium quality.</div>
+            <div class="model-tagline">Run GPT‑5.4 or similar for best quality.</div>
           </article>
 
           <article class="model-card" data-mode="two-stage">
@@ -1194,15 +1194,15 @@
             </div>
             <div class="model-section-label">Pros</div>
             <ul class="model-list">
-              <li>Separates search plan from execution.</li>
-              <li>Easier to debug complex hunts.</li>
+              <li>Separates plan from execution for complex searches.</li>
+              <li>Easier to debug and refine.</li>
             </ul>
             <div class="model-section-label">Cons</div>
             <ul class="model-list">
-              <li>Longer runs and more state to manage.</li>
-              <li>Weak planning hurts stage two.</li>
+              <li>Slower than one‑shot.</li>
+              <li>More state and code to manage.</li>
             </ul>
-            <div class="model-tagline">Strong planner model + fast executor.</div>
+            <div class="model-tagline">Use best reasoning model for planning, faster for execution.</div>
           </article>
 
           <article class="model-card" data-mode="web-search-only">
@@ -1212,25 +1212,24 @@
             </div>
             <div class="model-section-label">Pros</div>
             <ul class="model-list">
-              <li>Predictable keyword‑driven prospecting.</li>
+              <li>Fast, predictable keyword prospecting.</li>
               <li>Great for quick scans and manual review.</li>
             </ul>
             <div class="model-section-label">Cons</div>
             <ul class="model-list">
-              <li>Weaker synthesis and automation.</li>
-              <li>Pixel checks need a second pass.</li>
+              <li>Weakest synthesis.</li>
+              <li>Needs extra step for pixel checks.</li>
             </ul>
-            <div class="model-tagline">Pair later with an Agent mode for synthesis.</div>
+            <div class="model-tagline">Anchor to search, then synthesize in a second pass.</div>
           </article>
         </div>
       </section>
 
-      <!-- Config + results -->
       <section class="panel-block">
         <div class="panel-header">
           <div>
             <div class="panel-title">Step 2 · Tune the hunt</div>
-            <div class="muted">Inputs shift per mode so you only see what you actually need.</div>
+            <div class="muted">Inputs adapt to your mode, so you only fill what you actually need.</div>
           </div>
           <div class="pill-small">
             <span class="pill-dot"></span>
@@ -1246,20 +1245,20 @@
         <article class="model-explainer" id="model-explainer">
           <h3 id="explainer-title">Agent · pure reasoning mode</h3>
           <div class="explainer-sub" id="explainer-sub">
-            The Crackle thinks through targeting, scoring, and outreach without calling live web tools.
+            The Crackle thinks through lead search, scoring, and outreach without calling browser tools or live search.
           </div>
 
           <div class="explainer-block-title">When to use</div>
           <ul class="explainer-list" id="explainer-when">
-            <li>You want to define ICP and scoring logic for contractors.</li>
-            <li>You need cold email frameworks and offer angles.</li>
-            <li>You prefer speed over live verification.</li>
+            <li>Defining ICP and scoring logic for contractors.</li>
+            <li>Drafting cold emails and outreach frameworks.</li>
+            <li>Planning prospecting strategy before you wire APIs.</li>
           </ul>
 
           <div class="explainer-block-title">Limits to respect</div>
           <ul class="explainer-list" id="explainer-limits">
-            <li>Don’t rely on it to “invent” real businesses or pixels.</li>
-            <li>Pair with a browser or search mode for truth‑checking.</li>
+            <li>Don’t treat invented businesses as verified leads.</li>
+            <li>Pair with a verification mode before pushing to CRM.</li>
           </ul>
         </article>
 
@@ -1268,12 +1267,12 @@
             <div class="field">
               <label for="openai-key">OpenAI API key</label>
               <input id="openai-key" name="openaiKey" type="text" placeholder="sk-..." />
-              <div class="hint">Required for all modes that call OpenAI.</div>
+              <div class="hint">Optional override for this run. If empty, server uses its own key.</div>
             </div>
             <div class="field">
               <label for="builtwith-key">BuiltWith API key</label>
               <input id="builtwith-key" name="builtwithKey" type="text" placeholder="bw-..." />
-              <div class="hint">Used for tech stacks and tag detection.</div>
+              <div class="hint">For future tech‑stack checks (server decides whether to use it).</div>
             </div>
           </div>
 
@@ -1281,17 +1280,16 @@
             <div class="field" id="perplexity-api-wrapper">
               <label for="perplexity-key">Perplexity API key</label>
               <input id="perplexity-key" name="perplexityKey" type="text" placeholder="px-..." />
-              <div class="hint">Required for Perplexity + OpenAI and Web Search modes.</div>
+              <div class="hint">Used in Perplexity + OpenAI and Web Search Only modes.</div>
             </div>
             <div class="field">
-              <label for="mode-note">Mode‑specific requirements</label>
+              <label>Mode‑specific requirements</label>
               <div class="mode-note" id="mode-note">
-                Agent: Perplexity key is not required. Focus on criteria and messaging.
+                Agent: Perplexity not required. Focus on ICP, scoring, and cold email templates.
               </div>
             </div>
           </div>
 
-          <!-- SERVICES checkboxes -->
           <div class="field">
             <label>Digital marketing services</label>
             <div class="checkbox-group" id="services-group">
@@ -1303,10 +1301,9 @@
               <label><input type="checkbox" name="services" value="Automation Building"> Automation Building</label>
               <label><input type="checkbox" name="services" value="Custom Web Apps"> Custom Web Apps</label>
             </div>
-            <div class="hint">Tick everything you want The Crackle to propose in this run.</div>
+            <div class="hint">Tick every service you want The Crackle to sell in this run.</div>
           </div>
 
-          <!-- CONTRACTORS checkboxes -->
           <div class="field">
             <label>Contractor types</label>
             <div class="checkbox-group" id="contractors-group">
@@ -1337,24 +1334,24 @@
               <label><input type="checkbox" name="contractors" value="Carpenters"> Carpenters</label>
               <label><input type="checkbox" name="contractors" value="Home builders"> Home builders</label>
             </div>
-            <div class="hint">Tick as many contractor types as you want in this search.</div>
+            <div class="hint">Tick as many contractor types as you want for this lead search.</div>
           </div>
 
           <div class="field-row cols-3">
             <div class="field">
               <label for="locations-text">Locations (free‑form)</label>
               <input id="locations-text" name="locationsText" type="text" placeholder="e.g. Miami, Fort Lauderdale, Orlando" />
-              <div class="hint">Use city names, postal regions, or custom text.</div>
+              <div class="hint">Comma‑separated cities / regions. If filled, this is the main scope.</div>
             </div>
             <div class="field">
               <label for="states">States / provinces</label>
               <input id="states" name="states" type="text" placeholder="FL, GA, TX" />
-              <div class="hint">Fill this or cities – only one path is required.</div>
+              <div class="hint">Alternative to cities. Use either cities or states, not both.</div>
             </div>
             <div class="field">
               <label for="exclude-cities">Exclude cities</label>
               <input id="exclude-cities" name="excludeCities" type="text" placeholder="Cities to skip" />
-              <div class="hint">Comma‑separated list of cities to avoid.</div>
+              <div class="hint">Comma‑separated cities that should never show up.</div>
             </div>
           </div>
 
@@ -1365,12 +1362,12 @@
                 <input id="search-count" name="searchCount" type="range" min="3" max="5" step="1" value="3" />
                 <div class="range-value" id="range-value">3</div>
               </div>
-              <div class="hint">Between 3–5 high‑intent prospects per run.</div>
+              <div class="hint">3–5 high‑intent prospects per run (no bloated CSVs).</div>
             </div>
             <div class="field">
               <label for="website">Your website</label>
               <input id="website" name="website" type="text" placeholder="https://youragency.com" />
-              <div class="hint">Used to align fit score and email copy.</div>
+              <div class="hint">Used to align fit score and email copy with your positioning.</div>
             </div>
           </div>
 
@@ -1378,19 +1375,19 @@
             <div class="field">
               <label for="context-file">Upload context file</label>
               <input id="context-file" name="contextFile" type="file" />
-              <div class="hint">Brand docs, offers, or case studies – used for scoring & messaging.</div>
+              <div class="hint">PDF / DOC / TXT. Offers, case studies, process docs – enriches lead scoring & copy.</div>
             </div>
             <div class="field">
               <label for="notes">Extra targeting notes</label>
-              <textarea id="notes" name="notes" placeholder="Add ICP details, exclusions, tone, or special rules..."></textarea>
+              <textarea id="notes" name="notes" placeholder="Add ICP details, exclusions (e.g. no pure residential), tone, niches, or special rules..."></textarea>
             </div>
           </div>
 
           <div class="button-row">
             <button type="button" class="btn btn-secondary" id="reset-btn">Reset</button>
-            <div class="status-text">
+            <div class="status-text" id="status-wrapper">
               <div class="status-pip"></div>
-              <span id="status-label">Idle · Waiting for your crackle.</span>
+              <span id="status-label">Idle · Waiting to crack the neon grid.</span>
             </div>
             <button type="submit" class="btn btn-primary">
               <div class="btn-icon-dot"></div>
@@ -1403,7 +1400,7 @@
           <div class="results-header">
             <div>
               <div class="results-title">Step 3 · Review & export</div>
-              <div class="muted">Tap a card to see full profile, scoring, pixels, and email draft.</div>
+              <div class="muted">Click a card to open the full profile, verification, and cold email draft.</div>
             </div>
             <button class="btn btn-secondary" id="export-pdf-btn">Export PDF</button>
           </div>
@@ -1416,15 +1413,15 @@
 
 <div class="loading-overlay" id="loading-overlay">
   <div class="loading-card">
-    <div class="loading-title">Crackling the neon grid…</div>
+    <div class="loading-title">Crackling the skyline…</div>
     <div class="loading-sub" id="loading-sub">
-      Locking onto contractors, scanning, and ranking by fit.
+      Locking onto real contractors, scanning, and ranking by fit.
     </div>
     <div class="loader-bar"></div>
     <div class="loading-steps" id="loading-steps">
       1. Reading your services, trades, and geo.<br>
-      2. Mapping candidates against your ICP.<br>
-      3. Scoring, drafting rationale, and writing outreach.
+      2. Mapping candidates against your ICP and exclusions.<br>
+      3. Scoring fit, checking pixels, and drafting outreach.
     </div>
   </div>
 </div>
@@ -1434,7 +1431,7 @@
     <header class="modal-header">
       <div>
         <div class="modal-title" id="modal-title">Business name</div>
-        <div class="modal-subtitle" id="modal-subtitle">Fit breakdown, verification odds, pixels, and email draft.</div>
+        <div class="modal-subtitle" id="modal-subtitle">Fit breakdown, verification odds, pixels, and cold email draft.</div>
       </div>
       <button class="modal-close" id="modal-close-btn">Close</button>
     </header>
@@ -1448,7 +1445,7 @@
           <ul class="detail-list" id="modal-pixel-list"></ul>
         </div>
         <div>
-          <div class="detail-section-title">Why you’re the fit</div>
+          <div class="detail-section-title">Why you’re the best fit</div>
           <div id="modal-fit-text"></div>
 
           <div class="detail-section-title" style="margin-top:10px;">Cold email draft</div>
@@ -1471,104 +1468,105 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
         integrity="sha512-YcsIPVvQ73s2vQR4qzM7gc3KJ2YMBX3BGnZNL8p6v4nZke+6BW6uAG1UoVs4qBQmzk2i0I5rVQWZQhZjH9LU0A=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script>
   const MODE_CONTENT = {
     'agent': {
       label: 'Agent mode',
       title: 'Agent · pure reasoning mode',
-      sub: 'The Crackle thinks through targeting, scoring, and outreach with no live tools.',
+      sub: 'Thinks through lead search, scoring, and outreach with no browser tools.',
       when: [
-        'You want ideal client profiles and lead scoring rules.',
-        'You need cold email copy, subject lines, and angles.',
-        'You care about speed more than verification.',
+        'You want to design ICP and scoring rules for contractors.',
+        'You need cold email templates and offer angles.',
+        'You want speed and low complexity over live verification.'
       ],
       limits: [
-        'Don’t treat outputs as verified business data.',
-        'Pair with a browser or search mode for truth‑checking.',
+        'Treat invented leads as drafts, not CRM‑ready data.',
+        'Pair with a verification pass before serious outreach.'
       ],
-      apiNote: 'Agent: OpenAI key recommended. Perplexity optional, BuiltWith for later.',
-      needPerplexity: false,
+      apiNote: 'Agent: OpenAI key recommended. BuiltWith optional. Perplexity not required.',
+      needPerplexity: false
     },
     'agent-computer': {
-      label: 'Agent + computer',
+      label: 'Agent + Computer',
       title: 'Agent + Computer Use · browser‑aware mode',
-      sub: 'The Crackle operates a browser to inspect real sites for pixels and tags.',
+      sub: 'Lets the agent drive a browser to inspect real contractor sites for pixels and tags.',
       when: [
-        'You need Meta Pixel, Google Tag, and funnel checks.',
-        'You care about on‑site proof, not just search snippets.',
-        'You’re okay with slower, deeper runs.',
+        'You need Meta Pixel and Google Tag checks on real websites.',
+        'You care about actual funnels, forms, and navigation.',
+        'You’re okay with slower runs for deeper verification.'
       ],
       limits: [
-        'Can break when sites block bots or shift layout.',
-        'Requires robust error handling and observability.',
+        'Can break if sites block bots or change layout.',
+        'Requires logging and retries in your backend.'
       ],
-      apiNote: 'Agent + Computer: OpenAI + BuiltWith keys recommended. Perplexity not required.',
-      needPerplexity: false,
+      apiNote: 'Agent + Computer: OpenAI + BuiltWith recommended. Perplexity optional.',
+      needPerplexity: false
     },
     'perplexity-openai': {
       label: 'Perplexity + OpenAI',
-      title: 'Perplexity + OpenAI · hybrid research mode',
-      sub: 'Perplexity finds live, cited data; OpenAI scores and formats your leads.',
+      title: 'Perplexity + OpenAI · hybrid research',
+      sub: 'Perplexity handles live web retrieval; OpenAI synthesizes, scores, and drafts outreach.',
       when: [
-        'You need fresh data and clear citations.',
-        'You’re exploring new markets or cities.',
-        'You want defensible, source‑backed lead lists.',
+        'You care about fresh data and citations.',
+        'You’re exploring new cities or verticals.',
+        'You want source‑backed leads you can justify.'
       ],
       limits: [
-        'More integration overhead than single‑provider modes.',
-        'Quality depends on how retrieval and synthesis are joined.',
+        'More moving parts than single‑provider modes.',
+        'Quality depends on how you stitch retrieval and synthesis.'
       ],
       apiNote: 'Perplexity + OpenAI: Both API keys required. BuiltWith optional for tech intel.',
-      needPerplexity: true,
+      needPerplexity: true
     },
     'openai-only': {
       label: 'OpenAI only',
-      title: 'OpenAI Only · pure generation mode',
-      sub: 'The Crackle delegates all reasoning and copy to a single model, no live retrieval.',
+      title: 'OpenAI Only · pure generation',
+      sub: 'Everything runs through a single model with no live retrieval or browser.',
       when: [
-        'You’re iterating on offers or messaging.',
-        'You want fast outreach drafts at low friction.',
-        'You control verification elsewhere.',
+        'You’re focused on messaging, copy, and strategy.',
+        'You verify business details elsewhere.',
+        'You want minimal infra and fast iterations.'
       ],
       limits: [
-        'No live business, pixel, or tag verification.',
-        'Treat as drafts, not CRM‑ready truth.',
+        'No direct live business or pixel verification.',
+        'Can sound confident on unverified data.'
       ],
-      apiNote: 'OpenAI Only: Only an OpenAI key is needed.',
-      needPerplexity: false,
+      apiNote: 'OpenAI Only: Just an OpenAI key needed.',
+      needPerplexity: false
     },
     'two-stage': {
-      label: 'Two‑stage mode',
+      label: 'Two‑Stage mode',
       title: 'Two‑Stage · plan then execute',
-      sub: 'Stage one plans the search; stage two executes, validates, and formats.',
+      sub: 'First build a search plan, then run the plan and assemble leads.',
       when: [
         'You run multi‑city, multi‑service prospecting.',
-        'You want explicit plans to debug and refine.',
-        'You hate “black box” one‑shot prompts.',
+        'You want explicit plans you can inspect and tweak.',
+        'You hate opaque one‑shot prompts.'
       ],
       limits: [
-        'Longer runs and more state to handle.',
-        'Weak plans cascade into weaker results.',
+        'Longer runs and more state to manage.',
+        'Weak planning cascades into weak execution.'
       ],
-      apiNote: 'Two‑Stage: Strong planner + fast executor. Perplexity optional for planning.',
-      needPerplexity: false,
+      apiNote: 'Two‑Stage: Strong planner model + fast executor. Perplexity optional in planning.',
+      needPerplexity: false
     },
     'web-search-only': {
-      label: 'Web search only',
-      title: 'Web Search Only · raw discovery mode',
-      sub: 'The Crackle fires live web queries and hands you clean, lightly processed hits.',
+      label: 'Web Search only',
+      title: 'Web Search Only · raw discovery',
+      sub: 'Fires keyword‑level searches and hands you structured candidates to inspect.',
       when: [
         'You want quick scans and manual review.',
-        'You’re validating a new vertical or location.',
-        'You prefer to synthesize in a second pass.',
+        'You are validating new markets or niches.',
+        'You prefer to run verification in a second pass.'
       ],
       limits: [
-        'Minimal synthesis; use another mode for copy and scoring.',
-        'Pixel and tag checks need a browser step.',
+        'Weakest synthesis compared to Agent modes.',
+        'Pixel checks need a browser or tag API step.'
       ],
-      apiNote: 'Web Search Only: Perplexity key required. OpenAI is optional for summarization.',
-      needPerplexity: true,
-    },
+      apiNote: 'Web Search Only: Perplexity key required. OpenAI optional for summaries.',
+      needPerplexity: true
+    }
   };
 
   const modelGrid = document.getElementById('model-grid');
@@ -1585,6 +1583,7 @@
   const range = document.getElementById('search-count');
   const rangeValue = document.getElementById('range-value');
   const statusLabel = document.getElementById('status-label');
+  const statusWrapper = document.getElementById('status-wrapper');
   const resetBtn = document.getElementById('reset-btn');
   const loadingOverlay = document.getElementById('loading-overlay');
   const loadingSub = document.getElementById('loading-sub');
@@ -1647,7 +1646,94 @@
     modeNote.textContent = cfg.apiNote;
     perplexityWrapper.style.display = cfg.needPerplexity ? '' : 'none';
 
+    statusWrapper.classList.remove('error');
     statusLabel.textContent = `Idle · ${cfg.label} ready.`;
+  }
+
+  function buildPromptFromForm({ mode, services, contractors, locationsText, states, excludeCities, website, notes, leadCount }) {
+    const serviceText = services.length ? services.join(', ') : 'web design, SEO, and automation';
+    const contractorText = contractors.length ? contractors.join(', ') : 'roofing and other home service contractors';
+    const locationText = locationsText || states || 'my main service area';
+
+    return `
+You are an expert B2B lead research assistant for a digital marketing agency.
+
+Goal:
+Find ${leadCount} real, high-fit ${contractorText} that would be a strong fit for my agency's services: ${serviceText}.
+
+Geography:
+- Primary locations: ${locationText}
+- Exclude cities: ${excludeCities || 'none specified'}
+- Only return businesses located in the included cities/states (do not drift outside).
+
+My agency:
+- Website: ${website || 'not provided'}
+- Positioning: We help contractors get more profitable jobs with better websites, SEO, and light automation instead of burning money on broad, untracked ads.
+
+ICP & notes:
+${notes || 'Use standard good-fit signals for growing local contractors (steady reviews, clear service pages, evidence of marketing gaps). Avoid obvious spam, lead gen brands, and pure residential-only if not aligned.'}
+
+For each lead, ONLY return businesses that are very likely to be real.
+
+Output format:
+Return a SINGLE top-level JSON object: { "leads": [ {lead1}, {lead2}, ... ] } with NO markdown and NO extra text.
+Each lead object must match this schema exactly:
+
+{
+  "id": "string - unique id",
+  "business_name": "string",
+  "owner": "string or null",
+  "website": "string or null",
+  "email": "string or null",
+  "phone": "string or null",
+  "socials": {
+    "facebook": "string or null",
+    "instagram": "string or null",
+    "linkedin": "string or null",
+    "tiktok": "string or null"
+  },
+  "google_maps": {
+    "place_url": "string or null",
+    "place_id": "string or null",
+    "address": "string or null",
+    "lat": number or null,
+    "lng": number or null
+  },
+  "fit": {
+    "score": number,
+    "score_reason": "string",
+    "match_services": ["string"],
+    "match_signals": ["string"]
+  },
+  "verification": {
+    "is_likely_real_business": number,
+    "confidence_reason": "string",
+    "meta_pixel": {
+      "present": boolean,
+      "checked_urls": ["string"]
+    },
+    "google_tag": {
+      "present": boolean,
+      "gtm_ids": ["string"],
+      "ga_tags": ["string"]
+    }
+  },
+  "email_draft": {
+    "subject": "string",
+    "body": "string"
+  },
+  "alt_angles": ["string"],
+  "raw_sources": {
+    "search_results": ["string"],
+    "builtwith_tech": ["string"]
+  }
+}
+
+Important:
+- Obey the city/state filters strictly.
+- Do not fabricate impossible URLs or clearly fake data.
+- If some fields are not discoverable, set them to null rather than guessing.
+`.trim();
   }
 
   resetBtn.addEventListener('click', () => {
@@ -1658,12 +1744,13 @@
     resultsPanel.style.display = 'none';
     resultsList.innerHTML = '';
     currentResults = [];
-    statusLabel.textContent = 'Idle · Waiting for your crackle.';
+    statusWrapper.classList.remove('error');
+    statusLabel.textContent = 'Idle · Waiting to crack the neon grid.';
     stepDot.dataset.step = '1';
     stepLabel.textContent = '1 · Configure';
   });
 
-  formEl.addEventListener('submit', (e) => {
+  formEl.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const formData = new FormData(formEl);
@@ -1678,109 +1765,123 @@
     const excludeCities = formData.get('excludeCities') || '';
     const website = formData.get('website') || '';
     const notes = formData.get('notes') || '';
-    const count = parseInt(formData.get('searchCount') || '3', 10);
+    const leadCount = parseInt(formData.get('searchCount') || '3', 10);
+
+    const prompt = buildPromptFromForm({
+      mode: currentMode,
+      services,
+      contractors,
+      locationsText,
+      states,
+      excludeCities,
+      website,
+      notes,
+      leadCount
+    });
 
     stepDot.dataset.step = '2';
     stepLabel.textContent = '2 · Running';
-    statusLabel.textContent = 'Searching the neon grid for your best‑fit prospects…';
-
-    if (currentMode === 'agent') {
-      loadingSub.textContent = 'Thinking through ICP, scoring, and outreach – no live web calls.';
-      loadingSteps.innerHTML = '1. Parsing your ICP and services.<br>2. Building scoring logic and angles.<br>3. Drafting outreach structures.';
-    } else if (currentMode === 'agent-computer') {
-      loadingSub.textContent = 'Spinning up a browser to inspect real contractor sites.';
-      loadingSteps.innerHTML = '1. Mapping contractors against your geo.<br>2. Visiting short‑listed sites and scanning for tags.<br>3. Scoring fit against your offers.';
-    } else if (currentMode === 'perplexity-openai') {
-      loadingSub.textContent = 'Querying the live web, then synthesizing and scoring candidates.';
-      loadingSteps.innerHTML = '1. Issuing targeted Perplexity queries.<br>2. Merging citations into a lead graph.<br>3. Drafting scores, rationale, and outreach.';
-    } else if (currentMode === 'openai-only') {
-      loadingSub.textContent = 'Letting the model riff on your ICP and outreach – no external calls.';
-      loadingSteps.innerHTML = '1. Interpreting your targeting notes.<br>2. Imagining high‑fit archetype businesses.<br>3. Writing tailored approaches.';
-    } else if (currentMode === 'two-stage') {
-      loadingSub.textContent = 'Planning the route, then running the search and extraction.';
-      loadingSteps.innerHTML = '1. Designing a multi‑step search plan.<br>2. Executing the plan against live data.<br>3. Normalizing, scoring, and formatting results.';
-    } else {
-      loadingSub.textContent = 'Running web search passes and bubbling up promising candidates.';
-      loadingSteps.innerHTML = '1. Issuing web‑level queries.<br>2. Filtering low‑quality or duplicate hits.<br>3. Surfacing a clean candidate set.';
-    }
-
+    statusWrapper.classList.remove('error');
+    statusLabel.textContent = 'Searching the neon grid for real, high‑fit businesses…';
+    updateLoadingCopy(currentMode);
     loadingOverlay.classList.add('visible');
 
-    // Placeholder run – swap this for your real backend call.
-    setTimeout(() => {
+    try {
+      const payload = {
+        mode: currentMode,
+        prompt,
+        max_leads: leadCount,
+        client_api_keys: {
+          openai: formData.get('openaiKey') || null,
+          builtwith: formData.get('builtwithKey') || null,
+          perplexity: formData.get('perplexityKey') || null
+        }
+      };
+
+      const res = await fetch('/api/crackle/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || `Backend error ${res.status}`);
+      }
+
+      const leads = await res.json(); // valid, verified leads from your server
+      currentResults = mapLeadsToUi(leads, currentMode);
+
       loadingOverlay.classList.remove('visible');
       stepDot.dataset.step = '3';
       stepLabel.textContent = '3 · Results';
       statusLabel.textContent = 'Done · Review your leads, then export.';
-
-      currentResults = makeDemoResults({
-        count,
-        services,
-        contractors,
-        locationsText,
-        states,
-        excludeCities,
-        website,
-        notes,
-        mode: currentMode,
-      });
       renderResults(currentResults);
       resultsPanel.style.display = '';
-    }, 1200);
+    } catch (err) {
+      console.error(err);
+      loadingOverlay.classList.remove('visible');
+      statusWrapper.classList.add('error');
+      statusLabel.textContent = 'Error · ' + (err.message || 'Check your backend or model response.');
+    }
   });
 
-  function makeDemoResults(config) {
-    const { count, services, contractors, locationsText, states, website, mode } = config;
-    const baseCity = (locationsText || states || 'Your City').split(',')[0].trim() || 'Your City';
-    const baseService = services[0] || 'Full‑stack digital';
-    const baseContractor = contractors[0] || 'General contractors';
-    const results = [];
-
-    for (let i = 1; i <= count; i++) {
-      const score = 72 + i * 5;
-      const realOdds = 80 - i * 3;
-      const name = `${baseCity} ${baseContractor.split(' ')[0]} Group ${i}`;
-      const modeLabel = MODE_CONTENT[mode].label;
-
-      results.push({
-        id: i,
-        mode,
-        modeLabel,
-        name,
-        score,
-        fitReason: `Based on your focus on ${baseService.toLowerCase()} for ${baseContractor.toLowerCase()}, this profile mirrors your best wins and lives in ${baseCity}.`,
-        realOdds,
-        website: '— to be fetched by your backend —',
-        owner: '— if discoverable via your data sources —',
-        email: '— from your enrichment / data providers —',
-        phone: '— from your enrichment / data providers —',
-        socials: '— from your enrichment / data providers —',
-        gmap: '— from your maps / place data provider —',
-        metaPixel: mode === 'agent-computer' ? 'Detected / not detected – fill from real scans.' : 'Use Agent + Computer or a tag API to verify.',
-        gtag: mode === 'agent-computer' ? 'Detected / not detected – fill from real scans.' : 'Use Agent + Computer or a tag API to verify.',
-        altAngles: [
-          'Partner via suppliers or distributors already in their ecosystem.',
-          'Warm intro through local chamber or trade group.',
-          'Lead with a teardown Loom of their current site and funnel.',
-        ],
-        emailDraft: [
-          `Subject: A quick ${baseService.toLowerCase()} win for ${name} in ${baseCity}`,
-          '',
-          `Hi there,`,
-          '',
-          `I work with ${baseContractor.toLowerCase()} in ${baseCity} who want steadier jobs without burning cash on broad ads.`,
-          `From the outside, there are a few low‑friction ${baseService.toLowerCase()} moves that could lift your inbound volume and tighten follow‑up – without a full rebuild.`,
-          '',
-          `If you want, I can send a short teardown specific to ${name} so you can see the gaps before you commit to anything.`,
-          '',
-          `Worth a quick 10–15 minutes this week?`,
-          '',
-          `Best,`,
-          `Your Name`,
-        ].join('\n'),
-      });
+  function updateLoadingCopy(mode) {
+    if (mode === 'agent') {
+      loadingSub.textContent = 'Thinking through ICP, scoring, and outreach – no live web calls.';
+      loadingSteps.innerHTML = '1. Parsing your ICP and services.<br>2. Designing lead patterns and filters.<br>3. Drafting fit logic and cold emails.';
+    } else if (mode === 'agent-computer') {
+      loadingSub.textContent = 'Spinning up a browser to inspect real contractor sites.';
+      loadingSteps.innerHTML = '1. Mapping contractors against your geo.<br>2. Visiting sites and scanning for tags & funnels.<br>3. Scoring fit vs your offers.';
+    } else if (mode === 'perplexity-openai') {
+      loadingSub.textContent = 'Querying the live web, then synthesizing and scoring candidates.';
+      loadingSteps.innerHTML = '1. Issuing targeted research queries.<br>2. Merging citations into a lead set.<br>3. Drafting scores, rationale, and outreach.';
+    } else if (mode === 'openai-only') {
+      loadingSub.textContent = 'Letting the model riff on your ICP and messaging.';
+      loadingSteps.innerHTML = '1. Interpreting your targeting notes.<br>2. Imagining high‑fit archetype businesses.<br>3. Writing tailored approaches.';
+    } else if (mode === 'two-stage') {
+      loadingSub.textContent = 'Planning the route, then executing the search.';
+      loadingSteps.innerHTML = '1. Designing a multi‑step search plan.<br>2. Executing against live or cached data.<br>3. Normalizing and scoring leads.';
+    } else {
+      loadingSub.textContent = 'Running web search passes and surfacing candidates.';
+      loadingSteps.innerHTML = '1. Issuing keyword‑level queries.<br>2. Filtering weak or duplicate hits.<br>3. Surfacing clean, inspectable leads.';
     }
-    return results;
+  }
+
+  function mapLeadsToUi(leads, mode) {
+    const modeLabel = MODE_CONTENT[mode].label;
+    return leads.map((lead, idx) => ({
+      id: lead.id || String(idx + 1),
+      mode,
+      modeLabel,
+      name: lead.business_name,
+      score: lead.fit?.score ?? 0,
+      fitReason: lead.fit?.score_reason || '',
+      realOdds: Math.round((lead.verification?.is_likely_real_business || 0) * 100),
+      website: lead.website || 'n/a',
+      owner: lead.owner || 'n/a',
+      email: lead.email || 'n/a',
+      phone: lead.phone || 'n/a',
+      socials: lead.socials
+        ? Object.values(lead.socials).filter(Boolean).join(', ')
+        : 'n/a',
+      gmap: lead.google_maps?.place_url || 'n/a',
+      metaPixel: lead.verification?.meta_pixel?.present
+        ? 'Meta Pixel detected'
+        : 'Meta Pixel not detected',
+      gtag: lead.verification?.google_tag?.present
+        ? `Google Tag(s): ${[]
+            .concat(lead.verification.google_tag.gtm_ids || [])
+            .concat(lead.verification.google_tag.ga_tags || [])
+            .join(', ')}`
+        : 'Google Tag not detected',
+      altAngles: lead.alt_angles || [],
+      emailDraft: [
+        lead.email_draft?.subject || '',
+        '',
+        lead.email_draft?.body || ''
+      ].join('\n')
+    }));
   }
 
   function renderResults(list) {
@@ -1848,9 +1949,9 @@
       image: { type: 'jpeg', quality: 0.95 },
       html2canvas: { scale: 2, useCORS: true },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] },
+      pagebreak: { mode: ['css', 'legacy'] }
     };
-    html2pdf().set(opt).from(pdfTarget).save(); /* [web:7] */
+    html2pdf().set(opt).from(pdfTarget).save();
   });
 
   modalExportPdfBtn.addEventListener('click', () => {
@@ -1865,9 +1966,9 @@
       image: { type: 'jpeg', quality: 0.95 },
       html2canvas: { scale: 2, useCORS: true },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] },
+      pagebreak: { mode: ['css', 'legacy'] }
     };
-    html2pdf().set(opt).from(pdfTarget).save(); /* [web:7] */
+    html2pdf().set(opt).from(pdfTarget).save();
   });
 
   function buildPdfContent(list) {
