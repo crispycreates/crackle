@@ -175,15 +175,81 @@
   .ptag.unknown{background:rgba(255,255,255,.05);color:var(--dim);border:1px solid rgba(255,255,255,.08);}
   .prow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;}
   .pscan-note{font-size:.55rem;color:var(--dim);margin-top:7px;line-height:1.5;}
+
+  #modeOverlay{position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+  .mode-logo{font-size:2.2rem;font-weight:900;color:var(--g);text-shadow:0 0 30px var(--g),0 0 60px var(--g);letter-spacing:.15em;margin-bottom:6px;}
+  .mode-sub{font-size:.6rem;color:var(--dim);letter-spacing:.3em;margin-bottom:8px;}
+  .mode-ver{font-size:.6rem;color:rgba(0,255,65,.3);letter-spacing:.25em;font-family:'Courier New',monospace;margin-bottom:50px;}
+  .mode-cards{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;max-width:960px;}
+  .mcard{background:rgba(0,255,65,.03);border:1px solid rgba(0,255,65,.2);border-radius:10px;padding:28px 24px;width:260px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:280px;}
+  .mcard:hover{background:rgba(0,255,65,.07);border-color:rgba(0,255,65,.6);transform:translateY(-4px);box-shadow:0 0 30px rgba(0,255,65,.15);}
+  .mcard-icon{font-size:1.8rem;margin-bottom:12px;}
+  .mcard-title{font-size:.85rem;font-weight:700;color:var(--g);letter-spacing:.1em;margin-bottom:8px;}
+  .mcard-desc{font-size:.58rem;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:14px;}
+  .mcard-keys{font-size:.52rem;color:var(--dim);letter-spacing:.08em;border-top:1px solid rgba(0,255,65,.1);padding-top:10px;margin-top:auto;}
+  .mcard-keys span{color:rgba(0,255,65,.5);}
+  .mcard-select{margin-top:14px;background:rgba(0,255,65,.1);border:1px solid rgba(0,255,65,.3);color:var(--g);font-size:.6rem;letter-spacing:.15em;padding:7px 16px;border-radius:4px;cursor:pointer;width:100%;transition:all .2s;}
+  .mcard:hover .mcard-select{background:rgba(0,255,65,.2);border-color:var(--g);}
+  .mcard.recommended::before{content:'RECOMMENDED';position:absolute;top:10px;right:-22px;background:var(--g);color:#000;font-size:.45rem;font-weight:800;letter-spacing:.12em;padding:3px 28px;transform:rotate(45deg);transform-origin:center;}
+  .engine-badge{font-size:.52rem;letter-spacing:.12em;color:rgba(0,255,65,.5);border:1px solid rgba(0,255,65,.2);border-radius:3px;padding:3px 8px;cursor:pointer;transition:all .2s;background:rgba(0,255,65,.04);}
+  .engine-badge:hover{background:rgba(0,255,65,.1);color:var(--g);}
+  #matrixFeed{position:fixed;inset:0;background:#000;z-index:9998;display:none;flex-direction:column;font-family:'Courier New',monospace;overflow:hidden;}
+  #matrixRain{position:absolute;inset:0;opacity:.08;pointer-events:none;}
+  #feedContent{position:relative;z-index:2;padding:40px;max-width:800px;margin:0 auto;overflow-y:auto;height:100%;}
+  .feed-logo{font-size:1.4rem;font-weight:900;color:var(--g);text-shadow:0 0 20px var(--g);letter-spacing:.15em;margin-bottom:4px;}
+  .feed-sub{font-size:.55rem;color:var(--dim);letter-spacing:.25em;margin-bottom:30px;}
+  .feed-line{font-size:.65rem;color:var(--g);line-height:2;white-space:pre-wrap;min-height:1.3em;}
+  .feed-line.dim{color:rgba(0,255,65,.4);}
+  .feed-line.warn{color:#ff7aac;}
+  .feed-line.ok{color:#00c851;}
+  #feedProgress{margin-top:20px;font-size:.6rem;color:var(--dim);}
 </style>
 </head>
 <body>
+
+<div id="modeOverlay">
+  <div class="mode-logo">⚡ CRACKLE</div>
+  <div class="mode-sub">// AGENCY LEAD INTELLIGENCE SYSTEM · BY CRISPY MARKETING //</div>
+  <div class="mode-ver">v 4.0 · SELECT YOUR LEAD ENGINE</div>
+  <div class="mode-cards">
+    <div class="mcard" onclick="selectMode('agent')">
+      <div class="mcard-icon">🤖</div>
+      <div class="mcard-title">OPENAI AGENT</div>
+      <div class="mcard-desc">Full autonomous agent loop. Searches the web, visits each business site, enriches profiles, scores weaknesses, and writes emails — all in sequence. Matrix-style live feed while it runs.</div>
+      <div class="mcard-keys">Keys needed: <span>OpenAI only</span></div>
+      <div class="mcard-select">▶ SELECT ENGINE</div>
+    </div>
+    <div class="mcard recommended" onclick="selectMode('perplexity')">
+      <div class="mcard-icon">🔍</div>
+      <div class="mcard-title">PERPLEXITY + OPENAI</div>
+      <div class="mcard-desc">Perplexity's sonar-pro model finds real businesses with live web citations. OpenAI then scores leads, analyzes digital weaknesses, and writes cold emails. Highest real-world accuracy.</div>
+      <div class="mcard-keys">Keys needed: <span>OpenAI + Perplexity</span></div>
+      <div class="mcard-select">▶ SELECT ENGINE</div>
+    </div>
+    <div class="mcard" onclick="selectMode('twostage')">
+      <div class="mcard-icon">⚡</div>
+      <div class="mcard-title">TWO-STAGE OPENAI</div>
+      <div class="mcard-desc">Stage 1: GPT with web search finds real businesses and URLs. Stage 2: GPT scores, analyzes digital gaps, and writes personalized cold emails. Fast, clean, one API key.</div>
+      <div class="mcard-keys">Keys needed: <span>OpenAI only</span></div>
+      <div class="mcard-select">▶ SELECT ENGINE</div>
+    </div>
+  </div>
+</div>
+<div id="matrixFeed">
+  <canvas id="matrixRain"></canvas>
+  <div id="feedContent">
+    <div class="feed-logo">⚡ CRACKLE AGENT</div>
+    <div class="feed-sub">// AUTONOMOUS LEAD INTELLIGENCE · BY CRISPY MARKETING //</div>
+    <div id="feedLines"></div>
+    <div id="feedProgress"></div>
+  </div>
+</div>
 <canvas id="rain"></canvas>
 <div class="wrap">
   <div class="hdr">
-    <div class="logo">⚡ CRACKLE</div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;"><div class="logo">⚡ CRACKLE</div><button class="engine-badge" id="engineBadge" onclick="showModeSelector()">⬡ ENGINE: — · CHANGE</button></div>
     <div class="sub">// AGENCY LEAD INTELLIGENCE SYSTEM · BY CRISPY MARKETING //</div>
-    <div style="font-size:.65rem;color:rgba(0,255,65,.35);letter-spacing:.25em;margin-top:6px;font-family:'Courier New',monospace;">v 3.5</div>
+    <div style="font-size:.65rem;color:rgba(0,255,65,.35);letter-spacing:.25em;margin-top:6px;font-family:'Courier New',monospace;">v 4.0</div>
   </div>
   <div class="grid">
     <div class="sticky">
@@ -315,6 +381,12 @@
             <div style="font-size:.55rem;color:var(--dim);margin-top:4px;letter-spacing:.08em;">↳ Free key at <a href="https://builtwith.com/api" target="_blank" style="color:var(--c);">builtwith.com/api</a></div>
           </div>
         </div>
+        
+        <div class="cfg-block" style="margin-bottom:16px;">
+          <label style="font-size:.6rem;letter-spacing:.18em;color:var(--p);text-shadow:0 0 6px var(--p);">⬡ Perplexity API Key <span style="color:var(--dim)">(Mode B only)</span></label>
+          <input type="password" id="perplexityKey" placeholder="pplx-..." style="margin-top:8px;">
+          <div style="font-size:.6rem;color:var(--dim);margin-top:5px;letter-spacing:.08em;">↳ Required only for Perplexity + OpenAI mode</div>
+        </div>
         <button class="btn-fire" id="fireBtn" onclick="go()">⚡ CRACK THE LEADS</button>
       </div>
     </div>
@@ -332,6 +404,83 @@
 </div>
 
 <script>
+async function perplexitySearch(query,apiKey){
+  const r=await fetch('https://api.perplexity.ai/chat/completions',{
+    method:'POST',
+    headers:{'Authorization':`Bearer ${apiKey}`,'Content-Type':'application/json'},
+    body:JSON.stringify({model:'sonar-pro',messages:[{role:'system',content:'Find real businesses on the web. Return JSON only.'},{role:'user',content:query}],temperature:.2,max_tokens:2000})
+  });
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||`Perplexity ${r.status}`);}
+  const d=await r.json(); return d;
+}
+
+let activeEngine='';
+let agentFeedTimer=null;
+let matrixTimer=null;
+const engineLabels={agent:'OPENAI AGENT',perplexity:'PERPLEXITY + OPENAI',twostage:'TWO-STAGE OPENAI'};
+function showModeSelector(){
+  document.getElementById('modeOverlay').style.display='flex';
+}
+function selectMode(mode){
+  activeEngine=mode;
+  localStorage.setItem('crackleEngine',mode);
+  document.getElementById('engineBadge').textContent='⬡ ENGINE: '+engineLabels[mode]+' · CHANGE';
+  document.getElementById('modeOverlay').style.display='none';
+  document.getElementById('modeOverlay').classList.remove('runout');
+  document.getElementById('results').innerHTML='<div class="empty"><div class="eico">⬡</div><div class="etxt">CONFIGURE CRITERIA &amp; FIRE TO FIND LEADS</div></div>';
+  toggleBuiltWithKey();
+}
+function startMatrix(){
+  const feed=document.getElementById('matrixFeed');
+  const lines=document.getElementById('feedLines');
+  const progress=document.getElementById('feedProgress');
+  feed.style.display='flex';
+  lines.innerHTML='';
+  const msgs=[
+    ['> CONNECTING TO LEAD ENGINE...', 'ok'],
+    ['> LOADING TARGET PARAMETERS...', 'ok'],
+    ['> INJECTING SEARCH VECTORS...', 'ok'],
+    ['> STEP 1 — SCANNING LOCAL MARKET...', 'dim'],
+    ['> STEP 2 — ENRICHING PROFILES...', 'dim'],
+    ['> STEP 3 — ANALYZING DIGITAL WEAKNESSES...', 'dim'],
+    ['> STEP 4 — GENERATING COLD EMAILS...', 'dim']
+  ];
+  let i=0;
+  const typeLine=(el,text,cb)=>{
+    let n=0; el.textContent='';
+    const t=setInterval(()=>{el.textContent=text.slice(0,++n); if(n>=text.length){clearInterval(t); cb&&cb();}},12);
+  };
+  const step=()=>{
+    if(i>=msgs.length){progress.textContent='▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  COMPLETE'; setTimeout(()=>{feed.style.display='none';},900); return;}
+    const div=document.createElement('div'); div.className='feed-line '+msgs[i][1]; lines.appendChild(div);
+    typeLine(div,msgs[i][0],()=>{i++; progress.textContent='STEP '+Math.min(i,4)+'/4'; setTimeout(step,250);});
+  };
+  step();
+}
+function matrixRain(){
+  const canvas=document.getElementById('matrixRain'); if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const resize=()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;}; resize();
+  const chars='01アイウエオカキクケコサシスセソタチツテトABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const fontSize=14; const cols=Math.floor(canvas.width/fontSize); const drops=Array(cols).fill(1);
+  clearInterval(matrixTimer);
+  matrixTimer=setInterval(()=>{
+    ctx.fillStyle='rgba(0,0,0,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#00ff41'; ctx.font=fontSize+'px monospace';
+    for(let i=0;i<drops.length;i++){
+      const text=chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+      if(drops[i]*fontSize>canvas.height&&Math.random()>0.975)drops[i]=0;
+      drops[i]++;
+    }
+  },35);
+  window.addEventListener('resize',resize);
+}
+function setLeadEngine(){
+  const e=localStorage.getItem('crackleEngine')||'agent';
+  selectMode(e);
+}
+
 const cv=document.getElementById('rain'),cx=cv.getContext('2d');
 let drops=[];
 const ch='ｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵカキクケコ0123456789⚡⬡◈ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -410,7 +559,10 @@ function scoreClass(s){return s>=8?'bhi':s>=5?'bmd':'blo';}
 function stars(r){if(!r)return'';const f=Math.round(r);return'★'.repeat(f)+'☆'.repeat(5-f);}
 
 async function go(){
+  if(!activeEngine) activeEngine=localStorage.getItem('crackleEngine')||'agent';
+  startMatrix();
   const key=document.getElementById('apiKey').value.trim();
+  const pkey=(document.getElementById('perplexityKey')||{}).value?document.getElementById('perplexityKey').value.trim():'';
   const ctypes=getCtypes();
   const inc=document.getElementById('incCity').value.trim();
   const incProv=document.getElementById('incProv').value.trim();
@@ -485,6 +637,11 @@ Each lead object MUST have exactly these fields:
 }`;
   try{
     const selectedModel=document.getElementById('modelSel').value;
+    const engine=activeEngine||localStorage.getItem('crackleEngine')||'agent';
+    if(engine==='perplexity'&&!pkey)return alert('Perplexity API key required for this mode');
+    if(engine==='agent')sys+='\n\nYou are operating in AGENT MODE. Perform a full loop: search, enrich, score, write. Use web-grounded results only.';
+    if(engine==='twostage')sys+='\n\nYou are operating in TWO-STAGE MODE. First find real businesses with web search, then analyze and score them.';
+    if(engine==='perplexity')sys+='\n\nYou are operating in PERPLEXITY MODE. The user will provide a Perplexity API key. Use web-grounded research to find real businesses.';
     const useWebSearch=['gpt-4o','gpt-4o-mini','gpt-4.1','gpt-4.1-mini','gpt-4.1-nano'].includes(selectedModel);
     let res,data,raw;
     if(useWebSearch){
@@ -715,6 +872,7 @@ function copyEmail(i){
 }
 async function regenEmail(i){
   const key=document.getElementById('apiKey').value.trim();
+  const pkey=(document.getElementById('perplexityKey')||{}).value?document.getElementById('perplexityKey').value.trim():'';
   if(!key)return alert('API key required');
   const l=leads[i],btn=document.querySelector(`#c${i} .btn-p`);
   btn.textContent='↺ WRITING...';btn.disabled=true;
@@ -835,6 +993,8 @@ function exportPDF(){
   });
   doc.save(`CRACKLE_Leads_${new Date().toISOString().split('T')[0]}.pdf`);
 }
+
+window.addEventListener('load',()=>{matrixRain();setLeadEngine();toggleBuiltWithKey();});
 </script>
 </body>
 </html>
