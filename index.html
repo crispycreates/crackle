@@ -183,7 +183,7 @@
   <div class="hdr">
     <div class="logo">⚡ CRACKLE</div>
     <div class="sub">// AGENCY LEAD INTELLIGENCE SYSTEM · BY CRISPY MARKETING //</div>
-    <div style="font-size:.65rem;color:rgba(0,255,65,.35);letter-spacing:.25em;margin-top:6px;font-family:'Courier New',monospace;">v 3.4</div>
+    <div style="font-size:.65rem;color:rgba(0,255,65,.35);letter-spacing:.25em;margin-top:6px;font-family:'Courier New',monospace;">v 3.5</div>
   </div>
   <div class="grid">
     <div class="sticky">
@@ -286,6 +286,34 @@
           <input type="file" id="ctxFile" accept=".pdf,.doc,.docx,.txt" onchange="handleFileSelect(this)">
           <div style="font-size:.6rem;color:var(--dim);margin-top:5px;letter-spacing:.08em;">↳ PDF, Word doc, or TXT — enriches AI context beyond your website</div>
           <div id="ctxStatus"></div>
+        </div>
+        
+        <div class="cfg-block" style="margin-bottom:16px;">
+          <label style="font-size:.6rem;letter-spacing:.18em;color:var(--p);text-shadow:0 0 6px var(--p);">⬡ Tracking Scan Settings</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+            <div>
+              <label style="font-size:.55rem;color:var(--dim);letter-spacing:.1em;display:block;margin-bottom:4px;">META PIXEL PROVIDER</label>
+              <select id="pixelProvider" onchange="toggleBuiltWithKey()" style="width:100%;font-size:.62rem;padding:5px 8px;">
+                <option value="facebook">Facebook Graph API (free)</option>
+                <option value="builtwith">BuiltWith</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:.55rem;color:var(--dim);letter-spacing:.1em;display:block;margin-bottom:4px;">GOOGLE TAG PROVIDER</label>
+              <select id="googleTagProvider" onchange="toggleBuiltWithKey()" style="width:100%;font-size:.62rem;padding:5px 8px;">
+                <option value="htmlscan">HTML Scan (free, no key)</option>
+                <option value="builtwith">BuiltWith</option>
+              </select>
+            </div>
+          </div>
+          <div id="bwKeyWrap" style="display:none;margin-top:8px;">
+            <label style="font-size:.55rem;color:var(--dim);letter-spacing:.1em;display:block;margin-bottom:4px;">BUILTWITH API KEY</label>
+            <div style="position:relative;">
+              <input type="password" id="bwKey" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" style="width:100%;font-size:.62rem;padding:5px 8px;padding-right:52px;">
+              <button onclick="toggleBwVis()" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:.55rem;color:var(--dim);background:none;border:none;cursor:pointer;letter-spacing:.06em;">SHOW</button>
+            </div>
+            <div style="font-size:.55rem;color:var(--dim);margin-top:4px;letter-spacing:.08em;">↳ Free key at <a href="https://builtwith.com/api" target="_blank" style="color:var(--c);">builtwith.com/api</a></div>
+          </div>
         </div>
         <button class="btn-fire" id="fireBtn" onclick="go()">⚡ CRACK THE LEADS</button>
       </div>
@@ -456,14 +484,46 @@ Each lead object MUST have exactly these fields:
   "emailBody": string (3 short personalized paragraphs)${site?',\n  "matchScore": number 1-10,\n  "matchReason": string':''}
 }`;
   try{
-    const res=await fetch('https://api.openai.com/v1/chat/completions',{
-      method:'POST',
-      headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
-      body:JSON.stringify({model:'gpt-4o',messages:[{role:'system',content:sys},{role:'user',content:`Generate ${n} contractor leads [${ctypeStr}]. ALL must be in: ${locEnforced}. JSON only.`}],temperature:.45,max_tokens:7000,response_format:{type:'json_object'}})
-    });
-    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
-    const data=await res.json();
-    const raw=JSON.parse(data.choices[0].message.content);
+    const selectedModel=document.getElementById('modelSel').value;
+    const useWebSearch=['gpt-4o','gpt-4o-mini','gpt-4.1','gpt-4.1-mini','gpt-4.1-nano'].includes(selectedModel);
+    let res,data,raw;
+    if(useWebSearch){
+      // Responses API with web_search_preview for real businesses
+      res=await fetch('https://api.openai.com/v1/responses',{
+        method:'POST',
+        headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:selectedModel,
+          tools:[{type:'web_search_preview'}],
+          input:[{role:'user',content:sys+'\n\nGenerate '+n+' contractor leads ['+ctypeStr+']. ALL must be in: '+locEnforced+'. Use web search to find REAL businesses with REAL websites. Return JSON only with a top-level \"leads\" array.'}],
+          max_output_tokens:7000
+        })
+      });
+      if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
+      data=await res.json();
+      // Extract text from Responses API output
+      let textOut='';
+      for(const item of(data.output||[])){
+        if(item.type==='message'){
+          for(const c of(item.content||[])){
+            if(c.type==='output_text')textOut+=c.text;
+          }
+        }
+      }
+      // Extract JSON from text (may be wrapped in markdown)
+      const jsonMatch=textOut.match(/```json\s*([\s\S]*?)```/i)||textOut.match(/({[\s\S]*})/);
+      raw=JSON.parse(jsonMatch?jsonMatch[1]:textOut);
+    } else {
+      // Fallback: Chat Completions for other models
+      res=await fetch('https://api.openai.com/v1/chat/completions',{
+        method:'POST',
+        headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
+        body:JSON.stringify({model:selectedModel,messages:[{role:'system',content:sys},{role:'user',content:`Generate ${n} contractor leads [${ctypeStr}]. ALL must be in: ${locEnforced}. JSON only.`}],temperature:.45,max_tokens:7000,response_format:{type:'json_object'}})
+      });
+      if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
+      data=await res.json();
+      raw=JSON.parse(data.choices[0].message.content);
+    }
     leads=Array.isArray(raw)?raw:(raw.leads||Object.values(raw).find(v=>Array.isArray(v))||[]);
     // Location filter — remove leads that clearly don't match requested location
     if(inc||incProv){
@@ -499,46 +559,105 @@ async function scanPixels(i){
   if(!l.website)return;
   let ws=l.website.trim().replace(/['"]/g,'');
   if(!ws.startsWith('http'))ws='https://'+ws;
-  btn.disabled=true;btn.textContent='SCANNING...';
-  out.innerHTML='<span style="color:var(--dim);font-size:.58rem">Fetching site via proxy...</span>';
-  const proxyUrl='https://api.allorigins.win/get?url='+encodeURIComponent(ws);
-  let html='';
-  try{
-    const res=await fetch(proxyUrl,{signal:AbortSignal.timeout(12000)});
-    if(!res.ok)throw new Error('Proxy error '+res.status);
-    const data=await res.json();
-    html=data.contents||'';
-  }catch(e){
-    out.innerHTML='<span class="ptag unknown">Could not reach site — try opening it manually</span>';
-    btn.disabled=false;btn.textContent='RETRY SCAN';
+  let domain='';
+  try{domain=new URL(ws).hostname.replace(/^www\./,'');}catch(e){out.innerHTML='<span class="ptag unknown">Invalid URL</span>';return;}
+
+  const pixelProv=document.getElementById('pixelProvider').value;
+  const googleProv=document.getElementById('googleTagProvider').value;
+  const bwKey=(document.getElementById('bwKey').value||'').trim();
+
+  if((pixelProv==='builtwith'||googleProv==='builtwith')&&!bwKey){
+    out.innerHTML='<span class="ptag unknown">⚠ Enter your BuiltWith API key above to use BuiltWith scanning</span>';
     return;
   }
-  const hl=html.toLowerCase();
-  const hasPixel=hl.includes('connect.facebook.net')||hl.includes('fbq(')||hl.includes('facebook pixel')||hl.includes('fb-pixel');
-  const hasGTM=hl.includes('googletagmanager.com')||hl.includes('gtm.js')||hl.includes('gtm.start');
-  const hasGA=hl.includes('gtag(')||hl.includes('google-analytics.com')||hl.includes('ga.js')||hl.includes('analytics.js');
-  const anyGoogle=hasGTM||hasGA;
-  let pixelId='';
-  const pidMatch=html.match(/fbq\s*\(\s*['"]init['"]\s*,\s*['"]?(\d{10,20})['"]?\s*\)/i);
-  if(pidMatch)pixelId=' <span style="opacity:.6">ID: '+pidMatch[1]+'</span>';
-  let gtmId='';
-  const gtmMatch=html.match(/GTM-[A-Z0-9]{4,8}/i);
-  if(gtmMatch)gtmId=' <span style="opacity:.6">'+gtmMatch[0]+'</span>';
-  let gaId='';
-  const gaMatch=html.match(/G-[A-Z0-9]{6,12}/i)||html.match(/UA-\d{5,10}-\d/i);
-  if(gaMatch)gaId=' <span style="opacity:.6">'+gaMatch[0]+'</span>';
+
+  btn.disabled=true;btn.textContent='SCANNING...';
+  out.innerHTML='<span style="color:var(--dim);font-size:.58rem">Scanning tracking tags...</span>';
+
+  let hasPixel=null,hasGTM=null,hasGA=null,pixelId='',gtmId='',gaId='';
+
+  // ── META PIXEL ──
+  if(pixelProv==='facebook'){
+    try{
+      const r=await fetch('https://graph.facebook.com/?id='+encodeURIComponent(ws)+'&fields=pixel',{signal:AbortSignal.timeout(8000)});
+      const d=await r.json();
+      if(d.pixel&&d.pixel.pixel_id){hasPixel=true;pixelId=' <span style="opacity:.6">ID: '+d.pixel.pixel_id+'</span>';}
+      else if(d.error){hasPixel=false;}
+      else{hasPixel=!!(d.pixel);}
+    }catch(e){hasPixel=null;}
+  }
+
+  // ── BUILTWITH (covers pixel + google tags if selected) ──
+  let bwData=null;
+  if((pixelProv==='builtwith'||googleProv==='builtwith')&&bwKey){
+    try{
+      const r=await fetch('https://api.builtwith.com/v21/api.json?KEY='+encodeURIComponent(bwKey)+'&LOOKUP='+encodeURIComponent(domain),{signal:AbortSignal.timeout(12000)});
+      const d=await r.json();
+      bwData=d;
+      // Flatten all tech names
+      const techs=[];
+      if(d.Results&&d.Results[0]&&d.Results[0].Result&&d.Results[0].Result.Paths){
+        d.Results[0].Result.Paths.forEach(p=>{(p.Technologies||[]).forEach(t=>{techs.push((t.Name||'').toLowerCase());if(t.Tag)techs.push(t.Tag.toLowerCase());});});
+      }
+      const techStr=techs.join('|');
+      if(pixelProv==='builtwith'){
+        hasPixel=techStr.includes('facebook pixel')||techStr.includes('meta pixel')||techStr.includes('facebook ads');
+        // Try to get pixel ID from BW
+        if(d.Results&&d.Results[0]&&d.Results[0].Result&&d.Results[0].Result.Paths){
+          d.Results[0].Result.Paths.forEach(p=>{(p.Technologies||[]).forEach(t=>{if((t.Name||'').toLowerCase().includes('facebook pixel')&&t.Description){const m=t.Description.match(/\d{10,20}/);if(m)pixelId=' <span style="opacity:.6">ID: '+m[0]+'</span>';}});});
+        }
+      }
+      if(googleProv==='builtwith'){
+        hasGTM=techStr.includes('google tag manager');
+        hasGA=techStr.includes('google analytics')||techStr.includes('google analytics 4')||techStr.includes('ga4');
+        if(hasGTM){const m=techStr.match(/gtm-[a-z0-9]{4,8}/i);if(m)gtmId=' <span style="opacity:.6">'+m[0].toUpperCase()+'</span>';}
+        if(hasGA){const m=techStr.match(/g-[a-z0-9]{6,12}/i)||techStr.match(/ua-\d{5,10}-\d/i);if(m)gaId=' <span style="opacity:.6">'+m[0]+'</span>';}
+      }
+    }catch(e){
+      out.innerHTML='<span class="ptag unknown">BuiltWith error: '+e.message+'</span>';
+      btn.disabled=false;btn.textContent='↺ RETRY';
+      return;
+    }
+  }
+
+  // ── GOOGLE TAGS via HTML SCAN ──
+  if(googleProv==='htmlscan'){
+    try{
+      const proxyUrl='https://api.allorigins.win/get?url='+encodeURIComponent(ws);
+      const r=await fetch(proxyUrl,{signal:AbortSignal.timeout(12000)});
+      if(!r.ok)throw new Error('Proxy '+r.status);
+      const d=await r.json();
+      const hl=(d.contents||'').toLowerCase();
+      hasGTM=hl.includes('googletagmanager.com')||hl.includes('gtm.js')||hl.includes('gtm.start');
+      hasGA=hl.includes('gtag(')||hl.includes('google-analytics.com')||hl.includes('analytics.js');
+      const raw=d.contents||'';
+      const gm=raw.match(/GTM-[A-Z0-9]{4,8}/i);if(gm)gtmId=' <span style="opacity:.6">'+gm[0]+'</span>';
+      const ga=raw.match(/G-[A-Z0-9]{6,12}/i)||raw.match(/UA-\d{5,10}-\d/i);if(ga)gaId=' <span style="opacity:.6">'+ga[0]+'</span>';
+    }catch(e){hasGTM=null;hasGA=null;}
+  }
+
+  // ── RENDER RESULTS ──
+  const tagBadge=(status,foundLabel,missingLabel,id)=>{
+    if(status===null)return '<span class="ptag unknown">? '+missingLabel+' — could not check</span>';
+    return '<span class="ptag '+(status?'found':'missing')+'">'+(status?'✓ '+foundLabel:'✗ '+missingLabel)+(status?id:'')+'</span>';
+  };
+
   let badges='';
-  badges+='<span class="ptag '+(hasPixel?'found':'missing')+'">'+(hasPixel?'✓ Meta Pixel':'✗ No Meta Pixel')+pixelId+'</span>';
-  badges+='<span class="ptag '+(hasGTM?'found':'missing')+'">'+(hasGTM?'✓ Google Tag Manager':'✗ No GTM')+gtmId+'</span>';
-  badges+='<span class="ptag '+(hasGA?'found':'missing')+'">'+(hasGA?'✓ Google Analytics':'✗ No GA')+gaId+'</span>';
+  badges+=tagBadge(hasPixel,'Meta Pixel','No Meta Pixel',pixelId);
+  badges+=tagBadge(hasGTM,'Google Tag Manager','No GTM',gtmId);
+  badges+=tagBadge(hasGA,'Google Analytics','No GA',gaId);
+
+  const noPixel=hasPixel===false,noGoogle=hasGTM===false&&hasGA===false;
   let note='';
-  if(!hasPixel&&!anyGoogle){note='<div class="pscan-note">⚡ Zero tracking found — no ads, no analytics. Strong pitch: Meta Pixel + GTM + GA4 setup.</div>';}
-  else if(!hasPixel){note='<div class="pscan-note">💡 No Meta Pixel — they are not running Facebook/Instagram ads. Pitch Meta Ads setup.</div>';}
-  else if(!anyGoogle){note='<div class="pscan-note">💡 No Google Tag detected — analytics likely missing. Pitch Google Ads + GA4 setup.</div>';}
+  if(noPixel&&noGoogle){note='<div class="pscan-note">⚡ Zero tracking found — no ads, no analytics. Strong pitch: Meta Pixel + GTM + GA4 setup.</div>';}
+  else if(noPixel){note='<div class="pscan-note">💡 No Meta Pixel — not running Facebook/Instagram ads. Pitch Meta Ads setup.</div>';}
+  else if(noGoogle){note='<div class="pscan-note">💡 No Google Tag — analytics likely missing. Pitch Google Ads + GA4 setup.</div>';}
+
   out.innerHTML='<div class="prow">'+badges+'</div>'+note;
   btn.disabled=false;btn.textContent='↺ RESCAN';
   leads[i]._pixelScan={hasPixel,hasGTM,hasGA};
 }
+
 
 function render(arr,site){
   if(!arr.length){document.getElementById('results').innerHTML='<div class="empty"><div class="etxt">No leads returned. Try different criteria.</div></div>';return;}
@@ -573,6 +692,18 @@ function render(arr,site){
   setTimeout(()=>{document.querySelectorAll('.mbarfill').forEach(b=>{const w=b.style.width;b.style.width='0%';requestAnimationFrame(()=>{b.style.width=w;});});},100);
 }
 
+
+function toggleBuiltWithKey(){
+  const pp=document.getElementById('pixelProvider').value;
+  const gp=document.getElementById('googleTagProvider').value;
+  document.getElementById('bwKeyWrap').style.display=(pp==='builtwith'||gp==='builtwith')?'block':'none';
+}
+function toggleBwVis(){
+  const inp=document.getElementById('bwKey');
+  const btn=inp.nextElementSibling;
+  inp.type=inp.type==='password'?'text':'password';
+  btn.textContent=inp.type==='password'?'SHOW':'HIDE';
+}
 function toggle(i){document.getElementById('b'+i).classList.toggle('open');document.getElementById('chev'+i).classList.toggle('open');}
 function clearAll(){leads=[];document.getElementById('results').innerHTML='<div class="empty"><div class="eico">⬡</div><div class="etxt">CONFIGURE CRITERIA &amp; FIRE TO FIND LEADS</div></div>';}
 function copyEmail(i){
