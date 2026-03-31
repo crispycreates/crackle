@@ -207,10 +207,52 @@
 </head>
 <body>
 
+
 <div id="modeOverlay">
   <div class="mode-logo">⚡ CRACKLE</div>
+  <div class="mode-sub">// v4.1 · PICK YOUR LEAD ENGINE · REQUIRED</div>
+  <div class="mode-ver" style="margin-bottom:60px;">All modes include pixel/tag detection + tracking scan</div>
+  <div class="mode-cards" style="gap:20px;">
+    <div class="mcard" onclick="selectMode('agent')">
+      <div class="mcard-icon">🤖</div>
+      <div class="mcard-title">AGENT (WEB SEARCH)</div>
+      <div class="mcard-desc">OpenAI agent uses web_search_preview to find real businesses, scores gaps, writes emails.</div>
+      <div class="mcard-keys">OpenAI key • Cheap • Good accuracy</div>
+      <div class="mcard-select">▶ SELECT</div>
+    </div>
+    <div class="mcard recommended" onclick="selectMode('computer')">
+      <div class="mcard-icon">🖥️</div>
+      <div class="mcard-title">AGENT + COMPUTER USE</div>
+      <div class="mcard-desc">Full browser automation. Visits sites, opens DevTools, inspects source for fbq/gtag.</div>
+      <div class="mcard-keys">OpenAI key • Expensive • Highest accuracy</div>
+      <div class="mcard-select">▶ SELECT</div>
+    </div>
+    <div class="mcard" onclick="selectMode('perplexity')">
+      <div class="mcard-icon">🔍</div>
+      <div class="mcard-title">PERPLEXITY + OPENAI</div>
+      <div class="mcard-desc">Perplexity sonar-pro finds businesses with citations, OpenAI scores/emails.</div>
+      <div class="mcard-keys">2 keys • Medium • Best value</div>
+      <div class="mcard-select">▶ SELECT</div>
+    </div>
+    <div class="mcard" onclick="selectMode('twostage')">
+      <div class="mcard-icon">⚡</div>
+      <div class="mcard-title">TWO-STAGE OPENAI</div>
+      <div class="mcard-desc">Stage 1: GPT web search. Stage 2: GPT scores + emails.</div>
+      <div class="mcard-keys">OpenAI key • Cheap • Reliable</div>
+      <div class="mcard-select">▶ SELECT</div>
+    </div>
+    <div class="mcard" onclick="selectMode('searchonly')">
+      <div class="mcard-icon">🔬</div>
+      <div class="mcard-title">WEB SEARCH ONLY</div>
+      <div class="mcard-desc">Pure web_search_preview. Searches '[business] meta pixel installed' for mentions.</div>
+      <div class="mcard-keys">OpenAI key • Cheapest • Bulk runs</div>
+      <div class="mcard-select">▶ SELECT</div>
+    </div>
+  </div>
+</div>
+
   <div class="mode-sub">// AGENCY LEAD INTELLIGENCE SYSTEM · BY CRISPY MARKETING //</div>
-  <div class="mode-ver">v 4.0 · SELECT YOUR LEAD ENGINE</div>
+  <div class="mode-ver">v 4.1 · SELECT YOUR LEAD ENGINE</div>
   <div class="mode-cards">
     <div class="mcard" onclick="selectMode('agent')">
       <div class="mcard-icon">🤖</div>
@@ -249,7 +291,7 @@
   <div class="hdr">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;"><div class="logo">⚡ CRACKLE</div><button class="engine-badge" id="engineBadge" onclick="showModeSelector()">⬡ ENGINE: — · CHANGE</button></div>
     <div class="sub">// AGENCY LEAD INTELLIGENCE SYSTEM · BY CRISPY MARKETING //</div>
-    <div style="font-size:.65rem;color:rgba(0,255,65,.35);letter-spacing:.25em;margin-top:6px;font-family:'Courier New',monospace;">v 4.0</div>
+    <div style="font-size:.65rem;color:rgba(0,255,65,.35);letter-spacing:.25em;margin-top:6px;font-family:'Courier New',monospace;">v 4.1</div>
   </div>
   <div class="grid">
     <div class="sticky">
@@ -561,8 +603,42 @@ function stars(r){if(!r)return'';const f=Math.round(r);return'★'.repeat(f)+'�
 async function go(){
   if(!activeEngine) activeEngine=localStorage.getItem('crackleEngine')||'agent';
   startMatrix();
-  const key=document.getElementById('apiKey').value.trim();
-  const pkey=(document.getElementById('perplexityKey')||{}).value?document.getElementById('perplexityKey').value.trim():'';
+  const key=
+  const engine=activeEngine||localStorage.getItem('crackleEngine')||'twostage';
+  if(engine==='perplexity'&&!pkey){alert('Perplexity API key required');setBtn(false);return;}
+  let sys=promptSys;
+  if(engine==='agent')sys+='\n\nAGENT MODE: Use web_search_preview to find real businesses. For each: check website for fbq/connect.facebook.net (Meta Pixel) and gtag/googletagmanager.com (Google Tags). Report ✓/✗ in digitalWeaknesses.';
+  else if(engine==='twostage')sys+='\n\nTWO-STAGE: Web search real businesses first, then score.';
+  else if(engine==='perplexity')sys+='\n\nPERPLEXITY MODE: Perplexity will provide real leads. Score and analyze.';
+document.getElementById('apiKey').value.trim();
+  const pkey=
+  const engine=activeEngine||localStorage.getItem('crackleEngine')||'twostage';
+  if(engine==='perplexity'&&!pkey){alert('Perplexity API key required');setBtn(false);return;}
+  let sys=promptSys;
+  switch(engine){
+    case 'computer':
+      sys+='\nCOMPUTER USE MODE: Use computer_use tool to visit websites, open DevTools, search source for fbq/connect.facebook.net (Meta Pixel ✓/✗) and gtag/googletagmanager.com (Google Tags ✓/✗). Highest accuracy.';
+      break;
+    case 'agent':
+      sys+='\nAGENT MODE: Use web_search_preview to find real businesses. For each check if Meta Pixel (fbq) and Google Tags (gtag) mentioned.';
+      break;
+    case 'searchonly':
+      sys+='\nWEB SEARCH ONLY: Search \"[business] meta pixel installed\" and \"[business] google tag manager\" for each lead.';
+      break;
+    case 'perplexity':
+      sys+='\nPERPLEXITY MODE: Perplexity finds real businesses, you score + analyze.';
+      break;
+    default:
+      sys+='\nTWO-STAGE MODE: Web search businesses, then score.';
+  }
+(document.getElementById('perplexityKey')||{}).value?document.getElementById('perplexityKey').value.trim():'';
+  let engine=activeEngine||localStorage.getItem('crackleEngine')||'twostage';
+  if(engine==='perplexity'&&!pkey){alert('Perplexity API key required');setBtn(false);return;}
+  let sys=promptSys;
+  if(engine==='agent')sys+='\n\nAGENT MODE FULL LOOP: 1. Web search real businesses. 2. Visit websites. 3. Check for Meta Pixel (fbq/connect.facebook.net) and Google Tags (gtag/googletagmanager.com). 4. Score digital gaps. 5. Write emails.';
+  else if(engine==='perplexity'){sys+='\n\nPERPLEXITY MODE: Use Perplexity search results to find real businesses first.';}
+  else sys+='\n\nTWO-STAGE MODE: Web search for real businesses, then analyze.';
+
   const ctypes=getCtypes();
   const inc=document.getElementById('incCity').value.trim();
   const incProv=document.getElementById('incProv').value.trim();
@@ -579,7 +655,7 @@ async function go(){
   const ctypeStr=ctypes.join(', ');
   const locLabel=[inc,incProv].filter(Boolean).join(' / ');
   const fileCtx=await extractFileText();
-  document.getElementById('results').innerHTML=`<div class="loading"><div class="ltxt">INFILTRATING LOCAL MARKET DATA... [${document.getElementById('modelSel').value}]</div><div class="lbar"><div class="lbarfill"></div></div><div class="lsteps">⬡ Targeting: ${ctypeStr}<br>⬡ Location: ${locLabel||'Any'}<br>⬡ Filtering for revenue signals ($500K–$1.5M)<br>⬡ Detecting digital weaknesses &amp; SEO gaps<br>⬡ Crafting personalized cold outreach emails</div></div>`;
+  document.getElementById('results').innerHTML=`<div class="loading"><div class="ltxt">INFILTRATING LOCAL MARKET DATA... [${'gpt-4o'}]</div><div class="lbar"><div class="lbarfill"></div></div><div class="lsteps">⬡ Targeting: ${ctypeStr}<br>⬡ Location: ${locLabel||'Any'}<br>⬡ Filtering for revenue signals ($500K–$1.5M)<br>⬡ Detecting digital weaknesses &amp; SEO gaps<br>⬡ Crafting personalized cold outreach emails</div></div>`;
   const excNote=exc?`\nEXCLUDE businesses in: ${exc}.`:'';
   const locNote=[]
   if(inc)locNote.push(`Cities: ${inc}`);
@@ -637,7 +713,7 @@ Each lead object MUST have exactly these fields:
   "emailBody": string (3 short personalized paragraphs)${site?',\n  "matchScore": number 1-10,\n  "matchReason": string':''}
 }`;
   try{
-    let selectedModel=document.getElementById('modelSel').value;
+    let selectedModel='gpt-4o';
     let engine=activeEngine||localStorage.getItem('crackleEngine')||'agent';
     if(engine==='perplexity'&&!pkey)return alert('Perplexity API key required for this mode');
     if(engine==='agent')sys+='\n\nYou are operating in AGENT MODE. Perform a full loop: search, enrich, score, write. Use web-grounded results only.';
@@ -651,7 +727,7 @@ Each lead object MUST have exactly these fields:
         method:'POST',
         headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
         body:JSON.stringify({
-          model:selectedModel,
+          model:(engine==="computer"?"computer-use-preview":(engine==="agent"?"gpt-5.4":"gpt-4o")),
           tools:[{type:'web_search_preview'}],
           input:[{role:'user',content:sys+'\n\nGenerate '+n+' contractor leads ['+ctypeStr+']. ALL must be in: '+locEnforced+'. Use web search to find REAL businesses with REAL websites. Return JSON only with a top-level \"leads\" array.'}],
           max_output_tokens:7000
@@ -676,7 +752,7 @@ Each lead object MUST have exactly these fields:
       res=await fetch('https://api.openai.com/v1/chat/completions',{
         method:'POST',
         headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
-        body:JSON.stringify({model:selectedModel,messages:[{role:'system',content:sys},{role:'user',content:`Generate ${n} contractor leads [${ctypeStr}]. ALL must be in: ${locEnforced}. JSON only.`}],temperature:.45,max_tokens:7000,response_format:{type:'json_object'}})
+        body:JSON.stringify({model:(engine==="computer"?"computer-use-preview":(engine==="agent"?"gpt-5.4":"gpt-4o")),messages:[{role:'system',content:sys},{role:'user',content:`Generate ${n} contractor leads [${ctypeStr}]. ALL must be in: ${locEnforced}. JSON only.`}],temperature:.45,max_tokens:7000,response_format:{type:'json_object'}})
       });
       if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
       data=await res.json();
@@ -822,7 +898,7 @@ function render(arr,site){
   const _ctypes=getCtypes().join(', ')||'Mixed';
   const _loc=[document.getElementById('incCity').value,document.getElementById('incProv').value].filter(Boolean).join(' / ')||'Any';
   const hasFlag=arr.some(l=>l.locationFlagged);
-  let html=`<div class="rhdr"><div><div class="rtitle">⚡ ${arr.length} LEADS CRACKED</div><div class="rsub">${_ctypes} · ${_loc} · ${document.getElementById('modelSel').value}</div></div><div class="rbtns"><button class="btn-c" onclick="exportPDF()">⬇ EXPORT PDF</button><button class="btn-r" onclick="clearAll()">✕ CLEAR</button></div></div>
+  let html=`<div class="rhdr"><div><div class="rtitle">⚡ ${arr.length} LEADS CRACKED</div><div class="rsub">${_ctypes} · ${_loc} · ${'gpt-4o'}</div></div><div class="rbtns"><button class="btn-c" onclick="exportPDF()">⬇ EXPORT PDF</button><button class="btn-r" onclick="clearAll()">✕ CLEAR</button></div></div>
   <div class="disclaimer-bar">⚠ These are <strong>AI-generated lead profiles</strong> — not scraped from live databases. Company names, contacts, and review counts may be illustrative. Use the <strong>🔍 Verify</strong> buttons on each card to cross-check on Google Maps and Google Search before reaching out.${hasFlag?' <strong style="color:#ff6b35"> · Location filter removed some off-target leads — review remaining results carefully.</strong>':''}</div>`;
   arr.forEach((l,i)=>{
     const sc=scoreClass(l.leadScore);
@@ -927,7 +1003,7 @@ async function regenEmail(i){
   const l=leads[i],btn=document.querySelector(`#c${i} .btn-p`);
   btn.textContent='↺ WRITING...';btn.disabled=true;
   try{
-    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model:document.getElementById('modelSel').value,messages:[{role:'system',content:'Write concise personalized B2B cold emails for a digital marketing agency. Return JSON with keys: emailSubject (string), emailBody (string, 3 short paragraphs).'},{role:'user',content:`New cold email for: ${l.companyName}, owner ${l.ownerName}, ${l.city}. Type: ${l.businessType}. Weaknesses: ${(l.digitalWeaknesses||[]).join(', ')}. Services: ${(l.recommendedServices||[]).join(', ')}.`}],temperature:.85,max_tokens:600,response_format:{type:'json_object'}})});
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4o',messages:[{role:'system',content:'Write concise personalized B2B cold emails for a digital marketing agency. Return JSON with keys: emailSubject (string), emailBody (string, 3 short paragraphs).'},{role:'user',content:`New cold email for: ${l.companyName}, owner ${l.ownerName}, ${l.city}. Type: ${l.businessType}. Weaknesses: ${(l.digitalWeaknesses||[]).join(', ')}. Services: ${(l.recommendedServices||[]).join(', ')}.`}],temperature:.85,max_tokens:600,response_format:{type:'json_object'}})});
     const d=await r.json();const upd=JSON.parse(d.choices[0].message.content);
     leads[i].emailSubject=upd.emailSubject;leads[i].emailBody=upd.emailBody;
     document.querySelector(`#c${i} .esubj`).innerHTML=`<span style="color:var(--dim);font-size:.6rem">SUBJECT: </span>${upd.emailSubject}`;
