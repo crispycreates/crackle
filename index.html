@@ -1,1141 +1,1919 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚡ CRACKLE — Agency Lead Finder</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
-<style>
-  :root {
-    --g: #00ff41;--c: #00f5ff;--p: #bf00ff;--pk: #ff006e;--y: #ffcc00;
-    --bg: #030803;--border: rgba(0,255,65,0.18);--dim: rgba(180,255,180,0.45);--text: #c8ffc8;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;min-height:100vh;overflow-x:hidden;}
-  #rain{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.13;}
-  .wrap{position:relative;z-index:10;max-width:1440px;margin:0 auto;padding:20px;}
-  .hdr{text-align:center;padding:36px 20px 28px;border-bottom:1px solid var(--border);margin-bottom:28px;}
-  .logo{font-size:3.6rem;font-weight:900;letter-spacing:.35em;color:var(--g);
-    text-shadow:0 0 14px var(--g),0 0 40px var(--g),0 0 80px rgba(0,255,65,.4);animation:flicker 5s infinite;}
-  @keyframes flicker{0%,93%,100%{opacity:1}94%{opacity:.7}95%{opacity:1}97%{opacity:.5}98%{opacity:1}}
-  .sub{color:var(--c);font-size:.75rem;letter-spacing:.3em;margin-top:6px;text-shadow:0 0 8px var(--c);}
-  .grid{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start;}
-  .sticky{position:sticky;top:20px;}
-  .panel{background:rgba(3,12,3,.88);border:1px solid var(--border);border-radius:8px;
-    padding:22px;backdrop-filter:blur(12px);box-shadow:0 0 22px rgba(0,255,65,.04),inset 0 0 18px rgba(0,255,65,.015);}
-  .ptitle{font-size:.68rem;letter-spacing:.22em;color:var(--c);text-transform:uppercase;
-    margin-bottom:18px;padding-bottom:9px;border-bottom:1px solid rgba(0,245,255,.18);text-shadow:0 0 7px var(--c);}
-  .fg{margin-bottom:18px;}
-  label.lbl{display:block;font-size:.65rem;letter-spacing:.16em;color:var(--c);margin-bottom:7px;text-transform:uppercase;}
-  input[type=text],input[type=url],input[type=password],select,textarea{
-    width:100%;background:rgba(0,0,0,.65);border:1px solid rgba(0,255,65,.28);color:var(--g);
-    padding:9px 13px;border-radius:4px;font-family:'Courier New',monospace;font-size:.82rem;outline:none;
-    transition:border-color .2s,box-shadow .2s;}
-  input:focus,select:focus,textarea:focus{border-color:var(--g);box-shadow:0 0 10px rgba(0,255,65,.28);}
-  select option{background:#071007;color:var(--g);}
-  .rel{position:relative;}
-  .eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;
-    color:var(--dim);cursor:pointer;font-family:'Courier New',monospace;font-size:.62rem;letter-spacing:.08em;}
-  .cbg{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
-  .cb{display:flex;align-items:center;gap:8px;cursor:pointer;}
-  .cb input{width:14px;height:14px;accent-color:var(--g);cursor:pointer;flex-shrink:0;}
-  .cb span{font-size:.76rem;color:var(--text);}
-  input[type=range]{width:100%;accent-color:var(--g);background:transparent;border:none;padding:0;}
-  .rl{display:flex;justify-content:space-between;font-size:.6rem;color:var(--dim);margin-top:3px;}
-  hr.div{border:none;border-top:1px solid rgba(0,255,65,.09);margin:18px 0;}
-  .btn-fire{width:100%;padding:13px;background:transparent;border:2px solid var(--g);color:var(--g);
-    font-family:'Courier New',monospace;font-size:.88rem;font-weight:bold;letter-spacing:.28em;
-    text-transform:uppercase;cursor:pointer;border-radius:4px;text-shadow:0 0 8px var(--g);
-    box-shadow:0 0 14px rgba(0,255,65,.18),inset 0 0 14px rgba(0,255,65,.04);transition:all .2s;margin-top:8px;}
-  .btn-fire:hover{background:rgba(0,255,65,.09);box-shadow:0 0 28px rgba(0,255,65,.38),inset 0 0 18px rgba(0,255,65,.09);}
-  .btn-fire:disabled{opacity:.35;cursor:not-allowed;}
-  .btn-c{padding:9px 18px;background:transparent;border:1px solid var(--c);color:var(--c);
-    font-family:'Courier New',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
-    cursor:pointer;border-radius:4px;transition:all .2s;text-shadow:0 0 6px var(--c);}
-  .btn-c:hover{background:rgba(0,245,255,.07);box-shadow:0 0 13px rgba(0,245,255,.28);}
-  .btn-p{padding:9px 18px;background:transparent;border:1px solid var(--p);color:var(--p);
-    font-family:'Courier New',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
-    cursor:pointer;border-radius:4px;transition:all .2s;}
-  .btn-p:hover{background:rgba(191,0,255,.07);}
-  .btn-r{padding:9px 18px;background:transparent;border:1px solid var(--pk);color:var(--pk);
-    font-family:'Courier New',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
-    cursor:pointer;border-radius:4px;}
-  .loading{text-align:center;padding:70px 40px;}
-  .ltxt{color:var(--g);font-size:.82rem;letter-spacing:.2em;animation:pulse 1.4s infinite;}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
-  .lbar{width:220px;height:2px;background:rgba(0,255,65,.15);margin:18px auto;overflow:hidden;border-radius:2px;}
-  .lbarfill{height:100%;background:var(--g);box-shadow:0 0 8px var(--g);animation:lm 2s infinite;}
-  @keyframes lm{0%{width:0%;margin-left:0%}50%{width:55%;margin-left:22%}100%{width:0%;margin-left:100%}}
-  .lsteps{font-size:.62rem;color:var(--dim);margin-top:16px;letter-spacing:.1em;line-height:2;}
-  .rhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
-  .rtitle{font-size:1.05rem;color:var(--g);text-shadow:0 0 8px rgba(0,255,65,.4);}
-  .rsub{font-size:.68rem;color:var(--dim);letter-spacing:.13em;margin-top:2px;}
-  .rbtns{display:flex;gap:10px;flex-wrap:wrap;}
-  .lcard{background:rgba(0,4,0,.9);border:1px solid rgba(0,255,65,.16);border-radius:8px;
-    margin-bottom:14px;overflow:hidden;transition:border-color .25s;}
-  .lcard:hover{border-color:rgba(0,255,65,.42);}
-  .lchead{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;
-    cursor:pointer;background:rgba(0,255,65,.025);user-select:none;}
-  .lchead:hover{background:rgba(0,255,65,.045);}
-  .cname{font-size:1.02rem;font-weight:bold;color:var(--g);text-shadow:0 0 7px rgba(0,255,65,.35);}
-  .ctype{font-size:.65rem;color:var(--c);letter-spacing:.1em;margin-top:2px;}
-  .badge{display:inline-flex;align-items:center;gap:5px;font-size:.65rem;letter-spacing:.09em;
-    padding:3px 9px;border-radius:20px;font-weight:bold;white-space:nowrap;}
-  .bhi{border:1px solid #00ff41;color:#00ff41;background:rgba(0,255,65,.09);}
-  .bmd{border:1px solid #ffcc00;color:#ffcc00;background:rgba(255,204,0,.07);}
-  .blo{border:1px solid #ff6b35;color:#ff6b35;background:rgba(255,107,53,.07);}
-  .chev{transition:transform .2s;color:var(--dim);font-size:.75rem;margin-left:10px;}
-  .chev.open{transform:rotate(180deg);}
-  .lcbody{padding:18px;display:none;border-top:1px solid rgba(0,255,65,.09);}
-  .lcbody.open{display:block;}
-  .igrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
-  .ii label{font-size:.58rem;color:var(--dim);margin-bottom:3px;display:block;letter-spacing:.1em;}
-  .ii .val{font-size:.8rem;color:var(--text);}
-  .ii .val a{color:var(--c);text-decoration:none;}
-  .ii .val a:hover{text-decoration:underline;}
-  .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;}
-  .tag{font-size:.62rem;padding:3px 8px;border-radius:3px;letter-spacing:.07em;}
-  .tg{background:rgba(0,245,255,.07);border:1px solid rgba(0,245,255,.25);color:var(--c);}
-  .tw{background:rgba(255,0,110,.08);border:1px solid rgba(255,0,110,.25);color:#ff7aac;}
-  .ts{background:rgba(255,204,0,.07);border:1px solid rgba(255,204,0,.25);color:var(--y);}
-  .mbox{margin-top:10px;padding:11px 14px;background:rgba(191,0,255,.05);
-    border:1px solid rgba(191,0,255,.2);border-radius:5px;}
-  .mlbl{font-size:.6rem;color:var(--p);letter-spacing:.16em;text-shadow:0 0 6px var(--p);margin-bottom:6px;}
-  .mbar{display:flex;align-items:center;gap:10px;}
-  .mbarbg{flex:1;height:5px;background:rgba(191,0,255,.15);border-radius:3px;overflow:hidden;}
-  .mbarfill{height:100%;background:linear-gradient(90deg,var(--p),var(--c));
-    box-shadow:0 0 5px var(--p);border-radius:3px;transition:width 1.1s ease;}
-  .mval{font-size:.82rem;font-weight:bold;color:var(--p);min-width:28px;text-align:right;}
-  .mreason{font-size:.68rem;color:rgba(191,0,255,.75);margin-top:5px;line-height:1.5;}
-  .esec{margin-top:15px;padding-top:15px;border-top:1px solid rgba(0,255,65,.09);}
-  .esubj{font-size:.78rem;color:var(--c);padding:8px 12px;background:rgba(0,245,255,.04);
-    border-left:2px solid var(--c);border-radius:2px;margin-bottom:9px;line-height:1.5;}
-  .ebody{font-size:.76rem;line-height:1.75;color:rgba(200,255,200,.72);white-space:pre-wrap;
-    background:rgba(0,0,0,.45);padding:13px;border-radius:4px;
-    border:1px solid rgba(0,255,65,.09);max-height:230px;overflow-y:auto;}
-  .ebtns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
-  .empty{text-align:center;padding:90px 40px;}
-  .eico{font-size:2.8rem;margin-bottom:14px;opacity:.3;}
-  .etxt{font-size:.76rem;letter-spacing:.16em;color:var(--dim);}
-  .alert{padding:9px 13px;border-radius:4px;font-size:.72rem;margin-bottom:14px;letter-spacing:.05em;}
-  .aw{background:rgba(255,204,0,.07);border:1px solid rgba(255,204,0,.28);color:var(--y);}
-  .ae{background:rgba(255,0,0,.07);border:1px solid rgba(255,0,0,.28);color:#ff5555;}
-  .stars{color:var(--y);}
-  ::-webkit-scrollbar{width:4px;}
-  ::-webkit-scrollbar-track{background:rgba(0,0,0,.3);}
-  ::-webkit-scrollbar-thumb{background:rgba(0,255,65,.25);border-radius:2px;}
-  input[type=file]{width:100%;background:rgba(0,0,0,.65);border:1px solid rgba(191,0,255,.28);color:var(--p);
-    padding:8px 13px;border-radius:4px;font-family:'Courier New',monospace;font-size:.72rem;cursor:pointer;}
-  input[type=file]::file-selector-button{background:transparent;border:1px solid rgba(191,0,255,.4);color:var(--p);
-    font-family:'Courier New',monospace;font-size:.62rem;padding:4px 10px;border-radius:3px;cursor:pointer;margin-right:10px;}
-  .osec{margin-top:15px;padding-top:15px;border-top:1px solid rgba(255,204,0,.13);}
-  .osec-title{font-size:.6rem;color:var(--y);letter-spacing:.18em;text-transform:uppercase;text-shadow:0 0 6px var(--y);margin-bottom:9px;}
-  .otip{background:rgba(0,0,0,.32);border:1px solid rgba(0,255,65,.08);border-radius:5px;padding:9px 12px;margin-bottom:7px;display:flex;gap:10px;align-items:flex-start;}
-  .otip-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
-  .otip-inner{flex:1;}
-  .otip-ch{font-size:.68rem;color:var(--y);letter-spacing:.1em;font-weight:bold;margin-bottom:3px;}
-  .otip-body{font-size:.66rem;color:rgba(200,255,200,.6);line-height:1.55;}
-  #ctxStatus{font-size:.6rem;color:var(--p);margin-top:5px;letter-spacing:.08em;min-height:14px;}
-  .vsec{margin-top:14px;padding:12px 14px;background:rgba(0,245,255,.03);
-    border:1px solid rgba(0,245,255,.15);border-radius:5px;}
-  .vsec-title{font-size:.6rem;color:var(--c);letter-spacing:.18em;text-transform:uppercase;
-    text-shadow:0 0 5px var(--c);margin-bottom:9px;}
-  .vlinks{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px;}
-  .vbtn{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:3px;
-    font-family:'Courier New',monospace;font-size:.62rem;letter-spacing:.1em;text-decoration:none;
-    border:1px solid rgba(0,245,255,.3);color:var(--c);background:rgba(0,245,255,.05);
-    transition:all .2s;cursor:pointer;}
-  .vbtn:hover{background:rgba(0,245,255,.12);box-shadow:0 0 8px rgba(0,245,255,.25);}
-  .vbtn.vbtn-warn{border-color:rgba(255,204,0,.3);color:var(--y);background:rgba(255,204,0,.04);}
-  .vbtn.vbtn-warn:hover{background:rgba(255,204,0,.1);}
-  .vdisclaim{font-size:.6rem;color:rgba(255,204,0,.6);letter-spacing:.07em;line-height:1.5;
-    padding-top:7px;border-top:1px solid rgba(255,204,0,.1);margin-top:5px;}
-  .rcheck{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:12px;
-    font-size:.62rem;letter-spacing:.09em;font-weight:bold;}
-  .rc-hi{border:1px solid #00ff41;color:#00ff41;background:rgba(0,255,65,.07);}
-  .rc-md{border:1px solid #ffcc00;color:#ffcc00;background:rgba(255,204,0,.06);}
-  .rc-lo{border:1px solid #ff6b35;color:#ff6b35;background:rgba(255,107,53,.06);}
-  .disclaimer-bar{background:rgba(255,204,0,.06);border:1px solid rgba(255,204,0,.2);
-    border-radius:6px;padding:10px 16px;margin-bottom:16px;font-size:.66rem;
-    color:rgba(255,220,80,.8);letter-spacing:.07em;line-height:1.6;}
-  @media(max-width:900px){
-    .grid{grid-template-columns:1fr;}.sticky{position:relative;}.logo{font-size:2.4rem;}
-    .igrid{grid-template-columns:1fr;}}
+  <meta charset="UTF-8" />
+  <title>The Crackle – AI Lead Generator by Crispy Media</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* Miami Vice palette: Mesa Pink, Teal, Magnolia, sunset orange. [web:39] */
+      --bg-deep: #02101b;
+      --bg-night: #01121f;
+      --cyan: #1be7ff;
+      --magenta: #ff6ec7;
+      --hot-pink: #fe6dc6;
+      --teal: #008080;
+      --sunset: #ff5733;
+      --white: #ffffff;
+      --text-main: #fdfbff;
+      --text-muted: #8fb2d9;
+      --panel-border: rgba(27, 231, 255, 0.6);
+      --panel-glow: rgba(255, 110, 199, 0.55);
+      --success: #00ffb4;
+    }
 
-  .psec{background:rgba(0,255,65,.03);border:1px solid rgba(0,255,65,.12);border-radius:6px;padding:12px 14px;margin-bottom:13px;}
-  .psec-title{font-size:.6rem;letter-spacing:.18em;color:rgba(0,255,65,.5);margin-bottom:9px;font-weight:600;}
-  .pscan-btn{background:rgba(0,255,65,.08);border:1px solid rgba(0,255,65,.25);color:var(--g);font-size:.6rem;letter-spacing:.1em;padding:5px 12px;border-radius:4px;cursor:pointer;transition:all .2s;}
-  .pscan-btn:hover{background:rgba(0,255,65,.15);}
-  .pscan-btn:disabled{opacity:.4;cursor:not-allowed;}
-  .ptag{display:inline-flex;align-items:center;gap:5px;font-size:.6rem;padding:3px 9px;border-radius:3px;letter-spacing:.06em;font-weight:600;}
-  .ptag.found{background:rgba(0,255,65,.12);color:#00c851;border:1px solid rgba(0,200,81,.3);}
-  .ptag.missing{background:rgba(255,122,172,.07);color:#ff7aac;border:1px solid rgba(255,122,172,.2);}
-  .ptag.unknown{background:rgba(255,255,255,.05);color:var(--dim);border:1px solid rgba(255,255,255,.08);}
-  .prow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;}
-  .pscan-note{font-size:.55rem;color:var(--dim);margin-top:7px;line-height:1.5;}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  #modeOverlay{position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
-  .mode-logo{font-size:2.2rem;font-weight:900;color:var(--g);text-shadow:0 0 30px var(--g),0 0 60px var(--g);letter-spacing:.15em;margin-bottom:6px;}
-  .mode-sub{font-size:.6rem;color:var(--dim);letter-spacing:.3em;margin-bottom:8px;}
-  .mode-ver{font-size:.6rem;color:rgba(0,255,65,.3);letter-spacing:.25em;font-family:'Courier New',monospace;margin-bottom:50px;}
-  .mode-cards{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;max-width:960px;}
-  .mcard{background:rgba(0,255,65,.03);border:1px solid rgba(0,255,65,.2);border-radius:10px;padding:28px 24px;width:260px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:280px;}
-  .mcard:hover{background:rgba(0,255,65,.07);border-color:rgba(0,255,65,.6);transform:translateY(-4px);box-shadow:0 0 30px rgba(0,255,65,.15);}
-  .mcard-icon{font-size:1.8rem;margin-bottom:12px;}
-  .mcard-title{font-size:.85rem;font-weight:700;color:var(--g);letter-spacing:.1em;margin-bottom:8px;}
-  .mcard-desc{font-size:.58rem;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:14px;}
-  .mcard-keys{font-size:.52rem;color:var(--dim);letter-spacing:.08em;border-top:1px solid rgba(0,255,65,.1);padding-top:10px;margin-top:auto;}
-  .mcard-keys span{color:rgba(0,255,65,.5);}
-  .mcard-select{margin-top:14px;background:rgba(0,255,65,.1);border:1px solid rgba(0,255,65,.3);color:var(--g);font-size:.6rem;letter-spacing:.15em;padding:7px 16px;border-radius:4px;cursor:pointer;width:100%;transition:all .2s;}
-  .mcard:hover .mcard-select{background:rgba(0,255,65,.2);border-color:var(--g);}
-  .mcard.recommended::before{content:'RECOMMENDED';position:absolute;top:10px;right:-22px;background:var(--g);color:#000;font-size:.45rem;font-weight:800;letter-spacing:.12em;padding:3px 28px;transform:rotate(45deg);transform-origin:center;}
-  .engine-badge{font-size:.52rem;letter-spacing:.12em;color:rgba(0,255,65,.5);border:1px solid rgba(0,255,65,.2);border-radius:3px;padding:3px 8px;cursor:pointer;transition:all .2s;background:rgba(0,255,65,.04);}
-  .engine-badge:hover{background:rgba(0,255,65,.1);color:var(--g);}
-  #matrixFeed{position:fixed;inset:0;background:#000;z-index:9998;display:none;flex-direction:column;font-family:'Courier New',monospace;overflow:hidden;}
-  #matrixRain{position:absolute;inset:0;opacity:.08;pointer-events:none;}
-  #feedContent{position:relative;z-index:2;padding:40px;max-width:800px;margin:0 auto;overflow-y:auto;height:100%;}
-  .feed-logo{font-size:1.4rem;font-weight:900;color:var(--g);text-shadow:0 0 20px var(--g);letter-spacing:.15em;margin-bottom:4px;}
-  .feed-sub{font-size:.55rem;color:var(--dim);letter-spacing:.25em;margin-bottom:30px;}
-  .feed-line{font-size:.65rem;color:var(--g);line-height:2;white-space:pre-wrap;min-height:1.3em;}
-  .feed-line.dim{color:rgba(0,255,65,.4);}
-  .feed-line.warn{color:#ff7aac;}
-  .feed-line.ok{color:#00c851;}
-  #feedProgress{margin-top:20px;font-size:.6rem;color:var(--dim);}
-</style>
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at 15% -20%, rgba(254, 109, 198, 0.6) 0%, transparent 55%),
+        radial-gradient(circle at 85% 120%, rgba(27, 231, 255, 0.5) 0%, transparent 55%),
+        linear-gradient(180deg, #02101b 0%, #01121f 55%, #000000 100%);
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .background {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 10% -18%, rgba(254, 109, 198, 0.7) 0%, transparent 60%),
+        radial-gradient(circle at 90% 120%, rgba(27, 231, 255, 0.55) 0%, transparent 55%),
+        radial-gradient(circle at 0% 120%, rgba(255, 87, 51, 0.4) 0%, transparent 55%),
+        linear-gradient(180deg, #02101b 0%, #01121f 55%, #000000 100%);
+      animation: hueShift 26s linear infinite alternate;
+    }
+
+    @keyframes hueShift {
+      0% { filter: hue-rotate(0deg) brightness(1); }
+      50% { filter: hue-rotate(10deg) brightness(1.05); }
+      100% { filter: hue-rotate(-8deg) brightness(0.98); }
+    }
+
+    .sun {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      width: 420px;
+      height: 420px;
+      transform: translateX(-50%);
+      background:
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 246, 191, 0.7) 28%, transparent 60%),
+        radial-gradient(circle at 50% 70%, rgba(255, 110, 199, 0.8) 0%, transparent 60%);
+      opacity: 0.7;
+      filter: blur(1px);
+      mix-blend-mode: screen;
+    }
+
+    .grid {
+      position: absolute;
+      left: 50%;
+      bottom: -40px;
+      width: 150vw;
+      height: 55vh;
+      transform: translateX(-50%) perspective(650px) rotateX(72deg);
+      background:
+        linear-gradient(to right, rgba(27, 231, 255, 0.25) 1px, transparent 1px),
+        linear-gradient(to top, rgba(27, 231, 255, 0.25) 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-position: center bottom;
+      box-shadow: 0 0 60px rgba(27, 231, 255, 0.55);
+      opacity: 0.7;
+      animation: gridDrift 18s linear infinite;
+    }
+
+    @keyframes gridDrift {
+      0% { background-position: center bottom; }
+      100% { background-position: center calc(100% + 80px); }
+    }
+
+    .city-strip {
+      position: absolute;
+      bottom: 22vh;
+      width: 170%;
+      left: -35%;
+      height: 120px;
+      background-image: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0) 0,
+        rgba(0, 0, 0, 0.9) 5%,
+        rgba(0, 0, 0, 1) 13%,
+        rgba(0, 0, 0, 0.8) 20%,
+        transparent 24%
+      );
+      background-size: 190px 100%;
+      opacity: 0.9;
+      filter: drop-shadow(0 0 12px rgba(27, 231, 255, 0.45));
+      animation: skylineScroll 40s linear infinite;
+    }
+
+    .city-strip:nth-child(2) {
+      bottom: 26vh;
+      height: 90px;
+      opacity: 0.7;
+      animation-duration: 55s;
+    }
+
+    .city-strip:nth-child(3) {
+      bottom: 30vh;
+      height: 60px;
+      opacity: 0.55;
+      animation-duration: 70s;
+    }
+
+    @keyframes skylineScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-140px); }
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.95), transparent 60%);
+      opacity: 0.28;
+      mix-blend-mode: screen;
+      animation: floatUp 16s linear infinite;
+    }
+
+    .particle:nth-child(4) { width: 4px; height: 16px; left: 12%; bottom: -80px; animation-duration: 17s; }
+    .particle:nth-child(5) { width: 5px; height: 22px; left: 38%; bottom: -90px; animation-duration: 21s; }
+    .particle:nth-child(6) { width: 4px; height: 18px; left: 63%; bottom: -95px; animation-duration: 19s; }
+    .particle:nth-child(7) { width: 6px; height: 24px; left: 84%; bottom: -100px; animation-duration: 23s; }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0); opacity: 0; }
+      10% { opacity: 0.4; }
+      90% { opacity: 0.15; }
+      100% { transform: translateY(-120vh); opacity: 0; }
+    }
+
+    .app-shell {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 44px;
+    }
+
+    .panel {
+      width: 100%;
+      max-width: 1160px;
+      background:
+        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.18), transparent 65%),
+        radial-gradient(circle at 100% 100%, rgba(255, 110, 199, 0.18), transparent 55%),
+        linear-gradient(145deg, rgba(2, 5, 28, 0.96), rgba(2, 2, 14, 0.98));
+      border-radius: 22px;
+      border: 1px solid var(--panel-border);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.85),
+        0 0 45px var(--panel-glow),
+        0 30px 120px rgba(0, 0, 0, 0.95);
+      padding: 26px 22px 26px;
+      backdrop-filter: blur(18px);
+    }
+
+    @media (min-width: 900px) {
+      .panel {
+        padding: 32px 32px 34px;
+      }
+    }
+
+    header.app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .logo-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .logo-main {
+      font-family: 'Orbitron', system-ui;
+      font-size: clamp(34px, 5.5vw, 44px);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      position: relative;
+      color: var(--white);
+      text-shadow:
+        0 0 6px rgba(255, 255, 255, 0.8),
+        0 0 16px rgba(27, 231, 255, 0.9),
+        0 0 32px rgba(255, 110, 199, 1),
+        0 0 60px rgba(255, 110, 199, 0.9);
+      animation: neonFlicker 4.5s infinite;
+    }
+
+    .logo-main::after {
+      content: '';
+      position: absolute;
+      inset: -6px -12px;
+      border-radius: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow:
+        0 0 18px rgba(27, 231, 255, 0.85),
+        0 0 32px rgba(255, 110, 199, 0.9);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    @keyframes neonFlicker {
+      0%, 18%, 20%, 22%, 55%, 100% {
+        opacity: 1;
+        text-shadow:
+          0 0 4px rgba(255, 255, 255, 0.9),
+          0 0 12px rgba(27, 231, 255, 1),
+          0 0 26px rgba(255, 110, 199, 1),
+          0 0 72px rgba(255, 110, 199, 0.9);
+      }
+      19%, 21%, 23% {
+        opacity: 0.25;
+        text-shadow: none;
+      }
+      56% {
+        opacity: 0.75;
+      }
+    }
+
+    h2.subtitle {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.24em;
+      color: var(--cyan);
+      opacity: 0.95;
+    }
+
+    .byline {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .header-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(27, 231, 255, 0.7);
+      background:
+        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.35), transparent 60%),
+        rgba(2, 6, 26, 0.98);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--cyan);
+    }
+
+    .header-pill-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #00ffb4, #00a86b);
+      box-shadow: 0 0 10px rgba(0, 255, 180, 1);
+      animation: pulseDot 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(0.9); opacity: 0.9; }
+      50% { transform: scale(1.25); opacity: 1; }
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: 22px;
+    }
+
+    @media (max-width: 880px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .panel-block {
+      border-radius: 18px;
+      padding: 16px 16px 18px;
+      background:
+        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.12), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(255, 110, 199, 0.12), transparent 60%),
+        rgba(3, 6, 30, 0.97);
+      border: 1px solid rgba(27, 231, 255, 0.65);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.85),
+        0 20px 55px rgba(0, 0, 0, 0.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel-block::before {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: conic-gradient(
+        from 90deg,
+        rgba(27, 231, 255, 0.22),
+        transparent 35%,
+        rgba(255, 110, 199, 0.22),
+        transparent 65%,
+        rgba(255, 87, 51, 0.2)
+      );
+      opacity: 0;
+      mix-blend-mode: screen;
+      animation: sweep 14s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes sweep {
+      0% { transform: rotate(0deg); opacity: 0; }
+      15% { opacity: 0.35; }
+      35% { opacity: 0; }
+      100% { transform: rotate(360deg); opacity: 0; }
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+    }
+
+    .pill-small {
+      font-size: 10px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(27, 231, 255, 0.65);
+      background: rgba(1, 5, 24, 0.96);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.17em;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: radial-gradient(circle, var(--magenta), var(--hot-pink));
+      box-shadow: 0 0 6px rgba(255, 110, 199, 1);
+    }
+
+    .muted {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .model-card {
+      position: relative;
+      padding: 11px 11px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(27, 231, 255, 0.55);
+      background:
+        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.17), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(255, 110, 199, 0.17), transparent 60%),
+        rgba(2, 6, 28, 0.98);
+      cursor: pointer;
+      transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, border-color 0.18s ease-out, background 0.18s ease-out;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .model-card:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        0 0 0 1px rgba(27, 231, 255, 0.4),
+        0 24px 70px rgba(0, 0, 0, 1);
+    }
+
+    .model-card.selected {
+      border-color: rgba(255, 110, 199, 0.9);
+      box-shadow:
+        0 0 0 1px rgba(255, 110, 199, 0.65),
+        0 0 30px rgba(255, 110, 199, 0.75),
+        0 26px 80px rgba(0, 0, 0, 1);
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 110, 199, 0.22), transparent 60%),
+        radial-gradient(circle at 120% 160%, rgba(27, 231, 255, 0.22), transparent 60%),
+        rgba(3, 7, 34, 0.98);
+    }
+
+    .model-name-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+
+    .model-name {
+      font-family: 'Orbitron', system-ui;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+    }
+
+    .model-badge {
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      background: rgba(2, 7, 26, 0.96);
+    }
+
+    .model-section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      margin-top: 3px;
+      margin-bottom: 2px;
+    }
+
+    .model-list {
+      list-style: none;
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .model-list li::before {
+      content: '• ';
+      color: var(--cyan);
+    }
+
+    .model-tagline {
+      font-size: 11px;
+      color: var(--hot-pink);
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .model-explainer {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .model-explainer h3 {
+      font-size: 15px;
+      margin-bottom: 6px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .explainer-sub {
+      font-size: 12px;
+      margin-bottom: 6px;
+      color: var(--hot-pink);
+    }
+
+    .explainer-block-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.17em;
+      margin-top: 10px;
+      margin-bottom: 2px;
+      color: var(--text-muted);
+    }
+
+    .explainer-list {
+      list-style: none;
+      font-size: 12px;
+      padding-left: 0;
+    }
+
+    .explainer-list li::before {
+      content: '- ';
+      color: var(--cyan);
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+    }
+
+    .step-dot {
+      width: 20px;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(27, 231, 255, 0.3);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .step-dot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--hot-pink), var(--cyan));
+      transform-origin: left;
+      transform: scaleX(0.33);
+    }
+
+    .step-dot[data-step="2"]::after { transform: scaleX(0.66); }
+    .step-dot[data-step="3"]::after { transform: scaleX(1); }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .field-row {
+      display: grid;
+      gap: 10px;
+    }
+
+    @media (min-width: 900px) {
+      .field-row.cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .field-row.cols-3 {
+        grid-template-columns: 1.2fr 1.1fr 0.9fr;
+      }
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px 9px;
+      border-radius: 9px;
+      border: 1px solid rgba(27, 231, 255, 0.7);
+      background:
+        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.12), transparent 55%),
+        rgba(1, 5, 24, 0.98);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.7),
+        0 10px 30px rgba(0, 0, 0, 0.9);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(158, 176, 224, 0.75);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+      max-height: 150px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+    }
+
+    .checkbox-group label {
+      font-size: 12px;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      accent-color: var(--hot-pink);
+    }
+
+    input[type="file"] {
+      padding: 6px 9px;
+      cursor: pointer;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: rgba(255, 110, 199, 0.9);
+      box-shadow:
+        0 0 0 1px rgba(255, 110, 199, 0.75),
+        0 12px 36px rgba(0, 0, 0, 1);
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      accent-color: var(--hot-pink);
+    }
+
+    .range-value {
+      min-width: 28px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mode-note {
+      font-size: 11px;
+      color: var(--cyan);
+      margin-top: -4px;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 110, 199, 0.22), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(27, 231, 255, 0.3), transparent 60%),
+        rgba(2, 6, 30, 0.98);
+      color: #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      cursor: pointer;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.95);
+      transition: transform 0.16s ease-out, box-shadow 0.16s ease-out, background 0.16s ease-out;
+    }
+
+    .btn-primary {
+      border-color: rgba(27, 231, 255, 0.95);
+      background:
+        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.45), transparent 60%),
+        radial-gradient(circle at 100% 120%, rgba(255, 110, 199, 0.5), transparent 60%),
+        linear-gradient(135deg, #041c40, #001b5a);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 22px rgba(27, 231, 255, 0.4),
+        0 26px 80px rgba(0, 0, 0, 1);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow:
+        0 0 10px rgba(27, 231, 255, 0.3),
+        0 14px 44px rgba(0, 0, 0, 1);
+    }
+
+    .btn-icon-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #00ffb4, #00a86b);
+      box-shadow: 0 0 9px rgba(0, 255, 180, 1);
+    }
+
+    .btn-secondary {
+      background: rgba(2, 6, 26, 0.96);
+      border-color: rgba(101, 117, 201, 0.9);
+      color: var(--text-muted);
+    }
+
+    .status-text {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-pip {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(27, 231, 255, 0.9);
+      box-shadow: 0 0 9px rgba(27, 231, 255, 1);
+      animation: pulseDot 1.5s ease-in-out infinite;
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 0, rgba(27, 231, 255, 0.22), transparent 55%),
+        radial-gradient(circle at 85% 100%, rgba(255, 110, 199, 0.28), transparent 60%),
+        rgba(1, 2, 16, 0.97);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 60;
+    }
+
+    .loading-overlay.visible {
+      display: flex;
+    }
+
+    .loading-card {
+      width: 100%;
+      max-width: 440px;
+      padding: 22px 22px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(27, 231, 255, 0.8);
+      background:
+        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.2), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(255, 110, 199, 0.24), transparent 60%),
+        rgba(3, 6, 30, 0.98);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.9),
+        0 30px 86px rgba(0, 0, 0, 1),
+        0 0 70px rgba(27, 231, 255, 0.7);
+    }
+
+    .loader-bar {
+      position: relative;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(5, 9, 46, 0.95);
+      overflow: hidden;
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+
+    .loader-bar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #fe6dc6, #1be7ff, #ff5733);
+      animation: loaderSlide 1.4s linear infinite;
+      background-size: 200% 100%;
+    }
+
+    @keyframes loaderSlide {
+      0% { transform: translateX(-60%); }
+      100% { transform: translateX(60%); }
+    }
+
+    .loading-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      margin-bottom: 4px;
+    }
+
+    .loading-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .loading-steps {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .results-panel {
+      margin-top: 16px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(27, 231, 255, 0.55);
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .results-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--text-muted);
+    }
+
+    .results-list {
+      display: grid;
+      gap: 8px;
+      max-height: 260px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .result-card {
+      border-radius: 12px;
+      padding: 10px 11px;
+      border: 1px solid rgba(27, 231, 255, 0.48);
+      background:
+        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.18), transparent 55%),
+        rgba(2, 7, 28, 0.98);
+      cursor: pointer;
+      transition: background 0.16s ease-out, transform 0.12s ease-out, box-shadow 0.12s ease-out;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 1);
+    }
+
+    .result-card:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 18px rgba(27, 231, 255, 0.45),
+        0 26px 78px rgba(0, 0, 0, 1);
+    }
+
+    .result-topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 2px;
+    }
+
+    .result-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .result-score-pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 255, 180, 0.9);
+      color: var(--success);
+      background: rgba(0, 16, 14, 0.98);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .result-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .meta-chip {
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(100, 129, 210, 0.9);
+      background: rgba(3, 7, 30, 0.98);
+    }
+
+    .result-fit {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 10, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 70;
+    }
+
+    .modal-backdrop.visible {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 720px;
+      max-height: 80vh;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid rgba(27, 231, 255, 0.9);
+      background:
+        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.22), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(255, 110, 199, 0.26), transparent 60%),
+        rgba(2, 6, 30, 0.98);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 1),
+        0 30px 86px rgba(0, 0, 0, 1),
+        0 0 70px rgba(27, 231, 255, 0.7);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid rgba(27, 231, 255, 0.55);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .modal-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .modal-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .modal-close {
+      border: none;
+      background: rgba(2, 6, 26, 0.98);
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      border: 1px solid rgba(98, 124, 210, 0.95);
+    }
+
+    .modal-body {
+      padding: 12px 18px 14px;
+      overflow: auto;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .modal-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    @media (min-width: 820px) {
+      .modal-grid {
+        grid-template-columns: 1.15fr 1.1fr;
+      }
+    }
+
+    .detail-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 3px;
+      color: var(--text-muted);
+    }
+
+    .detail-list {
+      list-style: none;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .detail-list li span {
+      color: var(--text-main);
+    }
+
+    .email-draft {
+      margin-top: 6px;
+      padding: 8px 9px;
+      border-radius: 9px;
+      border: 1px dashed rgba(112, 136, 222, 0.95);
+      background: rgba(2, 6, 26, 0.98);
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+
+    .alt-leads {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .modal-footer {
+      padding: 8px 18px 12px;
+      border-top: 1px solid rgba(27, 231, 255, 0.55);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge-mode {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(2, 6, 26, 0.98);
+      text-transform: uppercase;
+      letter-spacing: 0.17em;
+    }
+
+    .pdf-target { display: none; }
+  </style>
 </head>
 <body>
-
-
-<div id="modeOverlay">
-  <div class="mode-logo">⚡ CRACKLE</div>
-  <div class="mode-sub">// v4.1 · PICK YOUR LEAD ENGINE · REQUIRED</div>
-  <div class="mode-ver" style="margin-bottom:60px;">All modes include pixel/tag detection + tracking scan</div>
-  <div class="mode-cards" style="gap:20px;">
-    <div class="mcard" onclick="selectMode('agent')">
-      <div class="mcard-icon">🤖</div>
-      <div class="mcard-title">AGENT (WEB SEARCH)</div>
-      <div class="mcard-desc">OpenAI agent uses web_search_preview to find real businesses, scores gaps, writes emails.</div>
-      <div class="mcard-keys">OpenAI key • Cheap • Good accuracy</div>
-      <div class="mcard-select">▶ SELECT</div>
-    </div>
-    <div class="mcard recommended" onclick="selectMode('computer')">
-      <div class="mcard-icon">🖥️</div>
-      <div class="mcard-title">AGENT + COMPUTER USE</div>
-      <div class="mcard-desc">Full browser automation. Visits sites, opens DevTools, inspects source for fbq/gtag.</div>
-      <div class="mcard-keys">OpenAI key • Expensive • Highest accuracy</div>
-      <div class="mcard-select">▶ SELECT</div>
-    </div>
-    <div class="mcard" onclick="selectMode('perplexity')">
-      <div class="mcard-icon">🔍</div>
-      <div class="mcard-title">PERPLEXITY + OPENAI</div>
-      <div class="mcard-desc">Perplexity sonar-pro finds businesses with citations, OpenAI scores/emails.</div>
-      <div class="mcard-keys">2 keys • Medium • Best value</div>
-      <div class="mcard-select">▶ SELECT</div>
-    </div>
-    <div class="mcard" onclick="selectMode('twostage')">
-      <div class="mcard-icon">⚡</div>
-      <div class="mcard-title">TWO-STAGE OPENAI</div>
-      <div class="mcard-desc">Stage 1: GPT web search. Stage 2: GPT scores + emails.</div>
-      <div class="mcard-keys">OpenAI key • Cheap • Reliable</div>
-      <div class="mcard-select">▶ SELECT</div>
-    </div>
-    <div class="mcard" onclick="selectMode('searchonly')">
-      <div class="mcard-icon">🔬</div>
-      <div class="mcard-title">WEB SEARCH ONLY</div>
-      <div class="mcard-desc">Pure web_search_preview. Searches '[business] meta pixel installed' for mentions.</div>
-      <div class="mcard-keys">OpenAI key • Cheapest • Bulk runs</div>
-      <div class="mcard-select">▶ SELECT</div>
-    </div>
-  </div>
+<div class="background">
+  <div class="sun"></div>
+  <div class="city-strip"></div>
+  <div class="city-strip"></div>
+  <div class="city-strip"></div>
+  <div class="grid"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
 </div>
 
-  <div class="mode-sub">// AGENCY LEAD INTELLIGENCE SYSTEM · BY CRISPY MARKETING //</div>
-  <div class="mode-ver">v 4.1 · SELECT YOUR LEAD ENGINE</div>
-  <div class="mode-cards">
-    <div class="mcard" onclick="selectMode('agent')">
-      <div class="mcard-icon">🤖</div>
-      <div class="mcard-title">OPENAI AGENT</div>
-      <div class="mcard-desc">Full autonomous agent loop. Searches the web, visits each business site, enriches profiles, scores weaknesses, and writes emails — all in sequence. Matrix-style live feed while it runs.</div>
-      <div class="mcard-keys">Keys needed: <span>OpenAI only</span></div>
-      <div class="mcard-select">▶ SELECT ENGINE</div>
-    </div>
-    <div class="mcard recommended" onclick="selectMode('perplexity')">
-      <div class="mcard-icon">🔍</div>
-      <div class="mcard-title">PERPLEXITY + OPENAI</div>
-      <div class="mcard-desc">Perplexity's sonar-pro model finds real businesses with live web citations. OpenAI then scores leads, analyzes digital weaknesses, and writes cold emails. Highest real-world accuracy.</div>
-      <div class="mcard-keys">Keys needed: <span>OpenAI + Perplexity</span></div>
-      <div class="mcard-select">▶ SELECT ENGINE</div>
-    </div>
-    <div class="mcard" onclick="selectMode('twostage')">
-      <div class="mcard-icon">⚡</div>
-      <div class="mcard-title">TWO-STAGE OPENAI</div>
-      <div class="mcard-desc">Stage 1: GPT with web search finds real businesses and URLs. Stage 2: GPT scores, analyzes digital gaps, and writes personalized cold emails. Fast, clean, one API key.</div>
-      <div class="mcard-keys">Keys needed: <span>OpenAI only</span></div>
-      <div class="mcard-select">▶ SELECT ENGINE</div>
-    </div>
-  </div>
-</div>
-<div id="matrixFeed">
-  <canvas id="matrixRain"></canvas>
-  <div id="feedContent">
-    <div class="feed-logo">⚡ CRACKLE AGENT</div>
-    <div class="feed-sub">// AUTONOMOUS LEAD INTELLIGENCE · BY CRISPY MARKETING //</div>
-    <div id="feedLines"></div>
-    <div id="feedProgress"></div>
-  </div>
-</div>
-<canvas id="rain"></canvas>
-<div class="wrap">
-  <div class="hdr">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;"><div class="logo">⚡ CRACKLE</div><button class="engine-badge" id="engineBadge" onclick="showModeSelector()">⬡ ENGINE: — · CHANGE</button></div>
-    <div class="sub">// AGENCY LEAD INTELLIGENCE SYSTEM · BY CRISPY MARKETING //</div>
-    <div style="font-size:.65rem;color:rgba(0,255,65,.35);letter-spacing:.25em;margin-top:6px;font-family:'Courier New',monospace;">v 4.1</div>
-  </div>
-  <div class="grid">
-    <div class="sticky">
-      <div class="panel">
-        <div class="ptitle">⬡ System Configuration</div>
-        <div class="fg">
-          <label class="lbl">OpenAI API Key</label>
-          <div class="rel">
-            <input type="password" id="apiKey" placeholder="sk-..." />
-            <button class="eye" onclick="toggleKey()">SHOW</button>
+<div class="app-shell">
+  <div class="panel">
+    <header class="app-header">
+      <div class="logo-stack">
+        <div class="logo-main">THE&nbsp;CRACKLE</div>
+        <h2 class="subtitle">AI Lead Generator</h2>
+        <div class="byline">by Crispy Media · Miami‑night neon for contractor prospecting</div>
+      </div>
+      <div class="header-pill">
+        <div class="header-pill-dot"></div>
+        <span>Mode selector · Live</span>
+      </div>
+    </header>
+
+    <main>
+      <!-- Model selector -->
+      <section class="panel-block" id="model-panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Step 1 · Pick your engine</div>
+            <div class="muted">Choose how The Crackle thinks and searches: reasoning, browser, hybrid, or raw search.</div>
           </div>
-          <div class="alert aw" style="margin-top:8px;font-size:.6rem;">⚠ Key stays in your browser only. Never shared.</div>
-        </div>
-        <div class="fg">
-          <label class="lbl">Model <span style="color:var(--dim)">(same key, tier determines access)</span></label>
-          <select id="modelSel">
-            <optgroup label="── GPT-5.4 · Latest Frontier (Mar 2026)">
-              <option value="gpt-5.4" selected>GPT-5.4 · Best quality — recommended ⭐</option>
-              <option value="gpt-5.4-mini">GPT-5.4 Mini · Fast + strong, lower cost</option>
-              <option value="gpt-5.4-nano">GPT-5.4 Nano · Cheapest 5.4-class</option>
-            </optgroup>
-            <optgroup label="── GPT-5 · Previous Frontier">
-              <option value="gpt-5">GPT-5 · Excellent quality</option>
-              <option value="gpt-5-mini">GPT-5 Mini · Cost-efficient</option>
-            </optgroup>
-            <optgroup label="── GPT-4.1 · Stable + Smart">
-              <option value="gpt-4.1">GPT-4.1 · Smartest non-reasoning</option>
-              <option value="gpt-4.1-mini">GPT-4.1 Mini · Smaller + faster</option>
-              <option value="gpt-4.1-nano">GPT-4.1 Nano · Fastest 4.1</option>
-            </optgroup>
-            <optgroup label="── GPT-4o · Older / Cheapest">
-              <option value="gpt-4o">GPT-4o · Reliable, widely available</option>
-              <option value="gpt-4o-mini">GPT-4o Mini · Lowest cost option</option>
-            </optgroup>
-          </select>
-          <div style="font-size:.6rem;color:var(--dim);margin-top:5px;letter-spacing:.08em;">↳ Higher models = better lead quality &amp; stricter location. Key tier determines access.</div>
-        </div>
-        <hr class="div">
-        <div class="fg">
-          <label class="lbl">Services You Offer</label>
-          <div class="cbg">
-            <label class="cb"><input type="checkbox" name="svc" value="Web Design" checked><span>Web Design</span></label>
-            <label class="cb"><input type="checkbox" name="svc" value="SEO" checked><span>SEO</span></label>
-            <label class="cb"><input type="checkbox" name="svc" value="Custom Web Apps"><span>Custom Web Apps</span></label>
-            <label class="cb"><input type="checkbox" name="svc" value="Paid Ads"><span>Paid Ads</span></label>
-            <label class="cb"><input type="checkbox" name="svc" value="CRM Implementation"><span>CRM Setup</span></label>
-            <label class="cb"><input type="checkbox" name="svc" value="Social Media"><span>Social Media</span></label>
-            <label class="cb"><input type="checkbox" name="svc" value="Content Creation"><span>Content Creation</span></label>
+          <div class="pill-small">
+            <span class="pill-dot"></span>
+            <span>Mode aware inputs</span>
           </div>
         </div>
-        <hr class="div">
-        <div class="fg">
-          <label class="lbl">Target Contractor Type <span style="color:var(--dim)">(select multiple)</span></label>
-          <div class="cbg">
-            <label class="cb"><input type="checkbox" name="ctype" value="Roofing Contractors" checked><span>Roofers</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Insulation Contractors"><span>Insulators</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Spray Foam Insulation Contractors"><span>Spray Foam</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Plumbing Contractors"><span>Plumbers</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="HVAC Contractors"><span>HVAC</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Electrical Contractors"><span>Electricians</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Home Remodeling Contractors"><span>Home Remodeling</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="General Contractors"><span>General Contractors</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Painting Contractors"><span>Painters</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Landscaping Companies"><span>Landscapers</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Concrete &amp; Foundation Contractors"><span>Concrete / Foundation</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Flooring Contractors"><span>Flooring</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Welding &amp; Metal Fabrication Shops"><span>Welders / Metal Fab</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Siding &amp; Exterior Contractors"><span>Siding</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Fence Contractors"><span>Fencing</span></label>
-            <label class="cb"><input type="checkbox" name="ctype" value="Window &amp; Door Contractors"><span>Windows &amp; Doors</span></label>
+
+        <div class="model-grid" id="model-grid">
+          <article class="model-card selected" data-mode="agent">
+            <div class="model-name-line">
+              <div class="model-name">Agent</div>
+              <div class="model-badge">Pure reasoning</div>
+            </div>
+            <div class="model-section-label">Pros</div>
+            <ul class="model-list">
+              <li>Fast lead criteria, scoring, and cold email drafts.</li>
+              <li>Lowest UI and infra complexity.</li>
+            </ul>
+            <div class="model-section-label">Cons</div>
+            <ul class="model-list">
+              <li>No live website or pixel verification.</li>
+              <li>Best for planning, not factual discovery.</li>
+            </ul>
+            <div class="model-tagline">Run on your strongest reasoning model (GPT‑5.4, etc.).</div>
+          </article>
+
+          <article class="model-card" data-mode="agent-computer">
+            <div class="model-name-line">
+              <div class="model-name">Agent + Computer Use</div>
+              <div class="model-badge">Browser native</div>
+            </div>
+            <div class="model-section-label">Pros</div>
+            <ul class="model-list">
+              <li>Inspects live sites for Meta Pixel, tags, and funnels.</li>
+              <li>Handles multi‑step click paths more reliably.</li>
+            </ul>
+            <div class="model-section-label">Cons</div>
+            <ul class="model-list">
+              <li>Slower, more brittle when sites block bots.</li>
+              <li>Requires more compute and tighter prompting.</li>
+            </ul>
+            <div class="model-tagline">Use a tool‑capable agent like GPT‑5.4 w/ browser tools.</div>
+          </article>
+
+          <article class="model-card" data-mode="perplexity-openai">
+            <div class="model-name-line">
+              <div class="model-name">Perplexity + OpenAI</div>
+              <div class="model-badge">Hybrid research</div>
+            </div>
+            <div class="model-section-label">Pros</div>
+            <ul class="model-list">
+              <li>Fresh, citation‑backed data for every lead.</li>
+              <li>OpenAI handles synthesis and formatting.</li>
+            </ul>
+            <div class="model-section-label">Cons</div>
+            <ul class="model-list">
+              <li>More moving parts and integration work.</li>
+              <li>Overkill for tiny, quick‑hit lists.</li>
+            </ul>
+            <div class="model-tagline">Strong synthesis model + Perplexity retrieval.</div>
+          </article>
+
+          <article class="model-card" data-mode="openai-only">
+            <div class="model-name-line">
+              <div class="model-name">OpenAI Only</div>
+              <div class="model-badge">Pure generation</div>
+            </div>
+            <div class="model-section-label">Pros</div>
+            <ul class="model-list">
+              <li>Fastest path for copy and internal reasoning.</li>
+              <li>Minimal external dependencies.</li>
+            </ul>
+            <div class="model-section-label">Cons</div>
+            <ul class="model-list">
+              <li>No live business or pixel checks.</li>
+              <li>Can sound confident on unverified data.</li>
+            </ul>
+            <div class="model-tagline">Use GPT‑5.4 or similar for premium quality.</div>
+          </article>
+
+          <article class="model-card" data-mode="two-stage">
+            <div class="model-name-line">
+              <div class="model-name">Two‑Stage</div>
+              <div class="model-badge">Plan → execute</div>
+            </div>
+            <div class="model-section-label">Pros</div>
+            <ul class="model-list">
+              <li>Separates search plan from execution.</li>
+              <li>Easier to debug complex hunts.</li>
+            </ul>
+            <div class="model-section-label">Cons</div>
+            <ul class="model-list">
+              <li>Longer runs and more state to manage.</li>
+              <li>Weak planning hurts stage two.</li>
+            </ul>
+            <div class="model-tagline">Strong planner model + fast executor.</div>
+          </article>
+
+          <article class="model-card" data-mode="web-search-only">
+            <div class="model-name-line">
+              <div class="model-name">Web Search Only</div>
+              <div class="model-badge">Raw discovery</div>
+            </div>
+            <div class="model-section-label">Pros</div>
+            <ul class="model-list">
+              <li>Predictable keyword‑driven prospecting.</li>
+              <li>Great for quick scans and manual review.</li>
+            </ul>
+            <div class="model-section-label">Cons</div>
+            <ul class="model-list">
+              <li>Weaker synthesis and automation.</li>
+              <li>Pixel checks need a second pass.</li>
+            </ul>
+            <div class="model-tagline">Pair later with an Agent mode for synthesis.</div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Config + results -->
+      <section class="panel-block">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Step 2 · Tune the hunt</div>
+            <div class="muted">Inputs shift per mode so you only see what you actually need.</div>
+          </div>
+          <div class="pill-small">
+            <span class="pill-dot"></span>
+            <span id="current-mode-label">Agent mode</span>
           </div>
         </div>
-        <div class="fg">
-          <label class="lbl">Include Cities <span style="color:var(--dim)">(comma separated, optional)</span></label>
-          <input type="text" id="incCity" placeholder="Edmonton, Sherwood Park..." value="Edmonton, Sherwood Park, St. Albert">
+
+        <div class="stepper">
+          <div class="step-dot" id="step-dot" data-step="1"></div>
+          <span id="step-label">1 · Configure</span>
         </div>
-        <div class="fg">
-          <label class="lbl">Include Province / State <span style="color:var(--dim)">(comma separated, optional)</span></label>
-          <input type="text" id="incProv" placeholder="Alberta, BC, Ontario...">
-          <div style="font-size:.6rem;color:var(--dim);margin-top:4px;letter-spacing:.08em;">↳ Use city, province, both, or neither</div>
-        </div>
-        <div class="fg">
-          <label class="lbl">Exclude Cities</label>
-          <input type="text" id="exCity" placeholder="Calgary, Red Deer...">
-        </div>
-        <div class="fg">
-          <label class="lbl">Lead Count: <span id="lcd" style="color:var(--g)">8</span></label>
-          <input type="range" id="lcount" min="3" max="50" value="8"
-            oninput="document.getElementById('lcd').textContent=this.value">
-          <div class="rl"><span>3</span><span>50</span></div>
-        </div>
-        <hr class="div">
-        <div class="fg">
-          <label class="lbl" style="color:var(--p);text-shadow:0 0 6px var(--p);">⬡ My Agency Website <span style="color:var(--dim)">(optional)</span></label>
-          <input type="url" id="mysite" placeholder="https://crispymarketing.ca">
-          <div style="font-size:.6rem;color:var(--dim);margin-top:5px;letter-spacing:.08em;">↳ Adds match likelihood score to every lead</div>
-        </div>
-        <div class="fg">
-          <label class="lbl" style="color:var(--p);text-shadow:0 0 6px var(--p);">⬡ Agency Context File <span style="color:var(--dim)">(optional)</span></label>
-          <input type="file" id="ctxFile" accept=".pdf,.doc,.docx,.txt" onchange="handleFileSelect(this)">
-          <div style="font-size:.6rem;color:var(--dim);margin-top:5px;letter-spacing:.08em;">↳ PDF, Word doc, or TXT — enriches AI context beyond your website</div>
-          <div id="ctxStatus"></div>
-        </div>
-        
-        <div class="cfg-block" style="margin-bottom:16px;">
-          <label style="font-size:.6rem;letter-spacing:.18em;color:var(--p);text-shadow:0 0 6px var(--p);">⬡ Tracking Scan Settings</label>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+
+        <article class="model-explainer" id="model-explainer">
+          <h3 id="explainer-title">Agent · pure reasoning mode</h3>
+          <div class="explainer-sub" id="explainer-sub">
+            The Crackle thinks through targeting, scoring, and outreach without calling live web tools.
+          </div>
+
+          <div class="explainer-block-title">When to use</div>
+          <ul class="explainer-list" id="explainer-when">
+            <li>You want to define ICP and scoring logic for contractors.</li>
+            <li>You need cold email frameworks and offer angles.</li>
+            <li>You prefer speed over live verification.</li>
+          </ul>
+
+          <div class="explainer-block-title">Limits to respect</div>
+          <ul class="explainer-list" id="explainer-limits">
+            <li>Don’t rely on it to “invent” real businesses or pixels.</li>
+            <li>Pair with a browser or search mode for truth‑checking.</li>
+          </ul>
+        </article>
+
+        <form id="crackle-form">
+          <div class="field-row cols-2" id="api-row-1">
+            <div class="field">
+              <label for="openai-key">OpenAI API key</label>
+              <input id="openai-key" name="openaiKey" type="text" placeholder="sk-..." />
+              <div class="hint">Required for all modes that call OpenAI.</div>
+            </div>
+            <div class="field">
+              <label for="builtwith-key">BuiltWith API key</label>
+              <input id="builtwith-key" name="builtwithKey" type="text" placeholder="bw-..." />
+              <div class="hint">Used for tech stacks and tag detection.</div>
+            </div>
+          </div>
+
+          <div class="field-row cols-2" id="api-row-2">
+            <div class="field" id="perplexity-api-wrapper">
+              <label for="perplexity-key">Perplexity API key</label>
+              <input id="perplexity-key" name="perplexityKey" type="text" placeholder="px-..." />
+              <div class="hint">Required for Perplexity + OpenAI and Web Search modes.</div>
+            </div>
+            <div class="field">
+              <label for="mode-note">Mode‑specific requirements</label>
+              <div class="mode-note" id="mode-note">
+                Agent: Perplexity key is not required. Focus on criteria and messaging.
+              </div>
+            </div>
+          </div>
+
+          <!-- SERVICES checkboxes -->
+          <div class="field">
+            <label>Digital marketing services</label>
+            <div class="checkbox-group" id="services-group">
+              <label><input type="checkbox" name="services" value="Web Design"> Web Design</label>
+              <label><input type="checkbox" name="services" value="SEO"> SEO</label>
+              <label><input type="checkbox" name="services" value="Content Creation"> Content Creation</label>
+              <label><input type="checkbox" name="services" value="CRM Set Up"> CRM Set Up</label>
+              <label><input type="checkbox" name="services" value="Digital Ads"> Digital Ads</label>
+              <label><input type="checkbox" name="services" value="Automation Building"> Automation Building</label>
+              <label><input type="checkbox" name="services" value="Custom Web Apps"> Custom Web Apps</label>
+            </div>
+            <div class="hint">Tick everything you want The Crackle to propose in this run.</div>
+          </div>
+
+          <!-- CONTRACTORS checkboxes -->
+          <div class="field">
+            <label>Contractor types</label>
+            <div class="checkbox-group" id="contractors-group">
+              <label><input type="checkbox" name="contractors" value="Roofing contractors"> Roofing contractors</label>
+              <label><input type="checkbox" name="contractors" value="HVAC contractors"> HVAC contractors</label>
+              <label><input type="checkbox" name="contractors" value="Plumbing contractors"> Plumbing contractors</label>
+              <label><input type="checkbox" name="contractors" value="Electrical contractors"> Electrical contractors</label>
+              <label><input type="checkbox" name="contractors" value="General contractors"> General contractors</label>
+              <label><input type="checkbox" name="contractors" value="Landscaping contractors"> Landscaping contractors</label>
+              <label><input type="checkbox" name="contractors" value="Concrete & foundation contractors"> Concrete & foundation contractors</label>
+              <label><input type="checkbox" name="contractors" value="Painting contractors"> Painting contractors</label>
+              <label><input type="checkbox" name="contractors" value="Flooring installers"> Flooring installers</label>
+              <label><input type="checkbox" name="contractors" value="Solar installers"> Solar installers</label>
+              <label><input type="checkbox" name="contractors" value="Window & door installers"> Window & door installers</label>
+              <label><input type="checkbox" name="contractors" value="Fencing contractors"> Fencing contractors</label>
+              <label><input type="checkbox" name="contractors" value="Remodeling contractors"> Remodeling contractors</label>
+              <label><input type="checkbox" name="contractors" value="Deck & patio builders"> Deck & patio builders</label>
+              <label><input type="checkbox" name="contractors" value="Garage door contractors"> Garage door contractors</label>
+              <label><input type="checkbox" name="contractors" value="Masonry & brickwork"> Masonry & brickwork</label>
+              <label><input type="checkbox" name="contractors" value="Welding & metal fabrication"> Welding & metal fabrication</label>
+              <label><input type="checkbox" name="contractors" value="Spray foam insulation"> Spray foam insulation</label>
+              <label><input type="checkbox" name="contractors" value="Excavation & earthworks"> Excavation & earthworks</label>
+              <label><input type="checkbox" name="contractors" value="Asphalt & paving"> Asphalt & paving</label>
+              <label><input type="checkbox" name="contractors" value="Roof cleaning & soft wash"> Roof cleaning & soft wash</label>
+              <label><input type="checkbox" name="contractors" value="Gutter installers"> Gutter installers</label>
+              <label><input type="checkbox" name="contractors" value="Cabinet makers"> Cabinet makers</label>
+              <label><input type="checkbox" name="contractors" value="Tile & stone"> Tile & stone</label>
+              <label><input type="checkbox" name="contractors" value="Carpenters"> Carpenters</label>
+              <label><input type="checkbox" name="contractors" value="Home builders"> Home builders</label>
+            </div>
+            <div class="hint">Tick as many contractor types as you want in this search.</div>
+          </div>
+
+          <div class="field-row cols-3">
+            <div class="field">
+              <label for="locations-text">Locations (free‑form)</label>
+              <input id="locations-text" name="locationsText" type="text" placeholder="e.g. Miami, Fort Lauderdale, Orlando" />
+              <div class="hint">Use city names, postal regions, or custom text.</div>
+            </div>
+            <div class="field">
+              <label for="states">States / provinces</label>
+              <input id="states" name="states" type="text" placeholder="FL, GA, TX" />
+              <div class="hint">Fill this or cities – only one path is required.</div>
+            </div>
+            <div class="field">
+              <label for="exclude-cities">Exclude cities</label>
+              <input id="exclude-cities" name="excludeCities" type="text" placeholder="Cities to skip" />
+              <div class="hint">Comma‑separated list of cities to avoid.</div>
+            </div>
+          </div>
+
+          <div class="field-row cols-2">
+            <div class="field">
+              <label for="search-count">Number of leads</label>
+              <div class="slider-row">
+                <input id="search-count" name="searchCount" type="range" min="3" max="5" step="1" value="3" />
+                <div class="range-value" id="range-value">3</div>
+              </div>
+              <div class="hint">Between 3–5 high‑intent prospects per run.</div>
+            </div>
+            <div class="field">
+              <label for="website">Your website</label>
+              <input id="website" name="website" type="text" placeholder="https://youragency.com" />
+              <div class="hint">Used to align fit score and email copy.</div>
+            </div>
+          </div>
+
+          <div class="field-row cols-2">
+            <div class="field">
+              <label for="context-file">Upload context file</label>
+              <input id="context-file" name="contextFile" type="file" />
+              <div class="hint">Brand docs, offers, or case studies – used for scoring & messaging.</div>
+            </div>
+            <div class="field">
+              <label for="notes">Extra targeting notes</label>
+              <textarea id="notes" name="notes" placeholder="Add ICP details, exclusions, tone, or special rules..."></textarea>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button type="button" class="btn btn-secondary" id="reset-btn">Reset</button>
+            <div class="status-text">
+              <div class="status-pip"></div>
+              <span id="status-label">Idle · Waiting for your crackle.</span>
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <div class="btn-icon-dot"></div>
+              <span>Run lead search</span>
+            </button>
+          </div>
+        </form>
+
+        <section class="results-panel" id="results-panel" style="display:none;">
+          <div class="results-header">
             <div>
-              <label style="font-size:.55rem;color:var(--dim);letter-spacing:.1em;display:block;margin-bottom:4px;">META PIXEL PROVIDER</label>
-              <select id="pixelProvider" onchange="toggleBuiltWithKey()" style="width:100%;font-size:.62rem;padding:5px 8px;">
-                <option value="facebook">Facebook Graph API (free)</option>
-                <option value="builtwith">BuiltWith</option>
-              </select>
+              <div class="results-title">Step 3 · Review & export</div>
+              <div class="muted">Tap a card to see full profile, scoring, pixels, and email draft.</div>
             </div>
-            <div>
-              <label style="font-size:.55rem;color:var(--dim);letter-spacing:.1em;display:block;margin-bottom:4px;">GOOGLE TAG PROVIDER</label>
-              <select id="googleTagProvider" onchange="toggleBuiltWithKey()" style="width:100%;font-size:.62rem;padding:5px 8px;">
-                <option value="htmlscan">HTML Scan (free, no key)</option>
-                <option value="builtwith">BuiltWith</option>
-              </select>
-            </div>
+            <button class="btn btn-secondary" id="export-pdf-btn">Export PDF</button>
           </div>
-          <div id="bwKeyWrap" style="display:none;margin-top:8px;">
-            <label style="font-size:.55rem;color:var(--dim);letter-spacing:.1em;display:block;margin-bottom:4px;">BUILTWITH API KEY</label>
-            <div style="position:relative;">
-              <input type="password" id="bwKey" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" style="width:100%;font-size:.62rem;padding:5px 8px;padding-right:52px;">
-              <button onclick="toggleBwVis()" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:.55rem;color:var(--dim);background:none;border:none;cursor:pointer;letter-spacing:.06em;">SHOW</button>
-            </div>
-            <div style="font-size:.55rem;color:var(--dim);margin-top:4px;letter-spacing:.08em;">↳ Free key at <a href="https://builtwith.com/api" target="_blank" style="color:var(--c);">builtwith.com/api</a></div>
-          </div>
+          <div class="results-list" id="results-list"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-card">
+    <div class="loading-title">Crackling the neon grid…</div>
+    <div class="loading-sub" id="loading-sub">
+      Locking onto contractors, scanning, and ranking by fit.
+    </div>
+    <div class="loader-bar"></div>
+    <div class="loading-steps" id="loading-steps">
+      1. Reading your services, trades, and geo.<br>
+      2. Mapping candidates against your ICP.<br>
+      3. Scoring, drafting rationale, and writing outreach.
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <header class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">Business name</div>
+        <div class="modal-subtitle" id="modal-subtitle">Fit breakdown, verification odds, pixels, and email draft.</div>
+      </div>
+      <button class="modal-close" id="modal-close-btn">Close</button>
+    </header>
+    <div class="modal-body">
+      <div class="modal-grid">
+        <div>
+          <div class="detail-section-title">Profile</div>
+          <ul class="detail-list" id="modal-profile-list"></ul>
+
+          <div class="detail-section-title" style="margin-top:10px;">Verification & pixels</div>
+          <ul class="detail-list" id="modal-pixel-list"></ul>
         </div>
-        
-        <div class="cfg-block" style="margin-bottom:16px;">
-          <label style="font-size:.6rem;letter-spacing:.18em;color:var(--p);text-shadow:0 0 6px var(--p);">⬡ Perplexity API Key <span style="color:var(--dim)">(Mode B only)</span></label>
-          <input type="password" id="perplexityKey" placeholder="pplx-..." style="margin-top:8px;">
-          <div style="font-size:.6rem;color:var(--dim);margin-top:5px;letter-spacing:.08em;">↳ Required only for Perplexity + OpenAI mode</div>
+        <div>
+          <div class="detail-section-title">Why you’re the fit</div>
+          <div id="modal-fit-text"></div>
+
+          <div class="detail-section-title" style="margin-top:10px;">Cold email draft</div>
+          <div class="email-draft" id="modal-email-draft"></div>
+
+          <div class="detail-section-title" style="margin-top:10px;">Alternative angles</div>
+          <div class="alt-leads" id="modal-alt-leads"></div>
         </div>
-        <button class="btn-fire" id="fireBtn" onclick="go()">⚡ CRACK THE LEADS</button>
       </div>
     </div>
-
-    <div id="results">
-      <div class="empty">
-        <div class="eico">⬡</div>
-        <div class="etxt">CONFIGURE CRITERIA &amp; FIRE TO FIND LEADS</div>
-        <div style="font-size:.62rem;color:rgba(180,255,180,.25);margin-top:10px;letter-spacing:.1em;">
-          AI analyses contractor profiles · revenue signals · digital gaps · cold email drafts
-        </div>
-      </div>
-    </div>
+    <footer class="modal-footer">
+      <span class="badge-mode" id="modal-mode-badge">Mode: Agent</span>
+      <button class="btn btn-secondary" id="modal-export-pdf-btn">Export this lead</button>
+    </footer>
   </div>
 </div>
 
+<div id="pdf-target" class="pdf-target"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-YcsIPVvQ73s2vQR4qzM7gc3KJ2YMBX3BGnZNL8p6v4nZke+6BW6uAG1UoVs4qBQmzk2i0I5rVQWZQhZjH9LU0A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-async function perplexitySearch(query,apiKey){
-  const r=await fetch('https://api.perplexity.ai/chat/completions',{
-    method:'POST',
-    headers:{'Authorization':`Bearer ${apiKey}`,'Content-Type':'application/json'},
-    body:JSON.stringify({model:'sonar-pro',messages:[{role:'system',content:'Find real businesses on the web. Return JSON only.'},{role:'user',content:query}],temperature:.2,max_tokens:2000})
+  const MODE_CONTENT = {
+    'agent': {
+      label: 'Agent mode',
+      title: 'Agent · pure reasoning mode',
+      sub: 'The Crackle thinks through targeting, scoring, and outreach with no live tools.',
+      when: [
+        'You want ideal client profiles and lead scoring rules.',
+        'You need cold email copy, subject lines, and angles.',
+        'You care about speed more than verification.',
+      ],
+      limits: [
+        'Don’t treat outputs as verified business data.',
+        'Pair with a browser or search mode for truth‑checking.',
+      ],
+      apiNote: 'Agent: OpenAI key recommended. Perplexity optional, BuiltWith for later.',
+      needPerplexity: false,
+    },
+    'agent-computer': {
+      label: 'Agent + computer',
+      title: 'Agent + Computer Use · browser‑aware mode',
+      sub: 'The Crackle operates a browser to inspect real sites for pixels and tags.',
+      when: [
+        'You need Meta Pixel, Google Tag, and funnel checks.',
+        'You care about on‑site proof, not just search snippets.',
+        'You’re okay with slower, deeper runs.',
+      ],
+      limits: [
+        'Can break when sites block bots or shift layout.',
+        'Requires robust error handling and observability.',
+      ],
+      apiNote: 'Agent + Computer: OpenAI + BuiltWith keys recommended. Perplexity not required.',
+      needPerplexity: false,
+    },
+    'perplexity-openai': {
+      label: 'Perplexity + OpenAI',
+      title: 'Perplexity + OpenAI · hybrid research mode',
+      sub: 'Perplexity finds live, cited data; OpenAI scores and formats your leads.',
+      when: [
+        'You need fresh data and clear citations.',
+        'You’re exploring new markets or cities.',
+        'You want defensible, source‑backed lead lists.',
+      ],
+      limits: [
+        'More integration overhead than single‑provider modes.',
+        'Quality depends on how retrieval and synthesis are joined.',
+      ],
+      apiNote: 'Perplexity + OpenAI: Both API keys required. BuiltWith optional for tech intel.',
+      needPerplexity: true,
+    },
+    'openai-only': {
+      label: 'OpenAI only',
+      title: 'OpenAI Only · pure generation mode',
+      sub: 'The Crackle delegates all reasoning and copy to a single model, no live retrieval.',
+      when: [
+        'You’re iterating on offers or messaging.',
+        'You want fast outreach drafts at low friction.',
+        'You control verification elsewhere.',
+      ],
+      limits: [
+        'No live business, pixel, or tag verification.',
+        'Treat as drafts, not CRM‑ready truth.',
+      ],
+      apiNote: 'OpenAI Only: Only an OpenAI key is needed.',
+      needPerplexity: false,
+    },
+    'two-stage': {
+      label: 'Two‑stage mode',
+      title: 'Two‑Stage · plan then execute',
+      sub: 'Stage one plans the search; stage two executes, validates, and formats.',
+      when: [
+        'You run multi‑city, multi‑service prospecting.',
+        'You want explicit plans to debug and refine.',
+        'You hate “black box” one‑shot prompts.',
+      ],
+      limits: [
+        'Longer runs and more state to handle.',
+        'Weak plans cascade into weaker results.',
+      ],
+      apiNote: 'Two‑Stage: Strong planner + fast executor. Perplexity optional for planning.',
+      needPerplexity: false,
+    },
+    'web-search-only': {
+      label: 'Web search only',
+      title: 'Web Search Only · raw discovery mode',
+      sub: 'The Crackle fires live web queries and hands you clean, lightly processed hits.',
+      when: [
+        'You want quick scans and manual review.',
+        'You’re validating a new vertical or location.',
+        'You prefer to synthesize in a second pass.',
+      ],
+      limits: [
+        'Minimal synthesis; use another mode for copy and scoring.',
+        'Pixel and tag checks need a browser step.',
+      ],
+      apiNote: 'Web Search Only: Perplexity key required. OpenAI is optional for summarization.',
+      needPerplexity: true,
+    },
+  };
+
+  const modelGrid = document.getElementById('model-grid');
+  const currentModeLabel = document.getElementById('current-mode-label');
+  const explainerTitle = document.getElementById('explainer-title');
+  const explainerSub = document.getElementById('explainer-sub');
+  const explainerWhen = document.getElementById('explainer-when');
+  const explainerLimits = document.getElementById('explainer-limits');
+  const modeNote = document.getElementById('mode-note');
+  const perplexityWrapper = document.getElementById('perplexity-api-wrapper');
+  const stepDot = document.getElementById('step-dot');
+  const stepLabel = document.getElementById('step-label');
+  const formEl = document.getElementById('crackle-form');
+  const range = document.getElementById('search-count');
+  const rangeValue = document.getElementById('range-value');
+  const statusLabel = document.getElementById('status-label');
+  const resetBtn = document.getElementById('reset-btn');
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const loadingSub = document.getElementById('loading-sub');
+  const loadingSteps = document.getElementById('loading-steps');
+  const resultsPanel = document.getElementById('results-panel');
+  const resultsList = document.getElementById('results-list');
+  const exportPdfBtn = document.getElementById('export-pdf-btn');
+  const pdfTarget = document.getElementById('pdf-target');
+
+  const modalBackdrop = document.getElementById('modal-backdrop');
+  const modalTitle = document.getElementById('modal-title');
+  const modalProfileList = document.getElementById('modal-profile-list');
+  const modalPixelList = document.getElementById('modal-pixel-list');
+  const modalFitText = document.getElementById('modal-fit-text');
+  const modalEmailDraft = document.getElementById('modal-email-draft');
+  const modalAltLeads = document.getElementById('modal-alt-leads');
+  const modalModeBadge = document.getElementById('modal-mode-badge');
+  const modalCloseBtn = document.getElementById('modal-close-btn');
+  const modalExportPdfBtn = document.getElementById('modal-export-pdf-btn');
+
+  let currentMode = 'agent';
+  let currentResults = [];
+
+  range.addEventListener('input', () => {
+    rangeValue.textContent = range.value;
   });
-  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||`Perplexity ${r.status}`);}
-  const d=await r.json(); return d;
-}
 
-let activeEngine='';
-let agentFeedTimer=null; window.matrixTimer=null;
-let matrixTimer=null;
-const engineLabels={agent:'OPENAI AGENT',perplexity:'PERPLEXITY + OPENAI',twostage:'TWO-STAGE OPENAI'};
-function showModeSelector(){
-  document.getElementById('modeOverlay').style.display='flex';
-}
-function selectMode(mode){
-  activeEngine=mode;
-  localStorage.setItem('crackleEngine',mode);
-  document.getElementById('engineBadge').textContent='⬡ ENGINE: '+engineLabels[mode]+' · CHANGE';
-  document.getElementById('modeOverlay').style.display='none';
-  document.getElementById('modeOverlay').classList.remove('runout');
-  document.getElementById('results').innerHTML='<div class="empty"><div class="eico">⬡</div><div class="etxt">CONFIGURE CRITERIA &amp; FIRE TO FIND LEADS</div></div>';
-  toggleBuiltWithKey();
-}
-function startMatrix(){
-  const feed=document.getElementById('matrixFeed');
-  const lines=document.getElementById('feedLines');
-  const progress=document.getElementById('feedProgress');
-  feed.style.display='flex';
-  lines.innerHTML='';
-  const msgs=[
-    ['> CONNECTING TO LEAD ENGINE...', 'ok'],
-    ['> LOADING TARGET PARAMETERS...', 'ok'],
-    ['> INJECTING SEARCH VECTORS...', 'ok'],
-    ['> STEP 1 — SCANNING LOCAL MARKET...', 'dim'],
-    ['> STEP 2 — ENRICHING PROFILES...', 'dim'],
-    ['> STEP 3 — ANALYZING DIGITAL WEAKNESSES...', 'dim'],
-    ['> STEP 4 — GENERATING COLD EMAILS...', 'dim']
-  ];
-  let i=0;
-  const typeLine=(el,text,cb)=>{
-    let n=0; el.textContent='';
-    const t=setInterval(()=>{el.textContent=text.slice(0,++n); if(n>=text.length){clearInterval(t); cb&&cb();}},12);
-  };
-  const step=()=>{
-    if(i>=msgs.length){progress.textContent='▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  COMPLETE'; setTimeout(()=>{feed.style.display='none';},900); return;}
-    const div=document.createElement('div'); div.className='feed-line '+msgs[i][1]; lines.appendChild(div);
-    typeLine(div,msgs[i][0],()=>{i++; progress.textContent='STEP '+Math.min(i,4)+'/4'; setTimeout(step,250);});
-  };
-  step();
-}
-function matrixRain(){
-  const canvas=document.getElementById('matrixRain'); if(!canvas) return;
-  const ctx=canvas.getContext('2d');
-  const resize=()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;}; resize();
-  const chars='01アイウエオカキクケコサシスセソタチツテトABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const fontSize=14; const cols=Math.floor(canvas.width/fontSize); const drops=Array(cols).fill(1);
-  clearInterval(matrixTimer);
-  matrixTimer=setInterval(()=>{
-    ctx.fillStyle='rgba(0,0,0,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#00ff41'; ctx.font=fontSize+'px monospace';
-    for(let i=0;i<drops.length;i++){
-      const text=chars[Math.floor(Math.random()*chars.length)];
-      ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-      if(drops[i]*fontSize>canvas.height&&Math.random()>0.975)drops[i]=0;
-      drops[i]++;
-    }
-  },35);
-  window.addEventListener('resize',resize);
-}
-function setLeadEngine(){
-  const e=localStorage.getItem('crackleEngine')||'agent';
-  selectMode(e);
-}
-
-const cv=document.getElementById('rain'),cx=cv.getContext('2d');
-let drops=[];
-const ch='ｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵカキクケコ0123456789⚡⬡◈ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-function initRain(){
-  cv.width=window.innerWidth;cv.height=window.innerHeight;
-  const cols=Math.floor(cv.width/16);
-  drops=Array.from({length:cols},()=>Math.random()*-80);
-}
-function drawRain(){
-  cx.fillStyle='rgba(3,8,3,0.048)';cx.fillRect(0,0,cv.width,cv.height);
-  drops.forEach((d,i)=>{
-    const isCyan=Math.random()>.97,bright=Math.random()>.96;
-    cx.fillStyle=isCyan?(bright?'#00f5ff':'rgba(0,245,255,0.6)'):(bright?'#ccffcc':'rgba(0,255,65,0.55)');
-    cx.font='13px "Courier New"';
-    cx.fillText(ch[Math.floor(Math.random()*ch.length)],i*16,d*16);
-    if(d*16>cv.height&&Math.random()>.975)drops[i]=0;
-    drops[i]+=0.45;
+  modelGrid.addEventListener('click', (e) => {
+    const card = e.target.closest('.model-card');
+    if (!card) return;
+    const mode = card.dataset.mode;
+    setMode(mode);
   });
-}
-initRain();setInterval(drawRain,48);window.addEventListener('resize',initRain);
 
-let leads=[];
-function toggleKey(){
-  const inp=document.getElementById('apiKey'),btn=document.querySelector('.eye');
-  if(inp.type==='password'){inp.type='text';btn.textContent='HIDE';}
-  else{inp.type='password';btn.textContent='SHOW';}
-}
-function getServices(){return[...document.querySelectorAll('input[name=svc]:checked')].map(c=>c.value);}
-function getCtypes(){return[...document.querySelectorAll('input[name=ctype]:checked')].map(c=>c.value);}
+  function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.model-card').forEach(card => {
+      card.classList.toggle('selected', card.dataset.mode === mode);
+    });
 
-pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const cfg = MODE_CONTENT[mode];
+    currentModeLabel.textContent = cfg.label;
+    explainerTitle.textContent = cfg.title;
+    explainerSub.textContent = cfg.sub;
 
-async function extractFileText(){
-  const file=document.getElementById('ctxFile').files[0];
-  if(!file)return'';
-  const ext=file.name.split('.').pop().toLowerCase();
-  if(ext==='txt'){return new Promise(r=>{const fr=new FileReader();fr.onload=e=>r(e.target.result.slice(0,4000));fr.readAsText(file);});}
-  if(ext==='pdf'){
-    try{
-      const ab=await file.arrayBuffer();
-      const pdf=await pdfjsLib.getDocument(ab).promise;
-      let txt='';
-      for(let i=1;i<=Math.min(pdf.numPages,6);i++){const pg=await pdf.getPage(i);const ct=await pg.getTextContent();txt+=ct.items.map(x=>x.str).join(' ')+'\n';}
-      return txt.slice(0,4000);
-    }catch(e){return'';}
+    explainerWhen.innerHTML = '';
+    cfg.when.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      explainerWhen.appendChild(li);
+    });
+
+    explainerLimits.innerHTML = '';
+    cfg.limits.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      explainerLimits.appendChild(li);
+    });
+
+    modeNote.textContent = cfg.apiNote;
+    perplexityWrapper.style.display = cfg.needPerplexity ? '' : 'none';
+
+    statusLabel.textContent = `Idle · ${cfg.label} ready.`;
   }
-  if(ext==='docx'||ext==='doc'){
-    try{const ab=await file.arrayBuffer();const r=await mammoth.extractRawText({arrayBuffer:ab});return r.value.slice(0,4000);}
-    catch(e){return'';}
-  }
-  return'';
-}
 
-function vOpen(type,btn){
-  const nm=btn.getAttribute('data-name')||'';
-  const cy=btn.getAttribute('data-city')||'';
-  const pr=btn.getAttribute('data-prov')||'';
-  const q=encodeURIComponent(nm+' '+cy+' '+pr);
-  const qc=encodeURIComponent(nm+' '+cy);
-  const urls={
-    search:'https://www.google.com/search?q='+q,
-    maps:'https://www.google.com/maps/search/?api=1&query='+q,
-    listings:'https://www.google.com/search?q='+qc+'+site:facebook.com+OR+site:yellowpages.ca+OR+site:yelp.com',
-    website:'https://www.google.com/search?q='+encodeURIComponent(nm+' '+cy+' official website')
-  };
-  window.open(urls[type],'_blank');
-}
-function handleFileSelect(inp){
-  const st=document.getElementById('ctxStatus');
-  if(inp.files[0]){st.textContent='✓ '+inp.files[0].name+' ready';st.style.color='var(--g)';}
-  else{st.textContent='';}
-}
-function setBtn(s,t){const b=document.getElementById('fireBtn');b.disabled=s;b.textContent=t;}
-function showErr(m){document.getElementById('results').innerHTML=`<div class="panel"><div class="alert ae">${m}</div></div>`;setBtn(false,'⚡ CRACK THE LEADS');}
-function scoreClass(s){return s>=8?'bhi':s>=5?'bmd':'blo';}
-function stars(r){if(!r)return'';const f=Math.round(r);return'★'.repeat(f)+'☆'.repeat(5-f);}
+  resetBtn.addEventListener('click', () => {
+    formEl.reset();
+    range.value = 3;
+    rangeValue.textContent = '3';
+    setMode('agent');
+    resultsPanel.style.display = 'none';
+    resultsList.innerHTML = '';
+    currentResults = [];
+    statusLabel.textContent = 'Idle · Waiting for your crackle.';
+    stepDot.dataset.step = '1';
+    stepLabel.textContent = '1 · Configure';
+  });
 
-async function go(){
-  if(!activeEngine) activeEngine=localStorage.getItem('crackleEngine')||'agent';
-  startMatrix();
-  const key=
-  const engine=activeEngine||localStorage.getItem('crackleEngine')||'twostage';
-  if(engine==='perplexity'&&!pkey){alert('Perplexity API key required');setBtn(false);return;}
-  let sys=promptSys;
-  if(engine==='agent')sys+='\n\nAGENT MODE: Use web_search_preview to find real businesses. For each: check website for fbq/connect.facebook.net (Meta Pixel) and gtag/googletagmanager.com (Google Tags). Report ✓/✗ in digitalWeaknesses.';
-  else if(engine==='twostage')sys+='\n\nTWO-STAGE: Web search real businesses first, then score.';
-  else if(engine==='perplexity')sys+='\n\nPERPLEXITY MODE: Perplexity will provide real leads. Score and analyze.';
-document.getElementById('apiKey').value.trim();
-  const pkey=
-  const engine=activeEngine||localStorage.getItem('crackleEngine')||'twostage';
-  if(engine==='perplexity'&&!pkey){alert('Perplexity API key required');setBtn(false);return;}
-  let sys=promptSys;
-  switch(engine){
-    case 'computer':
-      sys+='\nCOMPUTER USE MODE: Use computer_use tool to visit websites, open DevTools, search source for fbq/connect.facebook.net (Meta Pixel ✓/✗) and gtag/googletagmanager.com (Google Tags ✓/✗). Highest accuracy.';
-      break;
-    case 'agent':
-      sys+='\nAGENT MODE: Use web_search_preview to find real businesses. For each check if Meta Pixel (fbq) and Google Tags (gtag) mentioned.';
-      break;
-    case 'searchonly':
-      sys+='\nWEB SEARCH ONLY: Search \"[business] meta pixel installed\" and \"[business] google tag manager\" for each lead.';
-      break;
-    case 'perplexity':
-      sys+='\nPERPLEXITY MODE: Perplexity finds real businesses, you score + analyze.';
-      break;
-    default:
-      sys+='\nTWO-STAGE MODE: Web search businesses, then score.';
-  }
-(document.getElementById('perplexityKey')||{}).value?document.getElementById('perplexityKey').value.trim():'';
-  let engine=activeEngine||localStorage.getItem('crackleEngine')||'twostage';
-  if(engine==='perplexity'&&!pkey){alert('Perplexity API key required');setBtn(false);return;}
-  let sys=promptSys;
-  if(engine==='agent')sys+='\n\nAGENT MODE FULL LOOP: 1. Web search real businesses. 2. Visit websites. 3. Check for Meta Pixel (fbq/connect.facebook.net) and Google Tags (gtag/googletagmanager.com). 4. Score digital gaps. 5. Write emails.';
-  else if(engine==='perplexity'){sys+='\n\nPERPLEXITY MODE: Use Perplexity search results to find real businesses first.';}
-  else sys+='\n\nTWO-STAGE MODE: Web search for real businesses, then analyze.';
+  formEl.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-  const ctypes=getCtypes();
-  const inc=document.getElementById('incCity').value.trim();
-  const incProv=document.getElementById('incProv').value.trim();
-  const exc=document.getElementById('exCity').value.trim();
-  const n=document.getElementById('lcount').value;
-  const site=document.getElementById('mysite').value.trim();
-  const svcs=getServices();
-  if(!key)return showErr('⚠ Enter your OpenAI API key to continue.');
-  if(engine==='perplexity'&&!pkey)return showErr('⚠ Enter Perplexity API key for this mode');
-  if(!ctypes.length)return showErr('⚠ Select at least one contractor type.');
-  if(!inc&&!incProv)return showErr('⚠ Add at least one city or province/state to search in.');
-  if(!svcs.length)return showErr('⚠ Select at least one service you offer.');
-  setBtn(true,'⚡ SCANNING...');
-  const ctypeStr=ctypes.join(', ');
-  const locLabel=[inc,incProv].filter(Boolean).join(' / ');
-  const fileCtx=await extractFileText();
-  document.getElementById('results').innerHTML=`<div class="loading"><div class="ltxt">INFILTRATING LOCAL MARKET DATA... [${'gpt-4o'}]</div><div class="lbar"><div class="lbarfill"></div></div><div class="lsteps">⬡ Targeting: ${ctypeStr}<br>⬡ Location: ${locLabel||'Any'}<br>⬡ Filtering for revenue signals ($500K–$1.5M)<br>⬡ Detecting digital weaknesses &amp; SEO gaps<br>⬡ Crafting personalized cold outreach emails</div></div>`;
-  const excNote=exc?`\nEXCLUDE businesses in: ${exc}.`:'';
-  const locNote=[]
-  if(inc)locNote.push(`Cities: ${inc}`);
-  if(incProv)locNote.push(`Province/State: ${incProv}`);
-  const siteNote=site?`\nThe digital agency's website is: ${site}. For each lead add "matchScore" (int 1-10) and "matchReason" (1 sentence).`:'';
-  const fileNote=fileCtx?`\n\nAGENCY CONTEXT (from uploaded document):\n${fileCtx}`:'';
-  const locEnforced=locNote.length?locNote.join(' AND '):'any location';
-  const sys=`You are a business intelligence analyst generating contractor lead profiles for a digital marketing agency.${fileNote}
+    const formData = new FormData(formEl);
+    const services = Array.from(
+      document.querySelectorAll('input[name="services"]:checked')
+    ).map(c => c.value);
+    const contractors = Array.from(
+      document.querySelectorAll('input[name="contractors"]:checked')
+    ).map(c => c.value);
+    const locationsText = formData.get('locationsText') || '';
+    const states = formData.get('states') || '';
+    const excludeCities = formData.get('excludeCities') || '';
+    const website = formData.get('website') || '';
+    const notes = formData.get('notes') || '';
+    const count = parseInt(formData.get('searchCount') || '3', 10);
 
-⚠️ LOCATION RULE — THIS IS MANDATORY:
-Every single lead MUST be physically located in: ${locEnforced}.
-DO NOT place any business in ${excNote?'the excluded cities or ':''} any other city, state, province, or region.
-If you cannot produce ${n} leads in that location, return FEWER leads. Never substitute a different location.
-Double-check every lead's city and province/state before including it.
+    stepDot.dataset.step = '2';
+    stepLabel.textContent = '2 · Running';
+    statusLabel.textContent = 'Searching the neon grid for your best‑fit prospects…';
 
-TASK: Generate up to ${n} contractor leads from these types: ${ctypeStr}. Mix proportionally if multiple types.
-
-LEAD CRITERIA:
-- Location: ${locEnforced}${excNote}
-- Revenue range: $500K–$1.5M (established businesses, NOT startups or large enterprises)
-- Evidence of revenue: fleet vehicles, branded trucks, equipment, 5+ years operating, consistent reviews
-- Digital weaknesses present: poor Google ranking, outdated/no website, no blog, weak social, no ads
-- Owner-operated: 1–3 decision-makers, 5–20 employees
-${siteNote}
-
-REALISM RULES:
-- Use realistic local phone area codes for the specified location
-- Company names must sound like real local contractor businesses (e.g. "Mike's Roofing" not "Apex Digital Solutions")
-- Some businesses WILL have a basic website (even a poor one) — do not set all websites to null
-- Google review counts should be realistic (15–180 range typical for this size)
-- "realityCheck" must honestly reflect how plausible this lead profile is
-
-Return ONLY a valid JSON object with key "leads". No markdown, no explanation.
-
-Each lead object MUST have exactly these fields:
-{
-  "companyName": string,
-  "ownerName": string,
-  "businessType": string,
-  "city": string — MUST match requested location,
-  "province": string — MUST match requested location,
-  "phone": string — use correct area code for that city,
-  "email": string,
-  "website": string or null,
-  "yearsInBusiness": number,
-  "employeeCount": string,
-  "googleReviews": number,
-  "googleRating": number,
-  "revenueSignals": [3-5 strings],
-  "digitalWeaknesses": [3-5 strings],
-  "recommendedServices": [strings from: ${svcs.join(', ')}],
-  "leadScore": number 1-10,
-  "realityCheck": one of ["Likely real — verify on Google Maps","Possibly real — worth checking","AI-estimated — research carefully"],
-  "emailSubject": string,
-  "emailBody": string (3 short personalized paragraphs)${site?',\n  "matchScore": number 1-10,\n  "matchReason": string':''}
-}`;
-  try{
-    let selectedModel='gpt-4o';
-    let engine=activeEngine||localStorage.getItem('crackleEngine')||'agent';
-    if(engine==='perplexity'&&!pkey)return alert('Perplexity API key required for this mode');
-    if(engine==='agent')sys+='\n\nYou are operating in AGENT MODE. Perform a full loop: search, enrich, score, write. Use web-grounded results only.';
-    if(engine==='twostage')sys+='\n\nYou are operating in TWO-STAGE MODE. First find real businesses with web search, then analyze and score them.';
-    if(engine==='perplexity')sys+='\n\nYou are operating in PERPLEXITY MODE. The user will provide a Perplexity API key. Use web-grounded research to find real businesses.';
-    const useWebSearch=['gpt-4o','gpt-4o-mini','gpt-4.1','gpt-4.1-mini','gpt-4.1-nano'].includes(selectedModel);
-    let res,data,raw;
-    if(useWebSearch){
-      // Responses API with web_search_preview for real businesses
-      res=await fetch('https://api.openai.com/v1/responses',{
-        method:'POST',
-        headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:(engine==="computer"?"computer-use-preview":(engine==="agent"?"gpt-5.4":"gpt-4o")),
-          tools:[{type:'web_search_preview'}],
-          input:[{role:'user',content:sys+'\n\nGenerate '+n+' contractor leads ['+ctypeStr+']. ALL must be in: '+locEnforced+'. Use web search to find REAL businesses with REAL websites. Return JSON only with a top-level \"leads\" array.'}],
-          max_output_tokens:7000
-        })
-      });
-      if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
-      data=await res.json();
-      // Extract text from Responses API output
-      let textOut='';
-      for(const item of(data.output||[])){
-        if(item.type==='message'){
-          for(const c of(item.content||[])){
-            if(c.type==='output_text')textOut+=c.text;
-          }
-        }
-      }
-      // Extract JSON from text (may be wrapped in markdown)
-      const jsonMatch=textOut.match(/```json\s*([\s\S]*?)```/i)||textOut.match(/({[\s\S]*})/);
-      raw=JSON.parse(jsonMatch?jsonMatch[1]:textOut);
+    if (currentMode === 'agent') {
+      loadingSub.textContent = 'Thinking through ICP, scoring, and outreach – no live web calls.';
+      loadingSteps.innerHTML = '1. Parsing your ICP and services.<br>2. Building scoring logic and angles.<br>3. Drafting outreach structures.';
+    } else if (currentMode === 'agent-computer') {
+      loadingSub.textContent = 'Spinning up a browser to inspect real contractor sites.';
+      loadingSteps.innerHTML = '1. Mapping contractors against your geo.<br>2. Visiting short‑listed sites and scanning for tags.<br>3. Scoring fit against your offers.';
+    } else if (currentMode === 'perplexity-openai') {
+      loadingSub.textContent = 'Querying the live web, then synthesizing and scoring candidates.';
+      loadingSteps.innerHTML = '1. Issuing targeted Perplexity queries.<br>2. Merging citations into a lead graph.<br>3. Drafting scores, rationale, and outreach.';
+    } else if (currentMode === 'openai-only') {
+      loadingSub.textContent = 'Letting the model riff on your ICP and outreach – no external calls.';
+      loadingSteps.innerHTML = '1. Interpreting your targeting notes.<br>2. Imagining high‑fit archetype businesses.<br>3. Writing tailored approaches.';
+    } else if (currentMode === 'two-stage') {
+      loadingSub.textContent = 'Planning the route, then running the search and extraction.';
+      loadingSteps.innerHTML = '1. Designing a multi‑step search plan.<br>2. Executing the plan against live data.<br>3. Normalizing, scoring, and formatting results.';
     } else {
-      // Fallback: Chat Completions for other models
-      res=await fetch('https://api.openai.com/v1/chat/completions',{
-        method:'POST',
-        headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
-        body:JSON.stringify({model:(engine==="computer"?"computer-use-preview":(engine==="agent"?"gpt-5.4":"gpt-4o")),messages:[{role:'system',content:sys},{role:'user',content:`Generate ${n} contractor leads [${ctypeStr}]. ALL must be in: ${locEnforced}. JSON only.`}],temperature:.45,max_tokens:7000,response_format:{type:'json_object'}})
+      loadingSub.textContent = 'Running web search passes and bubbling up promising candidates.';
+      loadingSteps.innerHTML = '1. Issuing web‑level queries.<br>2. Filtering low‑quality or duplicate hits.<br>3. Surfacing a clean candidate set.';
+    }
+
+    loadingOverlay.classList.add('visible');
+
+    // Placeholder run – swap this for your real backend call.
+    setTimeout(() => {
+      loadingOverlay.classList.remove('visible');
+      stepDot.dataset.step = '3';
+      stepLabel.textContent = '3 · Results';
+      statusLabel.textContent = 'Done · Review your leads, then export.';
+
+      currentResults = makeDemoResults({
+        count,
+        services,
+        contractors,
+        locationsText,
+        states,
+        excludeCities,
+        website,
+        notes,
+        mode: currentMode,
       });
-      if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
-      data=await res.json();
-      raw=JSON.parse(data.choices[0].message.content);
-    }
-    leads=Array.isArray(raw)?raw:(raw.leads||Object.values(raw).find(v=>Array.isArray(v))||[]);
-    // Location filter — remove leads that clearly don't match requested location
-    if(inc||incProv){
-      const locTokens=[
-        ...inc.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean),
-        ...incProv.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean)
-      ];
-      if(locTokens.length){
-        const excTokens=exc.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
-        const filtered=leads.filter(l=>{
-          const lCity=(l.city||'').toLowerCase();
-          const lProv=(l.province||'').toLowerCase();
-          const locStr=lCity+' '+lProv;
-          const inExclude=excTokens.some(e=>lCity.includes(e));
-          if(inExclude)return false;
-          return locTokens.some(t=>locStr.includes(t));
-        });
-        if(filtered.length>0)leads=filtered;
-        // If filter removed everything, keep originals but flag them
-        if(filtered.length===0)leads=leads.map(l=>({...l,locationFlagged:true}));
-      }
-    }
-    render(leads,site);
-  }catch(err){showErr(`Error: ${err.message}`);}
-  finally{setBtn(false,'⚡ CRACK THE LEADS');}
-}
-
-
-async function scanPixels(i){
-  const l=leads[i];
-  const btn=document.getElementById('pscan-btn-'+i);
-  const out=document.getElementById('pscan-out-'+i);
-  if(!l.website)return;
-  let ws=l.website.trim().replace(/['"]/g,'');
-  if(!ws.startsWith('http'))ws='https://'+ws;
-  let domain='';
-  try{domain=new URL(ws).hostname.replace(/^www\./,'');}catch(e){out.innerHTML='<span class="ptag unknown">Invalid URL</span>';return;}
-
-  const pixelProv=document.getElementById('pixelProvider').value;
-  const googleProv=document.getElementById('googleTagProvider').value;
-  const bwKey=(document.getElementById('bwKey').value||'').trim();
-
-  if((pixelProv==='builtwith'||googleProv==='builtwith')&&!bwKey){
-    out.innerHTML='<span class="ptag unknown">⚠ Enter your BuiltWith API key above to use BuiltWith scanning</span>';
-    return;
-  }
-
-  btn.disabled=true;btn.textContent='SCANNING...';
-  out.innerHTML='<span style="color:var(--dim);font-size:.58rem">Scanning tracking tags...</span>';
-
-  let hasPixel=null,hasGTM=null,hasGA=null,pixelId='',gtmId='',gaId='';
-
-  // ── META PIXEL ──
-  if(pixelProv==='facebook'){
-    try{
-      const r=await fetch('https://graph.facebook.com/?id='+encodeURIComponent(ws)+'&fields=pixel',{signal:AbortSignal.timeout(8000)});
-      const d=await r.json();
-      if(d.pixel&&d.pixel.pixel_id){hasPixel=true;pixelId=' <span style="opacity:.6">ID: '+d.pixel.pixel_id+'</span>';}
-      else if(d.error){hasPixel=false;}
-      else{hasPixel=!!(d.pixel);}
-    }catch(e){hasPixel=null;}
-  }
-
-  // ── BUILTWITH (covers pixel + google tags if selected) ──
-  let bwData=null;
-  if((pixelProv==='builtwith'||googleProv==='builtwith')&&bwKey){
-    try{
-      const r=await fetch('https://api.builtwith.com/v21/api.json?KEY='+encodeURIComponent(bwKey)+'&LOOKUP='+encodeURIComponent(domain),{signal:AbortSignal.timeout(12000)});
-      const d=await r.json();
-      bwData=d;
-      // Flatten all tech names
-      const techs=[];
-      if(d.Results&&d.Results[0]&&d.Results[0].Result&&d.Results[0].Result.Paths){
-        d.Results[0].Result.Paths.forEach(p=>{(p.Technologies||[]).forEach(t=>{techs.push((t.Name||'').toLowerCase());if(t.Tag)techs.push(t.Tag.toLowerCase());});});
-      }
-      const techStr=techs.join('|');
-      if(pixelProv==='builtwith'){
-        hasPixel=techStr.includes('facebook pixel')||techStr.includes('meta pixel')||techStr.includes('facebook ads');
-        // Try to get pixel ID from BW
-        if(d.Results&&d.Results[0]&&d.Results[0].Result&&d.Results[0].Result.Paths){
-          d.Results[0].Result.Paths.forEach(p=>{(p.Technologies||[]).forEach(t=>{if((t.Name||'').toLowerCase().includes('facebook pixel')&&t.Description){const m=t.Description.match(/\d{10,20}/);if(m)pixelId=' <span style="opacity:.6">ID: '+m[0]+'</span>';}});});
-        }
-      }
-      if(googleProv==='builtwith'){
-        hasGTM=techStr.includes('google tag manager');
-        hasGA=techStr.includes('google analytics')||techStr.includes('google analytics 4')||techStr.includes('ga4');
-        if(hasGTM){const m=techStr.match(/gtm-[a-z0-9]{4,8}/i);if(m)gtmId=' <span style="opacity:.6">'+m[0].toUpperCase()+'</span>';}
-        if(hasGA){const m=techStr.match(/g-[a-z0-9]{6,12}/i)||techStr.match(/ua-\d{5,10}-\d/i);if(m)gaId=' <span style="opacity:.6">'+m[0]+'</span>';}
-      }
-    }catch(e){
-      out.innerHTML='<span class="ptag unknown">BuiltWith error: '+e.message+'</span>';
-      btn.disabled=false;btn.textContent='↺ RETRY';
-      return;
-    }
-  }
-
-  // ── GOOGLE TAGS via HTML SCAN ──
-  if(googleProv==='htmlscan'){
-    try{
-      const proxyUrl='https://api.allorigins.win/get?url='+encodeURIComponent(ws);
-      const r=await fetch(proxyUrl,{signal:AbortSignal.timeout(12000)});
-      if(!r.ok)throw new Error('Proxy '+r.status);
-      const d=await r.json();
-      const hl=(d.contents||'').toLowerCase();
-      hasGTM=hl.includes('googletagmanager.com')||hl.includes('gtm.js')||hl.includes('gtm.start');
-      hasGA=hl.includes('gtag(')||hl.includes('google-analytics.com')||hl.includes('analytics.js');
-      const raw=d.contents||'';
-      const gm=raw.match(/GTM-[A-Z0-9]{4,8}/i);if(gm)gtmId=' <span style="opacity:.6">'+gm[0]+'</span>';
-      const ga=raw.match(/G-[A-Z0-9]{6,12}/i)||raw.match(/UA-\d{5,10}-\d/i);if(ga)gaId=' <span style="opacity:.6">'+ga[0]+'</span>';
-    }catch(e){hasGTM=null;hasGA=null;}
-  }
-
-  // ── RENDER RESULTS ──
-  const tagBadge=(status,foundLabel,missingLabel,id)=>{
-    if(status===null)return '<span class="ptag unknown">? '+missingLabel+' — could not check</span>';
-    return '<span class="ptag '+(status?'found':'missing')+'">'+(status?'✓ '+foundLabel:'✗ '+missingLabel)+(status?id:'')+'</span>';
-  };
-
-  let badges='';
-  badges+=tagBadge(hasPixel,'Meta Pixel','No Meta Pixel',pixelId);
-  badges+=tagBadge(hasGTM,'Google Tag Manager','No GTM',gtmId);
-  badges+=tagBadge(hasGA,'Google Analytics','No GA',gaId);
-
-  const noPixel=hasPixel===false,noGoogle=hasGTM===false&&hasGA===false;
-  let note='';
-  if(noPixel&&noGoogle){note='<div class="pscan-note">⚡ Zero tracking found — no ads, no analytics. Strong pitch: Meta Pixel + GTM + GA4 setup.</div>';}
-  else if(noPixel){note='<div class="pscan-note">💡 No Meta Pixel — not running Facebook/Instagram ads. Pitch Meta Ads setup.</div>';}
-  else if(noGoogle){note='<div class="pscan-note">💡 No Google Tag — analytics likely missing. Pitch Google Ads + GA4 setup.</div>';}
-
-  out.innerHTML='<div class="prow">'+badges+'</div>'+note;
-  btn.disabled=false;btn.textContent='↺ RESCAN';
-  leads[i]._pixelScan={hasPixel,hasGTM,hasGA};
-}
-
-
-function render(arr,site){
-  if(!arr.length){document.getElementById('results').innerHTML='<div class="empty"><div class="etxt">No leads returned. Try different criteria.</div></div>';return;}
-  const _ctypes=getCtypes().join(', ')||'Mixed';
-  const _loc=[document.getElementById('incCity').value,document.getElementById('incProv').value].filter(Boolean).join(' / ')||'Any';
-  const hasFlag=arr.some(l=>l.locationFlagged);
-  let html=`<div class="rhdr"><div><div class="rtitle">⚡ ${arr.length} LEADS CRACKED</div><div class="rsub">${_ctypes} · ${_loc} · ${'gpt-4o'}</div></div><div class="rbtns"><button class="btn-c" onclick="exportPDF()">⬇ EXPORT PDF</button><button class="btn-r" onclick="clearAll()">✕ CLEAR</button></div></div>
-  <div class="disclaimer-bar">⚠ These are <strong>AI-generated lead profiles</strong> — not scraped from live databases. Company names, contacts, and review counts may be illustrative. Use the <strong>🔍 Verify</strong> buttons on each card to cross-check on Google Maps and Google Search before reaching out.${hasFlag?' <strong style="color:#ff6b35"> · Location filter removed some off-target leads — review remaining results carefully.</strong>':''}</div>`;
-  arr.forEach((l,i)=>{
-    const sc=scoreClass(l.leadScore);
-    const ws=(function(w){
-      if(!w)return null;
-      w=w.trim().replace(/['"]/g,'');
-      if(!w||w.includes(' ')||!w.includes('.'))return null;
-      if(!w.startsWith('http://') && !w.startsWith('https://')) w='https://'+w;
-      try{new URL(w);}catch(e){return null;}
-      return w;
-    })(l.website);
-    const rcClass=l.realityCheck&&l.realityCheck.includes('Likely')?'rc-hi':l.realityCheck&&l.realityCheck.includes('Possibly')?'rc-md':'rc-lo';
-    const rcLabel=l.realityCheck||'AI-estimated — research carefully';
-    const locWarn=l.locationFlagged?'<span style="font-size:.58rem;color:#ff6b35;margin-left:6px;">⚠ location unverified</span>':'';
-    html+=`<div class="lcard" id="c${i}"><div class="lchead" onclick="toggle(${i})"><div><div class="cname">${l.companyName}${locWarn}</div><div class="ctype">${l.businessType} · ${l.city}, ${l.province}</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;"><span class="rcheck ${rcClass}" title="${rcLabel}">🔍 ${rcLabel.split('—')[0].trim()}</span><div class="badge ${sc}">LEAD ${l.leadScore}/10</div><span class="chev" id="chev${i}">▼</span></div></div><div class="lcbody" id="b${i}"><div class="igrid"><div class="ii"><label>OWNER</label><div class="val">${l.ownerName||'Owner'}</div></div><div class="ii"><label>PHONE</label><div class="val">${l.phone||'—'}</div></div><div class="ii"><label>EMAIL</label><div class="val">${l.email||'—'}</div></div><div class="ii"><label>WEBSITE</label><div class="val">${ws?`<a href="${ws}" target="_blank">${l.website}</a>`:'<span style="color:var(--pk)">No website</span>'}</div></div><div class="ii"><label>YEARS ACTIVE</label><div class="val">${l.yearsInBusiness||'—'} yrs</div></div><div class="ii"><label>TEAM SIZE</label><div class="val">${l.employeeCount||'—'}</div></div><div class="ii"><label>GOOGLE REVIEWS</label><div class="val"><span class="stars">${stars(l.googleRating)}</span> ${l.googleRating||''} <span style="color:var(--dim)">(${l.googleReviews||0})</span></div></div></div><div class="vsec"><div class="vsec-title">🔍 Verify This Lead — Check Before You Reach Out</div><div class="vlinks"><button class="vbtn" onclick="vOpen('search',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">🌐 Google Search</button><button class="vbtn" onclick="vOpen('maps',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">📍 Google Maps</button><button class="vbtn" onclick="vOpen('listings',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">📋 Business Listings</button><button class="vbtn vbtn-warn" onclick="vOpen('website',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">🔍 Find Website on Google</button></div><div class="vdisclaim">⚠ AI-generated profile — always confirm on Google Maps before contacting. Check: business name matches, phone is listed, city is correct. Rating of <strong>${l.googleRating}★ (${l.googleReviews} reviews)</strong> is estimated.</div></div>${ws?`<div class=\"psec\" id=\"psec-${i}\"><div class=\"psec-title\">⬡ TRACKING SCAN</div><button class=\"pscan-btn\" id=\"pscan-btn-${i}\" onclick=\"scanPixels(${i})\">🔬 SCAN FOR META PIXEL &amp; GOOGLE TAGS</button><div id=\"pscan-out-${i}\" style=\"margin-top:0\"></div><div class=\"pscan-note\" style=\"margin-top:6px\">Scans live website for Meta Pixel, Google Tag Manager &amp; Google Analytics.</div></div>`:''}<div style="margin-bottom:13px"><label class="lbl" style="margin-bottom:5px">💰 Revenue Signals</label><div class="tags">${(l.revenueSignals||[]).map(s=>`<span class="tag ts">${s}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:#ff7aac;margin-bottom:5px">⚠ Digital Weaknesses</label><div class="tags">${(l.digitalWeaknesses||[]).map(w=>`<span class="tag tw">${w}</span>`).join('')}</div></div><div style="margin-bottom:13px"><label class="lbl" style="color:var(--c);margin-bottom:5px">⬡ Recommended Services</label><div class="tags">${(l.recommendedServices||[]).map(s=>`<span class="tag tg">${s}</span>`).join('')}</div></div>${site&&l.matchScore!==undefined?`<div class="mbox"><div class="mlbl">⬡ YOUR SITE MATCH LIKELIHOOD</div><div class="mbar"><div class="mbarbg"><div class="mbarfill" style="width:${l.matchScore*10}%"></div></div><div class="mval">${l.matchScore}/10</div></div><div class="mreason">${l.matchReason||''}</div></div>`:''}<div class="esec"><label class="lbl" style="color:var(--g);margin-bottom:8px">📧 Draft Cold Email</label><div class="esubj"><span style="color:var(--dim);font-size:.6rem">SUBJECT: </span>${l.emailSubject}</div><div class="ebody">${l.emailBody}</div><div class="ebtns"><button class="btn-c" onclick="copyEmail(${i})" id="cp${i}" style="font-size:.62rem;padding:6px 13px">⬡ COPY EMAIL</button><button class="btn-p" onclick="regenEmail(${i})" style="font-size:.62rem;padding:6px 13px">↺ REGENERATE</button></div></div><div class="osec"><div class="osec-title">🚀 Other Outreach Strategies — Beyond Cold Email</div>${[
-  {i:'🔗',ch:'LinkedIn DM',tip:`Find ${l.ownerName} on LinkedIn — connect with a short note (no pitch). Message 4-5 days later referencing a specific digital gap, e.g. "${(l.digitalWeaknesses||['weak online presence'])[0]}".`},
-  {i:'📞',ch:'Cold Call',tip:`Trades owners respond well to direct calls. Lead with a stat or observation about ${l.businessType}s in ${l.city} missing Google page 1 — makes it feel like research, not a sales call.`},
-  {i:'📱',ch:'Meta / Facebook Ads',tip:`Run a hyper-targeted ad in ${l.city} to business owners in ${l.businessType} — use a case study headline like "We got [similar client] 3x more calls in 60 days." Warm leads before you ever reach out.`},
-  {i:'🔍',ch:'Google Ads (their keywords)',tip:`Target the exact searches ${l.businessType}s in ${l.city} rely on for new jobs. A landing page offering a free audit or quote gets inbound leads before they know you exist.`},
-  {i:'🤝',ch:'Local Networking / BNI',tip:`BNI chapters and local contractor associations in ${l.city} are goldmines. Contractors trust referrals 10x more than cold outreach — one warm intro beats 50 cold emails.`},
-  {i:'📮',ch:'Direct Mail',tip:`A physical postcard or one-page flyer to ${l.companyName}'s address stands out when everyone else is emailing. Include a QR code to a quick-win offer (free SEO report, website audit, etc).`}
-].map(t=>`<div class="otip"><div class="otip-icon">${t.i}</div><div class="otip-inner"><div class="otip-ch">${t.ch}</div><div class="otip-body">${t.tip}</div></div></div>`).join('')}</div></div></div></div>`;
+      renderResults(currentResults);
+      resultsPanel.style.display = '';
+    }, 1200);
   });
-  document.getElementById('results').innerHTML=html;
-  setTimeout(()=>{document.querySelectorAll('.mbarfill').forEach(b=>{const w=b.style.width;b.style.width='0%';requestAnimationFrame(()=>{b.style.width=w;});});},100);
-}
 
+  function makeDemoResults(config) {
+    const { count, services, contractors, locationsText, states, website, mode } = config;
+    const baseCity = (locationsText || states || 'Your City').split(',')[0].trim() || 'Your City';
+    const baseService = services[0] || 'Full‑stack digital';
+    const baseContractor = contractors[0] || 'General contractors';
+    const results = [];
 
-function toggleBuiltWithKey(){
-  const pp=document.getElementById('pixelProvider').value;
-  const gp=document.getElementById('googleTagProvider').value;
-  document.getElementById('bwKeyWrap').style.display=(pp==='builtwith'||gp==='builtwith')?'block':'none';
-}
-function toggleBwVis(){
-  const inp=document.getElementById('bwKey');
-  const btn=inp.nextElementSibling;
-  inp.type=inp.type==='password'?'text':'password';
-  btn.textContent=inp.type==='password'?'SHOW':'HIDE';
-}
+    for (let i = 1; i <= count; i++) {
+      const score = 72 + i * 5;
+      const realOdds = 80 - i * 3;
+      const name = `${baseCity} ${baseContractor.split(' ')[0]} Group ${i}`;
+      const modeLabel = MODE_CONTENT[mode].label;
 
-function matrixRain(){
-  const canvas=document.getElementById('matrixRain'); if(!canvas) return;
-  const ctx=canvas.getContext('2d');
-  const resize=()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;}; resize();
-  const chars='01アイウエオカキクケコサシスセソタチツテトABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const fontSize=14; const cols=Math.floor(canvas.width/fontSize); const drops=Array(cols).fill(1);
-  clearInterval(window.matrixTimer);
-  window.matrixTimer=setInterval(()=>{
-    ctx.fillStyle='rgba(0,0,0,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#00ff41'; ctx.font=fontSize+'px monospace';
-    for(let i=0;i<drops.length;i++){
-      const text=chars[Math.floor(Math.random()*chars.length)];
-      ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-      if(drops[i]*fontSize>canvas.height&&Math.random()>0.975)drops[i]=0;
-      drops[i]++;
+      results.push({
+        id: i,
+        mode,
+        modeLabel,
+        name,
+        score,
+        fitReason: `Based on your focus on ${baseService.toLowerCase()} for ${baseContractor.toLowerCase()}, this profile mirrors your best wins and lives in ${baseCity}.`,
+        realOdds,
+        website: '— to be fetched by your backend —',
+        owner: '— if discoverable via your data sources —',
+        email: '— from your enrichment / data providers —',
+        phone: '— from your enrichment / data providers —',
+        socials: '— from your enrichment / data providers —',
+        gmap: '— from your maps / place data provider —',
+        metaPixel: mode === 'agent-computer' ? 'Detected / not detected – fill from real scans.' : 'Use Agent + Computer or a tag API to verify.',
+        gtag: mode === 'agent-computer' ? 'Detected / not detected – fill from real scans.' : 'Use Agent + Computer or a tag API to verify.',
+        altAngles: [
+          'Partner via suppliers or distributors already in their ecosystem.',
+          'Warm intro through local chamber or trade group.',
+          'Lead with a teardown Loom of their current site and funnel.',
+        ],
+        emailDraft: [
+          `Subject: A quick ${baseService.toLowerCase()} win for ${name} in ${baseCity}`,
+          '',
+          `Hi there,`,
+          '',
+          `I work with ${baseContractor.toLowerCase()} in ${baseCity} who want steadier jobs without burning cash on broad ads.`,
+          `From the outside, there are a few low‑friction ${baseService.toLowerCase()} moves that could lift your inbound volume and tighten follow‑up – without a full rebuild.`,
+          '',
+          `If you want, I can send a short teardown specific to ${name} so you can see the gaps before you commit to anything.`,
+          '',
+          `Worth a quick 10–15 minutes this week?`,
+          '',
+          `Best,`,
+          `Your Name`,
+        ].join('\n'),
+      });
     }
-  },35);
-}
-function startMatrix(){
-  const feed=document.getElementById('matrixFeed');
-  const lines=document.getElementById('feedLines');
-  lines.innerHTML='';
-  feed.style.display='flex';
-  const msgs=[
-    '> CONNECTING TO OPENAI AGENT LOOP...','ok',
-    '> LOADING TARGET PARAMETERS...','ok',
-    '> INJECTING SEARCH VECTORS...','ok',
-    '> STEP 1 — SCANNING LOCAL MARKET...','dim',
-    '> STEP 2 — ENRICHING PROFILES...','dim',
-    '> STEP 3 — ANALYZING DIGITAL WEAKNESSES...','dim',
-    '> STEP 4 — GENERATING COLD EMAILS...','dim'
-  ];
-  let i=0;
-  const typeLine=(el,text,cb)=>{
-    let n=0; el.textContent='';
-    const t=setInterval(()=>{el.textContent=text.slice(0,++n); if(n>=text.length){clearInterval(t); cb&&cb();}},12);
-  };
-  const step=()=>{
-    if(i>=msgs.length){
-      document.getElementById('feedProgress').textContent='▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  COMPLETE';
-      setTimeout(()=>{feed.style.display='none';},1200);
-      return;
-    }
-    const div=document.createElement('div'); div.className='feed-line '+msgs[i+1]; lines.appendChild(div);
-    typeLine(div,msgs[i],()=>{i+=2; document.getElementById('feedProgress').textContent='STEP '+(i/2+1)+'/4'; setTimeout(step,800);});
-  };
-  step();
-}
-function toggle(i){document.getElementById('b'+i).classList.toggle('open');document.getElementById('chev'+i).classList.toggle('open');}
-function clearAll(){leads=[];document.getElementById('results').innerHTML='<div class="empty"><div class="eico">⬡</div><div class="etxt">CONFIGURE CRITERIA &amp; FIRE TO FIND LEADS</div></div>';}
-function copyEmail(i){
-  const l=leads[i];
-  navigator.clipboard.writeText(`Subject: ${l.emailSubject}\n\n${l.emailBody}`).then(()=>{
-    const b=document.getElementById('cp'+i);b.textContent='✓ COPIED!';
-    setTimeout(()=>b.textContent='⬡ COPY EMAIL',2000);
-  });
-}
-async function regenEmail(i){
-  const key=document.getElementById('apiKey').value.trim();
-  const pkey=(document.getElementById('perplexityKey')||{}).value?document.getElementById('perplexityKey').value.trim():'';
-  if(!key)return alert('API key required');
-  const l=leads[i],btn=document.querySelector(`#c${i} .btn-p`);
-  btn.textContent='↺ WRITING...';btn.disabled=true;
-  try{
-    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4o',messages:[{role:'system',content:'Write concise personalized B2B cold emails for a digital marketing agency. Return JSON with keys: emailSubject (string), emailBody (string, 3 short paragraphs).'},{role:'user',content:`New cold email for: ${l.companyName}, owner ${l.ownerName}, ${l.city}. Type: ${l.businessType}. Weaknesses: ${(l.digitalWeaknesses||[]).join(', ')}. Services: ${(l.recommendedServices||[]).join(', ')}.`}],temperature:.85,max_tokens:600,response_format:{type:'json_object'}})});
-    const d=await r.json();const upd=JSON.parse(d.choices[0].message.content);
-    leads[i].emailSubject=upd.emailSubject;leads[i].emailBody=upd.emailBody;
-    document.querySelector(`#c${i} .esubj`).innerHTML=`<span style="color:var(--dim);font-size:.6rem">SUBJECT: </span>${upd.emailSubject}`;
-    document.querySelector(`#c${i} .ebody`).textContent=upd.emailBody;
-  }catch(e){alert('Failed: '+e.message);}
-  btn.textContent='↺ REGENERATE';btn.disabled=false;
-}
+    return results;
+  }
 
-function exportPDF(){
-  if(!leads.length)return;
-  const{jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),M=14,CW=W-M*2;
-  let y=M;
-  const np=()=>{doc.addPage();doc.setFillColor(255,255,255);doc.rect(0,0,W,H,'F');y=M;};
-  const ck=(n=12)=>{if(y+n>H-M)np();};
-  // ── COVER PAGE (dark themed) ──
-  doc.setFillColor(3,8,3);doc.rect(0,0,W,H,'F');
-  doc.setTextColor(0,255,65);doc.setFontSize(26);doc.setFont('courier','bold');
-  doc.text('CRACKLE',W/2,46,{align:'center'});
-  doc.setFontSize(8);doc.setTextColor(0,220,220);
-  doc.text('AGENCY LEAD INTELLIGENCE REPORT',W/2,56,{align:'center'});
-  doc.setFontSize(8);doc.setTextColor(140,200,140);
-  const _ctStr=getCtypes().join(', ')||'Contractors';
-  const _incCity=document.getElementById('incCity').value;
-  const _incProv=document.getElementById('incProv').value;
-  const _locStr=[_incCity,_incProv].filter(Boolean).join(' / ')||'Any Location';
-  let cy=66;
-  doc.text(`Generated: ${new Date().toLocaleDateString('en-CA')}`,W/2,cy,{align:'center'});cy+=7;
-  doc.text(`Types: ${_ctStr}`,W/2,cy,{align:'center'});cy+=7;
-  doc.text(`Location: ${_locStr}`,W/2,cy,{align:'center'});cy+=7;
-  doc.text(`Total Leads: ${leads.length}`,W/2,cy,{align:'center'});
-  // ── LEAD PAGES (white background, dark text) ──
-  leads.forEach((l,idx)=>{
-    np();
-    // Header bar
-    doc.setFillColor(20,20,20);doc.rect(M-2,y-3,CW+4,13,'F');
-    doc.setTextColor(255,255,255);doc.setFontSize(12);doc.setFont('courier','bold');
-    doc.text(`${idx+1}. ${l.companyName}`,M,y+5);
-    const sc=l.leadScore>=8?[0,140,60]:l.leadScore>=5?[160,110,0]:[180,30,30];
-    doc.setTextColor(...sc);doc.setFontSize(8);
-    doc.text(`LEAD SCORE: ${l.leadScore}/10`,W-M,y+5,{align:'right'});
-    y+=16;
-    // Info grid — dark text on white
-    const rcPdf=l.realityCheck||'AI-estimated — research carefully';
-    ck(6);doc.setFontSize(7);doc.setFont('courier','normal');
-    doc.setTextColor(120,80,0);doc.text('VERIFY: google.com/maps/search/'+encodeURIComponent((l.companyName+' '+l.city).slice(0,40)),M,y);y+=5;
-    doc.setTextColor(100,100,100);doc.text('Reality Check: '+rcPdf,M,y);y+=6;
-    [[' Type',l.businessType],['Location',`${l.city}, ${l.province}`],['Owner',l.ownerName],['Phone',l.phone],['Email',l.email],['Website',l.website||'No website'],['Years Active',`${l.yearsInBusiness} yrs`],['Team Size',l.employeeCount],['Google',`${l.googleRating}★ (${l.googleReviews} reviews) — ESTIMATED`]].forEach(([k,v])=>{
-      ck(6);doc.setFontSize(8);doc.setFont('courier','normal');
-      doc.setTextColor(90,90,90);doc.text(k+':',M,y);
-      doc.setTextColor(20,20,20);doc.text(String(v||'—'),M+32,y);y+=5.2;
+  function renderResults(list) {
+    resultsList.innerHTML = '';
+    list.forEach(item => {
+      const card = document.createElement('article');
+      card.className = 'result-card';
+      card.dataset.id = item.id;
+      card.innerHTML = `
+        <div class="result-topline">
+          <div class="result-name">${item.name}</div>
+          <div class="result-score-pill">Fit score: ${item.score}/100</div>
+        </div>
+        <div class="result-meta">
+          <div class="meta-chip">Odds real business: ${item.realOdds}%</div>
+          <div class="meta-chip">Mode: ${item.modeLabel}</div>
+        </div>
+        <div class="result-fit">${item.fitReason}</div>
+      `;
+      card.addEventListener('click', () => openResultModal(item));
+      resultsList.appendChild(card);
     });
-    y+=3;
-    // Revenue Signals
-    ck(18);doc.setTextColor(140,80,0);doc.setFont('courier','bold');doc.setFontSize(8);
-    doc.text('REVENUE SIGNALS:',M,y);y+=5;
-    doc.setFont('courier','normal');doc.setTextColor(100,60,0);
-    (l.revenueSignals||[]).forEach(s=>{ck(5);doc.text('• '+s,M+3,y);y+=4.8;});
-    y+=3;
-    // Digital Weaknesses
-    ck(18);doc.setTextColor(160,0,40);doc.setFont('courier','bold');doc.setFontSize(8);
-    doc.text('DIGITAL WEAKNESSES:',M,y);y+=5;
-    doc.setFont('courier','normal');doc.setTextColor(130,20,50);
-    (l.digitalWeaknesses||[]).forEach(w=>{ck(5);doc.text('• '+w,M+3,y);y+=4.8;});
-    y+=3;
-    // Recommended Services
-    ck(14);doc.setTextColor(0,80,150);doc.setFont('courier','bold');doc.setFontSize(8);
-    doc.text('RECOMMENDED SERVICES:',M,y);y+=5;
-    doc.setFont('courier','normal');doc.setTextColor(20,60,130);
-    doc.splitTextToSize((l.recommendedServices||[]).join(' · '),CW).forEach(line=>{ck(5);doc.text(line,M+3,y);y+=4.8;});
-    y+=3;
-    // Match Score (if present)
-    if(l.matchScore!==undefined){
-      ck(14);doc.setTextColor(100,0,180);doc.setFont('courier','bold');doc.setFontSize(8);
-      doc.text(`SITE MATCH SCORE: ${l.matchScore}/10`,M,y);y+=5;
-      doc.setFont('courier','normal');doc.setTextColor(80,20,150);
-      doc.splitTextToSize(l.matchReason||'—',CW).forEach(line=>{ck(5);doc.text(line,M+3,y);y+=4.8;});
-      y+=3;
-    }
-    // Cold Email — black text, clearly readable
-    ck(22);
-    doc.setFillColor(245,245,245);doc.rect(M-2,y-2,CW+4,6,'F');
-    doc.setTextColor(20,20,20);doc.setFont('courier','bold');doc.setFontSize(8);
-    doc.text('COLD EMAIL DRAFT:',M,y+2);y+=8;
-    doc.setFillColor(250,250,250);
-    doc.setTextColor(40,40,40);doc.setFont('courier','normal');doc.setFontSize(8);
-    doc.text('SUBJECT: '+l.emailSubject,M,y);y+=6;
-    doc.setTextColor(20,20,20);doc.setFontSize(7.5);
-    doc.splitTextToSize(l.emailBody,CW).forEach(line=>{ck(5);doc.text(line,M,y);y+=4.4;});
-    y+=4;
-    // Outreach Alternatives
-    ck(16);
-    doc.setFillColor(240,240,240);doc.rect(M-2,y-2,CW+4,6,'F');
-    doc.setTextColor(20,20,20);doc.setFont('courier','bold');doc.setFontSize(8);
-    doc.text('OTHER OUTREACH STRATEGIES:',M,y+2);y+=8;
-    const tips=[
-      ['LinkedIn DM',`Find ${l.ownerName} on LinkedIn — connect first, pitch 4-5 days later referencing: "${(l.digitalWeaknesses||[''])[0]}"`],
-      ['Cold Call',`Direct calls work well for trades. Lead with a stat about ${l.businessType}s missing Google page 1 in ${l.city}.`],
-      ['Meta Ads',`Target business owners in ${l.businessType} in ${l.city} with a case study ad before direct outreach.`],
-      ['Local Networking / BNI',`BNI + contractor associations in ${l.city}. One warm referral beats 50 cold emails.`],
-      ['Direct Mail',`Postcard to ${l.companyName} with a QR code to a free audit offer — stands out in a digital-only world.`]
-    ];
-    doc.setFont('courier','normal');doc.setTextColor(30,30,30);doc.setFontSize(7.5);
-    tips.forEach(([ch,tip])=>{
-      ck(8);
-      doc.setFont('courier','bold');doc.setTextColor(0,80,150);doc.text(ch+': ',M+3,y);
-      const chW=doc.getTextWidth(ch+': ');
-      doc.setFont('courier','normal');doc.setTextColor(40,40,40);
-      doc.splitTextToSize(tip,CW-6).forEach((line,li)=>{ck(5);doc.text(li===0?line:line,li===0?M+3+chW:M+6,y);y+=4.4;});
-      y+=1.5;
-    });
-  });
-  doc.save(`CRACKLE_Leads_${new Date().toISOString().split('T')[0]}.pdf`);
-}
+  }
 
-window.addEventListener('load',()=>{matrixRain();setLeadEngine();toggleBuiltWithKey();});
+  function openResultModal(item) {
+    modalTitle.textContent = item.name;
+    modalModeBadge.textContent = `Mode: ${item.modeLabel}`;
+    modalProfileList.innerHTML = `
+      <li><strong>Business:</strong> <span>${item.name}</span></li>
+      <li><strong>Owner:</strong> <span>${item.owner}</span></li>
+      <li><strong>Website:</strong> <span>${item.website}</span></li>
+      <li><strong>Email:</strong> <span>${item.email}</span></li>
+      <li><strong>Phone:</strong> <span>${item.phone}</span></li>
+      <li><strong>Socials:</strong> <span>${item.socials}</span></li>
+      <li><strong>Google Maps:</strong> <span>${item.gmap}</span></li>
+      <li><strong>Fit score:</strong> <span>${item.score}/100</span></li>
+      <li><strong>Odds real business:</strong> <span>${item.realOdds}%</span></li>
+    `;
+    modalPixelList.innerHTML = `
+      <li><strong>Meta Pixel:</strong> <span>${item.metaPixel}</span></li>
+      <li><strong>Google Tag:</strong> <span>${item.gtag}</span></li>
+    `;
+    modalFitText.textContent = item.fitReason;
+    modalEmailDraft.textContent = item.emailDraft;
+    modalAltLeads.textContent = item.altAngles.join(' · ');
+    modalBackdrop.classList.add('visible');
+  }
+
+  modalCloseBtn.addEventListener('click', () => {
+    modalBackdrop.classList.remove('visible');
+  });
+
+  modalBackdrop.addEventListener('click', (e) => {
+    if (e.target === modalBackdrop) {
+      modalBackdrop.classList.remove('visible');
+    }
+  });
+
+  exportPdfBtn.addEventListener('click', () => {
+    if (!currentResults.length) return;
+    buildPdfContent(currentResults);
+    const opt = {
+      margin: 10,
+      filename: 'the-crackle-leads.pdf',
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] },
+    };
+    html2pdf().set(opt).from(pdfTarget).save(); /* [web:7] */
+  });
+
+  modalExportPdfBtn.addEventListener('click', () => {
+    const name = modalTitle.textContent || 'lead';
+    const item = currentResults.find(r => r.name === name);
+    if (!item) return;
+    buildPdfContent([item]);
+    const safeName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    const opt = {
+      margin: 10,
+      filename: `crackle-${safeName}.pdf`,
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] },
+    };
+    html2pdf().set(opt).from(pdfTarget).save(); /* [web:7] */
+  });
+
+  function buildPdfContent(list) {
+    const modeName = MODE_CONTENT[currentMode].label;
+    const html = `
+      <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; color:#111; font-size:12px;">
+        <h1 style="font-size:20px; margin-bottom:4px;">The Crackle – Lead Pack</h1>
+        <div style="font-size:11px; color:#555; margin-bottom:12px;">
+          Mode: ${modeName} · Generated at: ${new Date().toLocaleString()}
+        </div>
+        ${list.map(item => `
+          <div style="border:1px solid #ddd; border-radius:6px; padding:8px 10px; margin-bottom:10px; page-break-inside:avoid;">
+            <h2 style="font-size:15px; margin:0 0 4px;">${item.name}</h2>
+            <div style="font-size:11px; color:#555; margin-bottom:4px;">
+              Fit score: ${item.score}/100 · Odds real business: ${item.realOdds}% · Mode: ${item.modeLabel}
+            </div>
+            <h3 style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#777; margin:6px 0 2px;">Profile</h3>
+            <ul style="margin:0 0 4px 14px; padding:0;">
+              <li><strong>Owner:</strong> ${item.owner}</li>
+              <li><strong>Website:</strong> ${item.website}</li>
+              <li><strong>Email:</strong> ${item.email}</li>
+              <li><strong>Phone:</strong> ${item.phone}</li>
+              <li><strong>Socials:</strong> ${item.socials}</li>
+              <li><strong>Google Maps:</strong> ${item.gmap}</li>
+            </ul>
+            <h3 style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#777; margin:6px 0 2px;">Verification & pixels</h3>
+            <ul style="margin:0 0 4px 14px; padding:0;">
+              <li><strong>Meta Pixel:</strong> ${item.metaPixel}</li>
+              <li><strong>Google Tag:</strong> ${item.gtag}</li>
+            </ul>
+            <h3 style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#777; margin:6px 0 2px;">Why you’re the best fit</h3>
+            <p style="margin:0 0 4px;">${item.fitReason}</p>
+            <h3 style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#777; margin:6px 0 2px;">Cold email draft</h3>
+            <pre style="margin:0 0 4px; white-space:pre-wrap; font-size:11px;">${item.emailDraft}</pre>
+            <h3 style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#777; margin:6px 0 2px;">Alternative angles</h3>
+            <ul style="margin:0 0 4px 14px; padding:0;">
+              ${item.altAngles.map(a => `<li>${a}</li>`).join('')}
+            </ul>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    pdfTarget.innerHTML = html;
+  }
+
+  setMode('agent');
 </script>
 </body>
-</html
-  if(engine==='perplexity'){
-    // Mode B: Perplexity search first
-    const pRes=await perplexitySearch(`Find ${n} real ${ctypeStr} businesses in ${locLabel}. Return JSON array of leads with companyName, website, phone, ownerName, city, province.`, pkey);
-    const pLeads=Array.isArray(pRes.choices[0].message.content)?JSON.parse(pRes.choices[0].message.content):[];
-    // Then OpenAI for scoring/emails
-    sys+='\nScore these Perplexity-found leads: '+JSON.stringify(pLeads.slice(0,n));
-    // Use original OpenAI call for scoring
-  } else if(engine==='agent'){
-    // Full agent mode - enhanced prompt for multi-step
-    sys+='\nAGENT MODE: Step 1: web search real businesses. Step 2: visit websites. Step 3: score digital gaps. Step 4: write emails. Return complete leads JSON.';
-  } else {
-    // Two-stage or default
-    sys+='\nTWO-STAGE MODE: First find real businesses, then analyze.';
-  }
->
+</html>
