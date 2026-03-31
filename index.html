@@ -415,7 +415,7 @@ async function perplexitySearch(query,apiKey){
 }
 
 let activeEngine='';
-let agentFeedTimer=null;
+let agentFeedTimer=null; window.matrixTimer=null;
 let matrixTimer=null;
 const engineLabels={agent:'OPENAI AGENT',perplexity:'PERPLEXITY + OPENAI',twostage:'TWO-STAGE OPENAI'};
 function showModeSelector(){
@@ -571,6 +571,7 @@ async function go(){
   const site=document.getElementById('mysite').value.trim();
   const svcs=getServices();
   if(!key)return showErr('⚠ Enter your OpenAI API key to continue.');
+  if(engine==='perplexity'&&!pkey)return showErr('⚠ Enter Perplexity API key for this mode');
   if(!ctypes.length)return showErr('⚠ Select at least one contractor type.');
   if(!inc&&!incProv)return showErr('⚠ Add at least one city or province/state to search in.');
   if(!svcs.length)return showErr('⚠ Select at least one service you offer.');
@@ -636,8 +637,8 @@ Each lead object MUST have exactly these fields:
   "emailBody": string (3 short personalized paragraphs)${site?',\n  "matchScore": number 1-10,\n  "matchReason": string':''}
 }`;
   try{
-    const selectedModel=document.getElementById('modelSel').value;
-    const engine=activeEngine||localStorage.getItem('crackleEngine')||'agent';
+    let selectedModel=document.getElementById('modelSel').value;
+    let engine=activeEngine||localStorage.getItem('crackleEngine')||'agent';
     if(engine==='perplexity'&&!pkey)return alert('Perplexity API key required for this mode');
     if(engine==='agent')sys+='\n\nYou are operating in AGENT MODE. Perform a full loop: search, enrich, score, write. Use web-grounded results only.';
     if(engine==='twostage')sys+='\n\nYou are operating in TWO-STAGE MODE. First find real businesses with web search, then analyze and score them.';
@@ -861,6 +862,55 @@ function toggleBwVis(){
   inp.type=inp.type==='password'?'text':'password';
   btn.textContent=inp.type==='password'?'SHOW':'HIDE';
 }
+
+function matrixRain(){
+  const canvas=document.getElementById('matrixRain'); if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const resize=()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;}; resize();
+  const chars='01アイウエオカキクケコサシスセソタチツテトABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const fontSize=14; const cols=Math.floor(canvas.width/fontSize); const drops=Array(cols).fill(1);
+  clearInterval(window.matrixTimer);
+  window.matrixTimer=setInterval(()=>{
+    ctx.fillStyle='rgba(0,0,0,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#00ff41'; ctx.font=fontSize+'px monospace';
+    for(let i=0;i<drops.length;i++){
+      const text=chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+      if(drops[i]*fontSize>canvas.height&&Math.random()>0.975)drops[i]=0;
+      drops[i]++;
+    }
+  },35);
+}
+function startMatrix(){
+  const feed=document.getElementById('matrixFeed');
+  const lines=document.getElementById('feedLines');
+  lines.innerHTML='';
+  feed.style.display='flex';
+  const msgs=[
+    '> CONNECTING TO OPENAI AGENT LOOP...','ok',
+    '> LOADING TARGET PARAMETERS...','ok',
+    '> INJECTING SEARCH VECTORS...','ok',
+    '> STEP 1 — SCANNING LOCAL MARKET...','dim',
+    '> STEP 2 — ENRICHING PROFILES...','dim',
+    '> STEP 3 — ANALYZING DIGITAL WEAKNESSES...','dim',
+    '> STEP 4 — GENERATING COLD EMAILS...','dim'
+  ];
+  let i=0;
+  const typeLine=(el,text,cb)=>{
+    let n=0; el.textContent='';
+    const t=setInterval(()=>{el.textContent=text.slice(0,++n); if(n>=text.length){clearInterval(t); cb&&cb();}},12);
+  };
+  const step=()=>{
+    if(i>=msgs.length){
+      document.getElementById('feedProgress').textContent='▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  COMPLETE';
+      setTimeout(()=>{feed.style.display='none';},1200);
+      return;
+    }
+    const div=document.createElement('div'); div.className='feed-line '+msgs[i+1]; lines.appendChild(div);
+    typeLine(div,msgs[i],()=>{i+=2; document.getElementById('feedProgress').textContent='STEP '+(i/2+1)+'/4'; setTimeout(step,800);});
+  };
+  step();
+}
 function toggle(i){document.getElementById('b'+i).classList.toggle('open');document.getElementById('chev'+i).classList.toggle('open');}
 function clearAll(){leads=[];document.getElementById('results').innerHTML='<div class="empty"><div class="eico">⬡</div><div class="etxt">CONFIGURE CRITERIA &amp; FIRE TO FIND LEADS</div></div>';}
 function copyEmail(i){
@@ -997,4 +1047,19 @@ function exportPDF(){
 window.addEventListener('load',()=>{matrixRain();setLeadEngine();toggleBuiltWithKey();});
 </script>
 </body>
-</html>
+</html
+  if(engine==='perplexity'){
+    // Mode B: Perplexity search first
+    const pRes=await perplexitySearch(`Find ${n} real ${ctypeStr} businesses in ${locLabel}. Return JSON array of leads with companyName, website, phone, ownerName, city, province.`, pkey);
+    const pLeads=Array.isArray(pRes.choices[0].message.content)?JSON.parse(pRes.choices[0].message.content):[];
+    // Then OpenAI for scoring/emails
+    sys+='\nScore these Perplexity-found leads: '+JSON.stringify(pLeads.slice(0,n));
+    // Use original OpenAI call for scoring
+  } else if(engine==='agent'){
+    // Full agent mode - enhanced prompt for multi-step
+    sys+='\nAGENT MODE: Step 1: web search real businesses. Step 2: visit websites. Step 3: score digital gaps. Step 4: write emails. Return complete leads JSON.';
+  } else {
+    // Two-stage or default
+    sys+='\nTWO-STAGE MODE: First find real businesses, then analyze.';
+  }
+>
