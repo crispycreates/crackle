@@ -1,2020 +1,916 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>The Crackle – AI Lead Generator by Crispy Media</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg-deep: #020518;
-      --bg-night: #050816;
-      --cyan: #1be7ff;
-      --magenta: #ff6ec7;
-      --hot-pink: #ff2e92;
-      --teal: #008080;
-      --sunset: #ff5733;
-      --white: #ffffff;
-      --text-main: #fdfbff;
-      --text-muted: #8fb2d9;
-      --panel-border: rgba(27, 231, 255, 0.6);
-      --panel-glow: rgba(255, 110, 199, 0.55);
-      --success: #00ffb4;
-      --error: #ff4b81;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      min-height: 100vh;
-      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      color: var(--text-main);
-      background:
-        radial-gradient(circle at 15% -20%, rgba(254, 109, 198, 0.65) 0%, transparent 55%),
-        radial-gradient(circle at 85% 120%, rgba(27, 231, 255, 0.55) 0%, transparent 55%),
-        linear-gradient(180deg, #020518 0%, #050816 52%, #000000 100%);
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
-    .background {
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 10% -18%, rgba(254, 109, 198, 0.7) 0%, transparent 60%),
-        radial-gradient(circle at 90% 120%, rgba(27, 231, 255, 0.6) 0%, transparent 55%),
-        radial-gradient(circle at 0% 120%, rgba(255, 87, 51, 0.45) 0%, transparent 55%),
-        linear-gradient(180deg, #020518 0%, #050816 60%, #000000 100%);
-      animation: hueShift 30s linear infinite alternate;
-    }
-
-    @keyframes hueShift {
-      0% { filter: hue-rotate(0deg) brightness(1); }
-      50% { filter: hue-rotate(8deg) brightness(1.05); }
-      100% { filter: hue-rotate(-8deg) brightness(0.98); }
-    }
-
-    .sun {
-      position: absolute;
-      top: -140px;
-      left: 50%;
-      width: 460px;
-      height: 460px;
-      transform: translateX(-50%);
-      background:
-        radial-gradient(circle at 50% 30%, rgba(255,255,255,0.9) 0%, rgba(255,246,191,0.75) 26%, transparent 60%),
-        radial-gradient(circle at 50% 70%, rgba(255,110,199,0.85) 0%, transparent 60%);
-      opacity: 0.8;
-      filter: blur(1px);
-      mix-blend-mode: screen;
-    }
-
-    .grid {
-      position: absolute;
-      left: 50%;
-      bottom: -60px;
-      width: 170vw;
-      height: 60vh;
-      transform: translateX(-50%) perspective(700px) rotateX(74deg);
-      background:
-        linear-gradient(to right, rgba(27, 231, 255, 0.25) 1px, transparent 1px),
-        linear-gradient(to top, rgba(27, 231, 255, 0.25) 1px, transparent 1px);
-      background-size: 42px 42px;
-      background-position: center bottom;
-      box-shadow: 0 0 70px rgba(27, 231, 255, 0.6);
-      opacity: 0.75;
-      animation: gridDrift 18s linear infinite;
-    }
-
-    @keyframes gridDrift {
-      0% { background-position: center bottom; }
-      100% { background-position: center calc(100% + 90px); }
-    }
-
-    .city-strip {
-      position: absolute;
-      bottom: 24vh;
-      width: 180%;
-      left: -40%;
-      height: 130px;
-      background-image: linear-gradient(
-        to right,
-        rgba(0,0,0,0) 0,
-        rgba(0,0,0,0.9) 5%,
-        rgba(0,0,0,1) 15%,
-        rgba(0,0,0,0.85) 22%,
-        transparent 26%
-      );
-      background-size: 210px 100%;
-      opacity: 0.9;
-      filter: drop-shadow(0 0 14px rgba(27, 231, 255, 0.5));
-      animation: skylineScroll 40s linear infinite;
-    }
-
-    .city-strip:nth-child(2) {
-      bottom: 29vh;
-      height: 100px;
-      opacity: 0.7;
-      animation-duration: 55s;
-    }
-
-    .city-strip:nth-child(3) {
-      bottom: 33vh;
-      height: 70px;
-      opacity: 0.55;
-      animation-duration: 70s;
-    }
-
-    @keyframes skylineScroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-170px); }
-    }
-
-    .particle {
-      position: absolute;
-      border-radius: 999px;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.95), transparent 60%);
-      opacity: 0.28;
-      mix-blend-mode: screen;
-      animation: floatUp 18s linear infinite;
-    }
-
-    .particle:nth-child(4) { width: 4px; height: 16px; left: 12%; bottom: -80px; animation-duration: 17s; }
-    .particle:nth-child(5) { width: 5px; height: 22px; left: 38%; bottom: -90px; animation-duration: 21s; }
-    .particle:nth-child(6) { width: 4px; height: 18px; left: 63%; bottom: -95px; animation-duration: 19s; }
-    .particle:nth-child(7) { width: 6px; height: 24px; left: 84%; bottom: -100px; animation-duration: 23s; }
-
-    @keyframes floatUp {
-      0% { transform: translateY(0); opacity: 0; }
-      10% { opacity: 0.4; }
-      90% { opacity: 0.15; }
-      100% { transform: translateY(-120vh); opacity: 0; }
-    }
-
-    .app-shell {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 32px 16px 44px;
-    }
-
-    .panel {
-      width: 100%;
-      max-width: 1180px;
-      background:
-        radial-gradient(circle at 0 0, rgba(27, 231, 255, 0.18), transparent 65%),
-        radial-gradient(circle at 100% 100%, rgba(255, 110, 199, 0.18), transparent 55%),
-        linear-gradient(145deg, rgba(2, 5, 32, 0.96), rgba(3, 2, 18, 0.98));
-      border-radius: 22px;
-      border: 1px solid var(--panel-border);
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,0.85),
-        0 0 45px var(--panel-glow),
-        0 30px 120px rgba(0,0,0,0.95);
-      padding: 26px 22px 26px;
-      backdrop-filter: blur(18px);
-    }
-
-    @media (min-width: 900px) {
-      .panel {
-        padding: 32px 32px 34px;
-      }
-    }
-
-    header.app-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 22px;
-    }
-
-    .logo-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .logo-main {
-      font-family: 'Orbitron', system-ui;
-      font-size: clamp(34px, 5.5vw, 44px);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      position: relative;
-      color: var(--white);
-      text-shadow:
-        0 0 6px rgba(255,255,255,0.8),
-        0 0 16px rgba(27,231,255,0.9),
-        0 0 32px rgba(255,110,199,1),
-        0 0 60px rgba(255,110,199,0.9);
-      animation: neonFlicker 4.5s infinite;
-    }
-
-    .logo-main::after {
-      content: '';
-      position: absolute;
-      inset: -6px -12px;
-      border-radius: 14px;
-      border: 2px solid rgba(255,255,255,0.2);
-      box-shadow:
-        0 0 18px rgba(27,231,255,0.85),
-        0 0 32px rgba(255,110,199,0.9);
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    @keyframes neonFlicker {
-      0%, 18%, 20%, 22%, 55%, 100% {
-        opacity: 1;
-        text-shadow:
-          0 0 4px rgba(255,255,255,0.9),
-          0 0 12px rgba(27,231,255,1),
-          0 0 26px rgba(255,110,199,1),
-          0 0 72px rgba(255,110,199,0.9);
-      }
-      19%, 21%, 23% {
-        opacity: 0.25;
-        text-shadow: none;
-      }
-      56% {
-        opacity: 0.75;
-      }
-    }
-
-    h2.subtitle {
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.24em;
-      color: var(--cyan);
-      opacity: 0.95;
-    }
-
-    .byline {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .header-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(27,231,255,0.7);
-      background:
-        radial-gradient(circle at 0 0, rgba(27,231,255,0.35), transparent 60%),
-        rgba(2,6,26,0.98);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--cyan);
-    }
-
-    .header-pill-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background: radial-gradient(circle, #00ffb4, #00a86b);
-      box-shadow: 0 0 10px rgba(0,255,180,1);
-      animation: pulseDot 1.4s ease-in-out infinite;
-    }
-
-    @keyframes pulseDot {
-      0%, 100% { transform: scale(0.9); opacity: 0.9; }
-      50% { transform: scale(1.25); opacity: 1; }
-    }
-
-    main {
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-      gap: 22px;
-    }
-
-    @media (max-width: 880px) {
-      main {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .panel-block {
-      border-radius: 18px;
-      padding: 16px 16px 18px;
-      background:
-        radial-gradient(circle at 0 0, rgba(27,231,255,0.12), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(255,110,199,0.12), transparent 60%),
-        rgba(3,6,30,0.97);
-      border: 1px solid rgba(27,231,255,0.65);
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,0.85),
-        0 20px 55px rgba(0,0,0,0.9);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .panel-block::before {
-      content: '';
-      position: absolute;
-      inset: -50%;
-      background: conic-gradient(
-        from 90deg,
-        rgba(27,231,255,0.22),
-        transparent 35%,
-        rgba(255,110,199,0.22),
-        transparent 65%,
-        rgba(255,87,51,0.2)
-      );
-      opacity: 0;
-      mix-blend-mode: screen;
-      animation: sweep 16s linear infinite;
-      pointer-events: none;
-    }
-
-    @keyframes sweep {
-      0% { transform: rotate(0deg); opacity: 0; }
-      15% { opacity: 0.35; }
-      35% { opacity: 0; }
-      100% { transform: rotate(360deg); opacity: 0; }
-    }
-
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .panel-title {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--text-muted);
-    }
-
-    .pill-small {
-      font-size: 10px;
-      padding: 4px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(27,231,255,0.65);
-      background: rgba(1,5,24,0.96);
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.17em;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .pill-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: radial-gradient(circle, var(--magenta), var(--hot-pink));
-      box-shadow: 0 0 6px rgba(255,110,199,1);
-    }
-
-    .muted {
-      color: var(--text-muted);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .model-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .model-card {
-      position: relative;
-      padding: 11px 11px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(27,231,255,0.55);
-      background:
-        radial-gradient(circle at 0 0, rgba(27,231,255,0.17), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(255,110,199,0.17), transparent 60%),
-        rgba(2,6,28,0.98);
-      cursor: pointer;
-      transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, border-color 0.18s ease-out, background 0.18s ease-out;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.9);
-    }
-
-    .model-card:hover {
-      transform: translateY(-3px);
-      box-shadow:
-        0 0 0 1px rgba(27,231,255,0.4),
-        0 24px 70px rgba(0,0,0,1);
-    }
-
-    .model-card.selected {
-      border-color: rgba(255,110,199,0.9);
-      box-shadow:
-        0 0 0 1px rgba(255,110,199,0.65),
-        0 0 30px rgba(255,110,199,0.75),
-        0 26px 80px rgba(0,0,0,1);
-      background:
-        radial-gradient(circle at 0 0, rgba(255,110,199,0.22), transparent 60%),
-        radial-gradient(circle at 120% 160%, rgba(27,231,255,0.22), transparent 60%),
-        rgba(3,7,34,0.98);
-    }
-
-    .model-name-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 3px;
-    }
-
-    .model-name {
-      font-family: 'Orbitron', system-ui;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-    }
-
-    .model-badge {
-      font-size: 9px;
-      padding: 2px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.22);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--cyan);
-      background: rgba(2,7,26,0.96);
-    }
-
-    .model-section-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-muted);
-      margin-top: 3px;
-      margin-bottom: 2px;
-    }
-
-    .model-list {
-      list-style: none;
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    .model-list li::before {
-      content: '• ';
-      color: var(--cyan);
-    }
-
-    .model-tagline {
-      font-size: 11px;
-      color: var(--hot-pink);
-      margin-top: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .model-explainer {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.7;
-    }
-
-    .model-explainer h3 {
-      font-size: 15px;
-      margin-bottom: 6px;
-      color: var(--cyan);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-    }
-
-    .explainer-sub {
-      font-size: 12px;
-      margin-bottom: 6px;
-      color: var(--hot-pink);
-    }
-
-    .explainer-block-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.17em;
-      margin-top: 10px;
-      margin-bottom: 2px;
-      color: var(--text-muted);
-    }
-
-    .explainer-list {
-      list-style: none;
-      font-size: 12px;
-      padding-left: 0;
-    }
-
-    .explainer-list li::before {
-      content: '- ';
-      color: var(--cyan);
-    }
-
-    .stepper {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.22em;
-    }
-
-    .step-dot {
-      width: 20px;
-      height: 3px;
-      border-radius: 999px;
-      background: rgba(27,231,255,0.3);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .step-dot::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--hot-pink), var(--cyan));
-      transform-origin: left;
-      transform: scaleX(0.33);
-    }
-
-    .step-dot[data-step="2"]::after { transform: scaleX(0.66); }
-    .step-dot[data-step="3"]::after { transform: scaleX(1); }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      font-size: 13px;
-    }
-
-    .field-row {
-      display: grid;
-      gap: 10px;
-    }
-
-    @media (min-width: 900px) {
-      .field-row.cols-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .field-row.cols-3 {
-        grid-template-columns: 1.2fr 1.1fr 0.9fr;
-      }
-    }
-
-    label {
-      display: block;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--text-muted);
-      margin-bottom: 3px;
-    }
-
-    .hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    input[type="text"],
-    input[type="file"],
-    textarea {
-      width: 100%;
-      padding: 8px 9px;
-      border-radius: 9px;
-      border: 1px solid rgba(27,231,255,0.7);
-      background:
-        radial-gradient(circle at 0 0, rgba(27,231,255,0.12), transparent 55%),
-        rgba(1,5,24,0.98);
-      color: var(--text-main);
-      font-family: inherit;
-      font-size: 13px;
-      outline: none;
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,0.7),
-        0 10px 30px rgba(0,0,0,0.9);
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: rgba(158,176,224,0.75);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 60px;
-      max-height: 150px;
-    }
-
-    input[type="file"] {
-      padding: 6px 9px;
-      cursor: pointer;
-    }
-
-    input:focus,
-    textarea:focus {
-      border-color: rgba(255,110,199,0.9);
-      box-shadow:
-        0 0 0 1px rgba(255,110,199,0.75),
-        0 12px 36px rgba(0,0,0,1);
-    }
-
-    .checkbox-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 14px;
-    }
-
-    .checkbox-group label {
-      font-size: 12px;
-      letter-spacing: 0;
-      text-transform: none;
-      color: var(--text-main);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .checkbox-group input[type="checkbox"] {
-      accent-color: var(--hot-pink);
-    }
-
-    .slider-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    input[type="range"] {
-      flex: 1;
-      accent-color: var(--hot-pink);
-    }
-
-    .range-value {
-      min-width: 28px;
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .mode-note {
-      font-size: 11px;
-      color: var(--cyan);
-      margin-top: -4px;
-    }
-
-    .button-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 6px;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.22);
-      background:
-        radial-gradient(circle at 0 0, rgba(255,110,199,0.22), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(27,231,255,0.3), transparent 60%),
-        rgba(2,6,30,0.98);
-      color: #fff;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      cursor: pointer;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.95);
-      transition: transform 0.16s ease-out, box-shadow 0.16s ease-out, background 0.16s ease-out;
-    }
-
-    .btn-primary {
-      border-color: rgba(27,231,255,0.95);
-      background:
-        radial-gradient(circle at 0 0, rgba(27,231,255,0.45), transparent 60%),
-        radial-gradient(circle at 100% 120%, rgba(255,110,199,0.5), transparent 60%),
-        linear-gradient(135deg, #041c40, #001b5a);
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 0 22px rgba(27,231,255,0.4),
-        0 26px 80px rgba(0,0,0,1);
-    }
-
-    .btn:active {
-      transform: translateY(0);
-      box-shadow:
-        0 0 10px rgba(27,231,255,0.3),
-        0 14px 44px rgba(0,0,0,1);
-    }
-
-    .btn-icon-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: radial-gradient(circle, #00ffb4, #00a86b);
-      box-shadow: 0 0 9px rgba(0,255,180,1);
-    }
-
-    .btn-secondary {
-      background: rgba(2,6,26,0.96);
-      border-color: rgba(101,117,201,0.9);
-      color: var(--text-muted);
-    }
-
-    .status-text {
-      font-size: 11px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .status-pip {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(27,231,255,0.9);
-      box-shadow: 0 0 9px rgba(27,231,255,1);
-      animation: pulseDot 1.5s ease-in-out infinite;
-    }
-
-    .status-text.error {
-      color: var(--error);
-    }
-
-    .loading-overlay {
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(circle at 15% 0, rgba(27,231,255,0.22), transparent 55%),
-        radial-gradient(circle at 85% 100%, rgba(255,110,199,0.28), transparent 60%),
-        rgba(1,2,16,0.97);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 60;
-    }
-
-    .loading-overlay.visible {
-      display: flex;
-    }
-
-    .loading-card {
-      width: 100%;
-      max-width: 440px;
-      padding: 22px 22px 20px;
-      border-radius: 18px;
-      border: 1px solid rgba(27,231,255,0.8);
-      background:
-        radial-gradient(circle at 0 0, rgba(27,231,255,0.2), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(255,110,199,0.24), transparent 60%),
-        rgba(3,6,30,0.98);
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,0.9),
-        0 30px 86px rgba(0,0,0,1),
-        0 0 70px rgba(27,231,255,0.7);
-    }
-
-    .loader-bar {
-      position: relative;
-      width: 100%;
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(5,9,46,0.95);
-      overflow: hidden;
-      margin-top: 8px;
-      margin-bottom: 10px;
-    }
-
-    .loader-bar::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, #fe6dc6, #1be7ff, #ff5733);
-      animation: loaderSlide 1.4s linear infinite;
-      background-size: 200% 100%;
-    }
-
-    @keyframes loaderSlide {
-      0% { transform: translateX(-60%); }
-      100% { transform: translateX(60%); }
-    }
-
-    .loading-title {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--cyan);
-      margin-bottom: 4px;
-    }
-
-    .loading-sub {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .loading-steps {
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .results-panel {
-      margin-top: 16px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(27,231,255,0.55);
-    }
-
-    .results-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-
-    .results-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.22em;
-      color: var(--text-muted);
-    }
-
-    .results-list {
-      display: grid;
-      gap: 8px;
-      max-height: 260px;
-      overflow: auto;
-      padding-right: 4px;
-    }
-
-    .result-card {
-      border-radius: 12px;
-      padding: 10px 11px;
-      border: 1px solid rgba(27,231,255,0.48);
-      background:
-        radial-gradient(circle at 0 0, rgba(27,231,255,0.18), transparent 55%),
-        rgba(2,7,28,0.98);
-      cursor: pointer;
-      transition: background 0.16s ease-out, transform 0.12s ease-out, box-shadow 0.12s ease-out;
-      box-shadow: 0 16px 40px rgba(0,0,0,1);
-    }
-
-    .result-card:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 0 18px rgba(27,231,255,0.45),
-        0 26px 78px rgba(0,0,0,1);
-    }
-
-    .result-topline {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 2px;
-    }
-
-    .result-name {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .result-score-pill {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,255,180,0.9);
-      color: var(--success);
-      background: rgba(0,16,14,0.98);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .result-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .meta-chip {
-      padding: 2px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(100,129,210,0.9);
-      background: rgba(3,7,30,0.98);
-    }
-
-    .result-fit {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,10,0.9);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 70;
-    }
-
-    .modal-backdrop.visible {
-      display: flex;
-    }
-
-    .modal {
-      width: 100%;
-      max-width: 720px;
-      max-height: 80vh;
-      overflow: hidden;
-      border-radius: 20px;
-      border: 1px solid rgba(27,231,255,0.9);
-      background:
-        radial-gradient(circle at 0 0, rgba(27,231,255,0.22), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(255,110,199,0.26), transparent 60%),
-        rgba(2,6,30,0.98);
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,1),
-        0 30px 86px rgba(0,0,0,1),
-        0 0 70px rgba(27,231,255,0.7);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-header {
-      padding: 14px 18px 10px;
-      border-bottom: 1px solid rgba(27,231,255,0.55);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .modal-title {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .modal-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .modal-close {
-      border: none;
-      background: rgba(2,6,26,0.98);
-      color: var(--text-muted);
-      border-radius: 999px;
-      padding: 6px 10px;
-      cursor: pointer;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      border: 1px solid rgba(98,124,210,0.95);
-    }
-
-    .modal-body {
-      padding: 12px 18px 14px;
-      overflow: auto;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .modal-grid {
-      display: grid;
-      gap: 14px;
-    }
-
-    @media (min-width: 820px) {
-      .modal-grid {
-        grid-template-columns: 1.15fr 1.1fr;
-      }
-    }
-
-    .detail-section-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      margin-bottom: 3px;
-      color: var(--text-muted);
-    }
-
-    .detail-list {
-      list-style: none;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .detail-list li span {
-      color: var(--text-main);
-    }
-
-    .email-draft {
-      margin-top: 6px;
-      padding: 8px 9px;
-      border-radius: 9px;
-      border: 1px dashed rgba(112,136,222,0.95);
-      background: rgba(2,6,26,0.98);
-      font-size: 12px;
-      white-space: pre-wrap;
-    }
-
-    .alt-leads {
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .modal-footer {
-      padding: 8px 18px 12px;
-      border-top: 1px solid rgba(27,231,255,0.55);
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .badge-mode {
-      font-size: 10px;
-      padding: 2px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.22);
-      background: rgba(2,6,26,0.98);
-      text-transform: uppercase;
-      letter-spacing: 0.17em;
-    }
-
-    .pdf-target { display: none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ CRACKLE SIX — Agency Lead Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<style>
+:root{
+  --bg:#0a0015;--panel:rgba(12,4,40,0.92);--cyan:#00f0ff;--pink:#ff2d95;--magenta:#ff6ec7;
+  --amber:#ffb347;--gold:#f0c040;--text:#e0d0ff;--dim:rgba(200,180,255,0.45);
+  --border:rgba(0,240,255,0.18);--green:#00ff88;--error:#ff4466;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;min-height:100vh;overflow-x:hidden;}
+
+/* ═══ SYNTHWAVE BACKGROUND ═══ */
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  background:linear-gradient(180deg,#12002a 0%,#0a0015 30%,#050010 60%,#000 100%);}
+.sun{position:absolute;top:6%;left:50%;transform:translateX(-50%);width:380px;height:380px;
+  border-radius:50%;overflow:hidden;opacity:.45;}
+.sun-glow{width:100%;height:100%;border-radius:50%;
+  background:radial-gradient(circle at 50% 42%,#fff 0%,#ffee55 12%,#ffaa33 26%,#ff6ec7 44%,#ff2d95 58%,#8b00cc 72%,transparent 78%);}
+.sun-lines{position:absolute;bottom:0;left:0;width:100%;height:55%;
+  background:repeating-linear-gradient(180deg,transparent 0px,transparent 5px,rgba(10,0,21,0.88) 5px,rgba(10,0,21,0.88) 9px);}
+.grid-floor{position:absolute;bottom:-10px;left:50%;width:250vw;height:52vh;
+  transform:translateX(-50%) perspective(500px) rotateX(73deg);transform-origin:center bottom;
+  background:linear-gradient(to right,rgba(0,240,255,0.14) 1px,transparent 1px),
+    linear-gradient(to top,rgba(0,240,255,0.14) 1px,transparent 1px);
+  background-size:55px 55px;animation:gridDrift 10s linear infinite;opacity:.6;}
+@keyframes gridDrift{0%{background-position:0 0}100%{background-position:0 55px}}
+.horizon-glow{position:absolute;bottom:40vh;left:0;width:100%;height:3px;
+  background:linear-gradient(90deg,transparent,var(--cyan),var(--pink),var(--cyan),transparent);
+  opacity:.25;filter:blur(3px);}
+.scanlines{position:fixed;inset:0;z-index:9998;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);}
+.stars{position:absolute;inset:0;}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle 3s infinite alternate;}
+@keyframes twinkle{0%{opacity:.2}100%{opacity:.8}}
+
+/* ═══ LAYOUT ═══ */
+.wrap{position:relative;z-index:10;max-width:1480px;margin:0 auto;padding:20px;}
+.hdr{text-align:center;padding:32px 20px 24px;margin-bottom:24px;}
+.logo{font-family:'Orbitron',sans-serif;font-size:clamp(2.4rem,5.5vw,3.8rem);font-weight:900;
+  letter-spacing:.25em;color:#fff;
+  text-shadow:0 0 6px rgba(255,255,255,.8),0 0 18px var(--cyan),0 0 36px var(--pink),0 0 70px rgba(255,45,149,.6);
+  animation:neonFlicker 5s infinite;}
+.logo-six{font-family:'Orbitron',sans-serif;font-size:clamp(1rem,2vw,1.4rem);font-weight:700;
+  letter-spacing:.6em;color:var(--pink);text-shadow:0 0 10px var(--pink),0 0 30px var(--pink);margin-top:2px;}
+@keyframes neonFlicker{0%,93%,100%{opacity:1}94%{opacity:.6}95%{opacity:1}97%{opacity:.4}98%{opacity:1}}
+.sub{font-family:'Orbitron',sans-serif;color:var(--cyan);font-size:.6rem;letter-spacing:.35em;margin-top:8px;
+  text-shadow:0 0 8px var(--cyan);opacity:.85;}
+.ver{font-size:.55rem;color:rgba(255,45,149,.4);letter-spacing:.3em;margin-top:6px;}
+.mgrid{display:grid;grid-template-columns:370px 1fr;gap:20px;align-items:start;}
+.sticky{position:sticky;top:20px;}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:22px;
+  backdrop-filter:blur(16px);box-shadow:0 0 30px rgba(0,240,255,0.04),0 0 60px rgba(255,45,149,0.03),
+  inset 0 0 20px rgba(0,240,255,0.01);}
+.ptitle{font-family:'Orbitron',sans-serif;font-size:.58rem;letter-spacing:.22em;color:var(--cyan);
+  text-transform:uppercase;margin-bottom:16px;padding-bottom:9px;
+  border-bottom:1px solid rgba(0,240,255,0.15);text-shadow:0 0 6px var(--cyan);}
+
+/* ═══ MODE TOGGLE ═══ */
+.mode-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;}
+.mode-btn{padding:14px 10px;background:rgba(0,0,0,.4);border:1px solid rgba(0,240,255,.15);
+  color:var(--dim);font-family:'Orbitron',sans-serif;font-size:.62rem;letter-spacing:.14em;
+  cursor:pointer;border-radius:8px;transition:all .3s;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.mode-btn .mi{font-size:1.3rem;}
+.mode-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,240,255,.06);
+  box-shadow:0 0 20px rgba(0,240,255,.18),inset 0 0 14px rgba(0,240,255,.04);text-shadow:0 0 8px var(--cyan);}
+.mode-btn:hover:not(.active){border-color:rgba(0,240,255,.35);color:rgba(200,180,255,.7);}
+.mode-desc{font-size:.56rem;color:var(--dim);letter-spacing:.1em;margin-bottom:14px;text-align:center;min-height:14px;}
+
+/* ═══ FORM ELEMENTS ═══ */
+.fg{margin-bottom:16px;}
+label.lbl{display:block;font-family:'Orbitron',sans-serif;font-size:.52rem;letter-spacing:.18em;
+  color:var(--cyan);margin-bottom:7px;text-transform:uppercase;}
+input[type=text],input[type=url],input[type=password],select,textarea{
+  width:100%;background:rgba(0,0,0,.55);border:1px solid rgba(0,240,255,.2);color:var(--cyan);
+  padding:9px 13px;border-radius:5px;font-family:'Courier New',monospace;font-size:.8rem;outline:none;
+  transition:border-color .2s,box-shadow .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--cyan);box-shadow:0 0 12px rgba(0,240,255,.22);}
+select option{background:#0a0020;color:var(--cyan);}
+.rel{position:relative;}
+.eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;
+  color:var(--dim);cursor:pointer;font-family:'Courier New',monospace;font-size:.58rem;letter-spacing:.08em;}
+.cbg{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.cb{display:flex;align-items:center;gap:7px;cursor:pointer;}
+.cb input{width:14px;height:14px;accent-color:var(--cyan);cursor:pointer;flex-shrink:0;}
+.cb span{font-size:.72rem;color:var(--text);}
+input[type=range]{width:100%;accent-color:var(--pink);background:transparent;border:none;padding:0;}
+.rl{display:flex;justify-content:space-between;font-size:.55rem;color:var(--dim);margin-top:3px;}
+hr.div{border:none;border-top:1px solid rgba(0,240,255,.08);margin:16px 0;}
+input[type=file]{width:100%;background:rgba(0,0,0,.55);border:1px solid rgba(255,45,149,.22);color:var(--pink);
+  padding:8px 13px;border-radius:5px;font-family:'Courier New',monospace;font-size:.68rem;cursor:pointer;}
+input[type=file]::file-selector-button{background:transparent;border:1px solid rgba(255,45,149,.35);color:var(--pink);
+  font-family:'Courier New',monospace;font-size:.58rem;padding:4px 10px;border-radius:3px;cursor:pointer;margin-right:10px;}
+.alert{padding:8px 12px;border-radius:5px;font-size:.65rem;margin-bottom:12px;letter-spacing:.05em;}
+.aw{background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.22);color:var(--gold);}
+.ae{background:rgba(255,68,102,.06);border:1px solid rgba(255,68,102,.22);color:var(--error);}
+#ctxStatus{font-size:.55rem;color:var(--pink);margin-top:5px;letter-spacing:.08em;min-height:14px;}
+
+/* ═══ FIRE BUTTON ═══ */
+.btn-fire{width:100%;padding:14px;background:linear-gradient(135deg,rgba(255,45,149,.1),rgba(0,240,255,.1));
+  border:2px solid var(--pink);color:var(--pink);font-family:'Orbitron',sans-serif;font-size:.78rem;
+  font-weight:700;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;border-radius:6px;
+  text-shadow:0 0 10px var(--pink);box-shadow:0 0 22px rgba(255,45,149,.2),inset 0 0 14px rgba(255,45,149,.04);
+  transition:all .25s;margin-top:10px;position:relative;overflow:hidden;}
+.btn-fire:hover{background:linear-gradient(135deg,rgba(255,45,149,.2),rgba(0,240,255,.2));
+  box-shadow:0 0 38px rgba(255,45,149,.35),0 0 60px rgba(0,240,255,.12),inset 0 0 18px rgba(255,45,149,.06);}
+.btn-fire:disabled{opacity:.3;cursor:not-allowed;}
+.btn-fire::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:linear-gradient(45deg,transparent,rgba(255,255,255,.025),transparent);animation:shimmer 3.5s infinite;}
+@keyframes shimmer{0%{transform:translateX(-100%) rotate(45deg)}100%{transform:translateX(100%) rotate(45deg)}}
+
+/* ═══ ACTION BUTTONS ═══ */
+.btn-c{padding:9px 16px;background:transparent;border:1px solid var(--cyan);color:var(--cyan);
+  font-family:'Orbitron',sans-serif;font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;
+  cursor:pointer;border-radius:5px;transition:all .2s;text-shadow:0 0 5px var(--cyan);}
+.btn-c:hover{background:rgba(0,240,255,.06);box-shadow:0 0 14px rgba(0,240,255,.25);}
+.btn-p{padding:9px 16px;background:transparent;border:1px solid var(--magenta);color:var(--magenta);
+  font-family:'Courier New',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+  cursor:pointer;border-radius:5px;transition:all .2s;}
+.btn-p:hover{background:rgba(255,110,199,.06);}
+.btn-r{padding:9px 16px;background:transparent;border:1px solid var(--error);color:var(--error);
+  font-family:'Courier New',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+  cursor:pointer;border-radius:5px;}
+
+/* ═══ LOADING ═══ */
+.loading{text-align:center;padding:70px 40px;}
+.licon{font-size:2.2rem;color:var(--cyan);text-shadow:0 0 18px var(--cyan),0 0 36px var(--pink);
+  animation:spinGlow 3s linear infinite;margin-bottom:14px;display:inline-block;}
+@keyframes spinGlow{0%{transform:rotate(0deg);filter:hue-rotate(0deg)}100%{transform:rotate(360deg);filter:hue-rotate(360deg)}}
+.ltxt{font-family:'Orbitron',sans-serif;color:var(--cyan);font-size:.7rem;letter-spacing:.2em;
+  text-shadow:0 0 10px var(--cyan);animation:pulse 1.4s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.lbar{width:240px;height:3px;background:rgba(0,240,255,.1);margin:16px auto;overflow:hidden;border-radius:2px;}
+.lbarfill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--pink),var(--cyan));
+  box-shadow:0 0 8px var(--cyan);animation:lm 2s infinite;}
+@keyframes lm{0%{width:0%;margin-left:0}50%{width:50%;margin-left:25%}100%{width:0%;margin-left:100%}}
+.lsteps{font-size:.58rem;color:var(--dim);margin-top:14px;letter-spacing:.1em;line-height:2.1;}
+
+/* ═══ RESULTS ═══ */
+.rhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;}
+.rtitle{font-family:'Orbitron',sans-serif;font-size:.95rem;color:var(--pink);
+  text-shadow:0 0 10px rgba(255,45,149,.5);}
+.rsub{font-size:.6rem;color:var(--dim);letter-spacing:.12em;margin-top:2px;}
+.rbtns{display:flex;gap:10px;flex-wrap:wrap;}
+.disclaimer-bar{background:rgba(240,192,64,.05);border:1px solid rgba(240,192,64,.18);
+  border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:.62rem;
+  color:rgba(240,192,64,.8);letter-spacing:.06em;line-height:1.6;}
+
+/* ═══ LEAD CARDS ═══ */
+.lcard{background:rgba(8,2,28,.92);border:1px solid rgba(0,240,255,.12);border-radius:10px;
+  margin-bottom:14px;overflow:hidden;transition:border-color .25s;}
+.lcard:hover{border-color:rgba(0,240,255,.35);}
+.lchead{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;
+  cursor:pointer;background:rgba(0,240,255,.015);user-select:none;}
+.lchead:hover{background:rgba(0,240,255,.03);}
+.cname{font-family:'Orbitron',sans-serif;font-size:.88rem;font-weight:700;color:var(--cyan);
+  text-shadow:0 0 6px rgba(0,240,255,.3);}
+.ctype{font-size:.6rem;color:var(--dim);letter-spacing:.1em;margin-top:3px;}
+.badge{display:inline-flex;align-items:center;gap:5px;font-family:'Orbitron',sans-serif;
+  font-size:.55rem;letter-spacing:.1em;padding:4px 10px;border-radius:20px;font-weight:700;white-space:nowrap;}
+.bhi{border:1px solid var(--green);color:var(--green);background:rgba(0,255,136,.07);}
+.bmd{border:1px solid var(--gold);color:var(--gold);background:rgba(240,192,64,.06);}
+.blo{border:1px solid var(--amber);color:var(--amber);background:rgba(255,179,71,.06);}
+.chev{transition:transform .2s;color:var(--dim);font-size:.7rem;margin-left:10px;}
+.chev.open{transform:rotate(180deg);}
+.lcbody{padding:18px;display:none;border-top:1px solid rgba(0,240,255,.08);}
+.lcbody.open{display:block;}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:14px;}
+.ii label{font-family:'Orbitron',sans-serif;font-size:.48rem;color:var(--dim);margin-bottom:3px;display:block;letter-spacing:.12em;}
+.ii .val{font-size:.76rem;color:var(--text);}
+.ii .val a{color:var(--cyan);text-decoration:none;}
+.ii .val a:hover{text-decoration:underline;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;}
+.tag{font-size:.58rem;padding:3px 8px;border-radius:3px;letter-spacing:.06em;}
+.tg{background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.2);color:var(--cyan);}
+.tw{background:rgba(255,45,149,.06);border:1px solid rgba(255,45,149,.2);color:var(--pink);}
+.ts{background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.2);color:var(--gold);}
+.stars-r{color:var(--gold);}
+
+/* ═══ MATCH BOX ═══ */
+.mbox{margin-top:10px;padding:11px 14px;background:rgba(255,110,199,.04);
+  border:1px solid rgba(255,110,199,.18);border-radius:6px;}
+.mlbl{font-family:'Orbitron',sans-serif;font-size:.5rem;color:var(--magenta);letter-spacing:.16em;
+  text-shadow:0 0 5px var(--magenta);margin-bottom:6px;}
+.mbar{display:flex;align-items:center;gap:10px;}
+.mbarbg{flex:1;height:5px;background:rgba(255,110,199,.12);border-radius:3px;overflow:hidden;}
+.mbarfill{height:100%;background:linear-gradient(90deg,var(--pink),var(--cyan));
+  box-shadow:0 0 5px var(--pink);border-radius:3px;transition:width 1.1s ease;}
+.mval{font-family:'Orbitron',sans-serif;font-size:.78rem;font-weight:700;color:var(--pink);min-width:28px;text-align:right;}
+.mreason{font-size:.64rem;color:rgba(255,110,199,.65);margin-top:5px;line-height:1.5;}
+
+/* ═══ VERIFY ═══ */
+.vsec{margin-top:14px;padding:12px 14px;background:rgba(0,240,255,.02);
+  border:1px solid rgba(0,240,255,.12);border-radius:6px;}
+.vsec-title{font-family:'Orbitron',sans-serif;font-size:.5rem;color:var(--cyan);letter-spacing:.18em;
+  text-transform:uppercase;text-shadow:0 0 5px var(--cyan);margin-bottom:9px;}
+.vlinks{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px;}
+.vbtn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:4px;
+  font-family:'Courier New',monospace;font-size:.58rem;letter-spacing:.08em;text-decoration:none;
+  border:1px solid rgba(0,240,255,.25);color:var(--cyan);background:rgba(0,240,255,.04);
+  transition:all .2s;cursor:pointer;}
+.vbtn:hover{background:rgba(0,240,255,.1);box-shadow:0 0 8px rgba(0,240,255,.2);}
+.vdisclaim{font-size:.55rem;color:rgba(240,192,64,.55);letter-spacing:.06em;line-height:1.5;
+  padding-top:7px;border-top:1px solid rgba(240,192,64,.08);margin-top:5px;}
+
+/* ═══ REALITY CHECK ═══ */
+.rcheck{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:12px;
+  font-size:.55rem;letter-spacing:.08em;font-weight:bold;}
+.rc-hi{border:1px solid var(--green);color:var(--green);background:rgba(0,255,136,.06);}
+.rc-md{border:1px solid var(--gold);color:var(--gold);background:rgba(240,192,64,.05);}
+.rc-lo{border:1px solid var(--amber);color:var(--amber);background:rgba(255,179,71,.05);}
+
+/* ═══ EMAIL ═══ */
+.esec{margin-top:15px;padding-top:15px;border-top:1px solid rgba(0,240,255,.08);}
+.esubj{font-size:.74rem;color:var(--cyan);padding:8px 12px;background:rgba(0,240,255,.03);
+  border-left:2px solid var(--cyan);border-radius:3px;margin-bottom:9px;line-height:1.5;}
+.ebody{font-size:.72rem;line-height:1.75;color:rgba(224,208,255,.65);white-space:pre-wrap;
+  background:rgba(0,0,0,.4);padding:13px;border-radius:5px;
+  border:1px solid rgba(0,240,255,.06);max-height:230px;overflow-y:auto;}
+.ebtns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+
+/* ═══ OUTREACH ═══ */
+.osec{margin-top:15px;padding-top:15px;border-top:1px solid rgba(240,192,64,.1);}
+.osec-title{font-family:'Orbitron',sans-serif;font-size:.5rem;color:var(--gold);letter-spacing:.18em;
+  text-transform:uppercase;text-shadow:0 0 5px var(--gold);margin-bottom:9px;}
+.otip{background:rgba(0,0,0,.28);border:1px solid rgba(0,240,255,.06);border-radius:6px;
+  padding:9px 12px;margin-bottom:7px;display:flex;gap:10px;align-items:flex-start;}
+.otip-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
+.otip-inner{flex:1;}
+.otip-ch{font-size:.62rem;color:var(--gold);letter-spacing:.1em;font-weight:bold;margin-bottom:3px;}
+.otip-body{font-size:.6rem;color:rgba(224,208,255,.5);line-height:1.55;}
+
+/* ═══ EMPTY STATE ═══ */
+.empty{text-align:center;padding:90px 40px;}
+.eico{font-size:2.8rem;margin-bottom:14px;opacity:.2;
+  text-shadow:0 0 20px var(--cyan),0 0 40px var(--pink);}
+.etxt{font-family:'Orbitron',sans-serif;font-size:.62rem;letter-spacing:.2em;color:var(--dim);}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:rgba(0,0,0,.3);}
+::-webkit-scrollbar-thumb{background:rgba(0,240,255,.2);border-radius:2px;}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .mgrid{grid-template-columns:1fr;}.sticky{position:relative;}.logo{font-size:2.2rem;}
+  .igrid{grid-template-columns:1fr;}}
+</style>
 </head>
 <body>
-<div class="background">
-  <div class="sun"></div>
-  <div class="city-strip"></div>
-  <div class="city-strip"></div>
-  <div class="city-strip"></div>
-  <div class="grid"></div>
-  <div class="particle"></div>
-  <div class="particle"></div>
-  <div class="particle"></div>
-  <div class="particle"></div>
+
+<!-- ═══ SYNTHWAVE BACKGROUND ═══ -->
+<div class="bg-layer">
+  <div class="sun"><div class="sun-glow"></div><div class="sun-lines"></div></div>
+  <div class="stars" id="stars"></div>
+  <div class="horizon-glow"></div>
+  <div class="grid-floor"></div>
 </div>
+<div class="scanlines"></div>
 
-<div class="app-shell">
-  <div class="panel">
-    <header class="app-header">
-      <div class="logo-stack">
-        <div class="logo-main">THE&nbsp;CRACKLE</div>
-        <h2 class="subtitle">AI Lead Generator</h2>
-        <div class="byline">by Crispy Media · Downtown neon, contractor lead intelligence</div>
-      </div>
-      <div class="header-pill">
-        <div class="header-pill-dot"></div>
-        <span>Mode selector · Live</span>
-      </div>
-    </header>
-
-    <main>
-      <section class="panel-block" id="model-panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Step 1 · Pick your engine</div>
-            <div class="muted">Choose how The Crackle finds and scores leads: pure reasoning, browser, hybrid, or raw search.</div>
-          </div>
-          <div class="pill-small">
-            <span class="pill-dot"></span>
-            <span>Mode aware inputs</span>
-          </div>
-        </div>
-
-        <div class="model-grid" id="model-grid">
-          <article class="model-card selected" data-mode="agent">
-            <div class="model-name-line">
-              <div class="model-name">Agent</div>
-              <div class="model-badge">Pure reasoning</div>
-            </div>
-            <div class="model-section-label">Pros</div>
-            <ul class="model-list">
-              <li>Fast and simple.</li>
-              <li>Great for lead criteria, scoring logic, and cold email drafts.</li>
-            </ul>
-            <div class="model-section-label">Cons</div>
-            <ul class="model-list">
-              <li>No live verification.</li>
-              <li>Can hallucinate if you ask it to invent leads.</li>
-            </ul>
-            <div class="model-tagline">Use your strongest reasoning model, like GPT‑5.4.</div>
-          </article>
-
-          <article class="model-card" data-mode="agent-computer">
-            <div class="model-name-line">
-              <div class="model-name">Agent + Computer Use</div>
-              <div class="model-badge">Browser native</div>
-            </div>
-            <div class="model-section-label">Pros</div>
-            <ul class="model-list">
-              <li>Inspects real websites for Meta Pixel and Google tags.</li>
-              <li>Can follow multi‑step navigation and funnels.</li>
-            </ul>
-            <div class="model-section-label">Cons</div>
-            <ul class="model-list">
-              <li>Slower and more brittle when sites block automation.</li>
-              <li>Needs careful prompting and more compute.</li>
-            </ul>
-            <div class="model-tagline">Use a tool‑capable agent (GPT‑5.4 + browser tools).</div>
-          </article>
-
-          <article class="model-card" data-mode="perplexity-openai">
-            <div class="model-name-line">
-              <div class="model-name">Perplexity + OpenAI</div>
-              <div class="model-badge">Hybrid research</div>
-            </div>
-            <div class="model-section-label">Pros</div>
-            <ul class="model-list">
-              <li>Fresh, citation‑backed live web data.</li>
-              <li>OpenAI handles synthesis and scoring.</li>
-            </ul>
-            <div class="model-section-label">Cons</div>
-            <ul class="model-list">
-              <li>More moving parts and integration work.</li>
-              <li>Overkill for tiny lists.</li>
-            </ul>
-            <div class="model-tagline">Perfect when you care about freshness and citations.</div>
-          </article>
-
-          <article class="model-card" data-mode="openai-only">
-            <div class="model-name-line">
-              <div class="model-name">OpenAI Only</div>
-              <div class="model-badge">Pure generation</div>
-            </div>
-            <div class="model-section-label">Pros</div>
-            <ul class="model-list">
-              <li>Fastest to wire up.</li>
-              <li>Great for copy, subject lines, and reasoning.</li>
-            </ul>
-            <div class="model-section-label">Cons</div>
-            <ul class="model-list">
-              <li>No live verification.</li>
-              <li>No direct pixel or tag checks.</li>
-            </ul>
-            <div class="model-tagline">Run GPT‑5.4 or similar for best quality.</div>
-          </article>
-
-          <article class="model-card" data-mode="two-stage">
-            <div class="model-name-line">
-              <div class="model-name">Two‑Stage</div>
-              <div class="model-badge">Plan → execute</div>
-            </div>
-            <div class="model-section-label">Pros</div>
-            <ul class="model-list">
-              <li>Separates plan from execution for complex searches.</li>
-              <li>Easier to debug and refine.</li>
-            </ul>
-            <div class="model-section-label">Cons</div>
-            <ul class="model-list">
-              <li>Slower than one‑shot.</li>
-              <li>More state and code to manage.</li>
-            </ul>
-            <div class="model-tagline">Use best reasoning model for planning, faster for execution.</div>
-          </article>
-
-          <article class="model-card" data-mode="web-search-only">
-            <div class="model-name-line">
-              <div class="model-name">Web Search Only</div>
-              <div class="model-badge">Raw discovery</div>
-            </div>
-            <div class="model-section-label">Pros</div>
-            <ul class="model-list">
-              <li>Fast, predictable keyword prospecting.</li>
-              <li>Great for quick scans and manual review.</li>
-            </ul>
-            <div class="model-section-label">Cons</div>
-            <ul class="model-list">
-              <li>Weakest synthesis.</li>
-              <li>Needs extra step for pixel checks.</li>
-            </ul>
-            <div class="model-tagline">Anchor to search, then synthesize in a second pass.</div>
-          </article>
-        </div>
-      </section>
-
-      <section class="panel-block">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Step 2 · Tune the hunt</div>
-            <div class="muted">Inputs adapt to your mode, so you only fill what you actually need.</div>
-          </div>
-          <div class="pill-small">
-            <span class="pill-dot"></span>
-            <span id="current-mode-label">Agent mode</span>
-          </div>
-        </div>
-
-        <div class="stepper">
-          <div class="step-dot" id="step-dot" data-step="1"></div>
-          <span id="step-label">1 · Configure</span>
-        </div>
-
-        <article class="model-explainer" id="model-explainer">
-          <h3 id="explainer-title">Agent · pure reasoning mode</h3>
-          <div class="explainer-sub" id="explainer-sub">
-            The Crackle thinks through lead search, scoring, and outreach without calling browser tools or live search.
-          </div>
-
-          <div class="explainer-block-title">When to use</div>
-          <ul class="explainer-list" id="explainer-when">
-            <li>Defining ICP and scoring logic for contractors.</li>
-            <li>Drafting cold emails and outreach frameworks.</li>
-            <li>Planning prospecting strategy before you wire APIs.</li>
-          </ul>
-
-          <div class="explainer-block-title">Limits to respect</div>
-          <ul class="explainer-list" id="explainer-limits">
-            <li>Don’t treat invented businesses as verified leads.</li>
-            <li>Pair with a verification mode before pushing to CRM.</li>
-          </ul>
-        </article>
-
-        <form id="crackle-form">
-          <div class="field-row cols-2" id="api-row-1">
-            <div class="field">
-              <label for="openai-key">OpenAI API key</label>
-              <input id="openai-key" name="openaiKey" type="text" placeholder="sk-..." />
-              <div class="hint">Optional override for this run. If empty, server uses its own key.</div>
-            </div>
-            <div class="field">
-              <label for="builtwith-key">BuiltWith API key</label>
-              <input id="builtwith-key" name="builtwithKey" type="text" placeholder="bw-..." />
-              <div class="hint">For future tech‑stack checks (server decides whether to use it).</div>
-            </div>
-          </div>
-
-          <div class="field-row cols-2" id="api-row-2">
-            <div class="field" id="perplexity-api-wrapper">
-              <label for="perplexity-key">Perplexity API key</label>
-              <input id="perplexity-key" name="perplexityKey" type="text" placeholder="px-..." />
-              <div class="hint">Used in Perplexity + OpenAI and Web Search Only modes.</div>
-            </div>
-            <div class="field">
-              <label>Mode‑specific requirements</label>
-              <div class="mode-note" id="mode-note">
-                Agent: Perplexity not required. Focus on ICP, scoring, and cold email templates.
-              </div>
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Digital marketing services</label>
-            <div class="checkbox-group" id="services-group">
-              <label><input type="checkbox" name="services" value="Web Design"> Web Design</label>
-              <label><input type="checkbox" name="services" value="SEO"> SEO</label>
-              <label><input type="checkbox" name="services" value="Content Creation"> Content Creation</label>
-              <label><input type="checkbox" name="services" value="CRM Set Up"> CRM Set Up</label>
-              <label><input type="checkbox" name="services" value="Digital Ads"> Digital Ads</label>
-              <label><input type="checkbox" name="services" value="Automation Building"> Automation Building</label>
-              <label><input type="checkbox" name="services" value="Custom Web Apps"> Custom Web Apps</label>
-            </div>
-            <div class="hint">Tick every service you want The Crackle to sell in this run.</div>
-          </div>
-
-          <div class="field">
-            <label>Contractor types</label>
-            <div class="checkbox-group" id="contractors-group">
-              <label><input type="checkbox" name="contractors" value="Roofing contractors"> Roofing contractors</label>
-              <label><input type="checkbox" name="contractors" value="HVAC contractors"> HVAC contractors</label>
-              <label><input type="checkbox" name="contractors" value="Plumbing contractors"> Plumbing contractors</label>
-              <label><input type="checkbox" name="contractors" value="Electrical contractors"> Electrical contractors</label>
-              <label><input type="checkbox" name="contractors" value="General contractors"> General contractors</label>
-              <label><input type="checkbox" name="contractors" value="Landscaping contractors"> Landscaping contractors</label>
-              <label><input type="checkbox" name="contractors" value="Concrete & foundation contractors"> Concrete & foundation contractors</label>
-              <label><input type="checkbox" name="contractors" value="Painting contractors"> Painting contractors</label>
-              <label><input type="checkbox" name="contractors" value="Flooring installers"> Flooring installers</label>
-              <label><input type="checkbox" name="contractors" value="Solar installers"> Solar installers</label>
-              <label><input type="checkbox" name="contractors" value="Window & door installers"> Window & door installers</label>
-              <label><input type="checkbox" name="contractors" value="Fencing contractors"> Fencing contractors</label>
-              <label><input type="checkbox" name="contractors" value="Remodeling contractors"> Remodeling contractors</label>
-              <label><input type="checkbox" name="contractors" value="Deck & patio builders"> Deck & patio builders</label>
-              <label><input type="checkbox" name="contractors" value="Garage door contractors"> Garage door contractors</label>
-              <label><input type="checkbox" name="contractors" value="Masonry & brickwork"> Masonry & brickwork</label>
-              <label><input type="checkbox" name="contractors" value="Welding & metal fabrication"> Welding & metal fabrication</label>
-              <label><input type="checkbox" name="contractors" value="Spray foam insulation"> Spray foam insulation</label>
-              <label><input type="checkbox" name="contractors" value="Excavation & earthworks"> Excavation & earthworks</label>
-              <label><input type="checkbox" name="contractors" value="Asphalt & paving"> Asphalt & paving</label>
-              <label><input type="checkbox" name="contractors" value="Roof cleaning & soft wash"> Roof cleaning & soft wash</label>
-              <label><input type="checkbox" name="contractors" value="Gutter installers"> Gutter installers</label>
-              <label><input type="checkbox" name="contractors" value="Cabinet makers"> Cabinet makers</label>
-              <label><input type="checkbox" name="contractors" value="Tile & stone"> Tile & stone</label>
-              <label><input type="checkbox" name="contractors" value="Carpenters"> Carpenters</label>
-              <label><input type="checkbox" name="contractors" value="Home builders"> Home builders</label>
-            </div>
-            <div class="hint">Tick as many contractor types as you want for this lead search.</div>
-          </div>
-
-          <div class="field-row cols-3">
-            <div class="field">
-              <label for="locations-text">Locations (free‑form)</label>
-              <input id="locations-text" name="locationsText" type="text" placeholder="e.g. Miami, Fort Lauderdale, Orlando" />
-              <div class="hint">Comma‑separated cities / regions. If filled, this is the main scope.</div>
-            </div>
-            <div class="field">
-              <label for="states">States / provinces</label>
-              <input id="states" name="states" type="text" placeholder="FL, GA, TX" />
-              <div class="hint">Alternative to cities. Use either cities or states, not both.</div>
-            </div>
-            <div class="field">
-              <label for="exclude-cities">Exclude cities</label>
-              <input id="exclude-cities" name="excludeCities" type="text" placeholder="Cities to skip" />
-              <div class="hint">Comma‑separated cities that should never show up.</div>
-            </div>
-          </div>
-
-          <div class="field-row cols-2">
-            <div class="field">
-              <label for="search-count">Number of leads</label>
-              <div class="slider-row">
-                <input id="search-count" name="searchCount" type="range" min="3" max="5" step="1" value="3" />
-                <div class="range-value" id="range-value">3</div>
-              </div>
-              <div class="hint">3–5 high‑intent prospects per run (no bloated CSVs).</div>
-            </div>
-            <div class="field">
-              <label for="website">Your website</label>
-              <input id="website" name="website" type="text" placeholder="https://youragency.com" />
-              <div class="hint">Used to align fit score and email copy with your positioning.</div>
-            </div>
-          </div>
-
-          <div class="field-row cols-2">
-            <div class="field">
-              <label for="context-file">Upload context file</label>
-              <input id="context-file" name="contextFile" type="file" />
-              <div class="hint">PDF / DOC / TXT. Offers, case studies, process docs – enriches lead scoring & copy.</div>
-            </div>
-            <div class="field">
-              <label for="notes">Extra targeting notes</label>
-              <textarea id="notes" name="notes" placeholder="Add ICP details, exclusions (e.g. no pure residential), tone, niches, or special rules..."></textarea>
-            </div>
-          </div>
-
-          <div class="button-row">
-            <button type="button" class="btn btn-secondary" id="reset-btn">Reset</button>
-            <div class="status-text" id="status-wrapper">
-              <div class="status-pip"></div>
-              <span id="status-label">Idle · Waiting to crack the neon grid.</span>
-            </div>
-            <button type="submit" class="btn btn-primary">
-              <div class="btn-icon-dot"></div>
-              <span>Run lead search</span>
-            </button>
-          </div>
-        </form>
-
-        <section class="results-panel" id="results-panel" style="display:none;">
-          <div class="results-header">
-            <div>
-              <div class="results-title">Step 3 · Review & export</div>
-              <div class="muted">Click a card to open the full profile, verification, and cold email draft.</div>
-            </div>
-            <button class="btn btn-secondary" id="export-pdf-btn">Export PDF</button>
-          </div>
-          <div class="results-list" id="results-list"></div>
-        </section>
-      </section>
-    </main>
+<!-- ═══ MAIN CONTENT ═══ -->
+<div class="wrap">
+  <div class="hdr">
+    <div class="logo">⚡ CRACKLE</div>
+    <div class="logo-six">S I X</div>
+    <div class="sub">// AGENCY LEAD INTELLIGENCE SYSTEM · CRISPY MEDIA //</div>
+    <div class="ver">v 6.0</div>
   </div>
-</div>
 
-<div class="loading-overlay" id="loading-overlay">
-  <div class="loading-card">
-    <div class="loading-title">Crackling the skyline…</div>
-    <div class="loading-sub" id="loading-sub">
-      Locking onto real contractors, scanning, and ranking by fit.
+  <div class="mgrid">
+    <!-- ═══ CONFIG SIDEBAR ═══ -->
+    <div class="sticky">
+      <div class="panel">
+        <div class="ptitle">◈ System Configuration</div>
+
+        <!-- MODE TOGGLE -->
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="modeBtn1" onclick="setMode(1)">
+            <span class="mi">⚡</span>SEARCH
+          </button>
+          <button class="mode-btn" id="modeBtn2" onclick="setMode(2)">
+            <span class="mi">🤖</span>AGENT
+          </button>
+        </div>
+        <div class="mode-desc" id="modeDesc">GPT + Web Search · Fast real-time reconnaissance</div>
+
+        <div class="fg">
+          <label class="lbl">OpenAI API Key</label>
+          <div class="rel">
+            <input type="password" id="apiKey" placeholder="sk-..." />
+            <button class="eye" onclick="toggleKey()">SHOW</button>
+          </div>
+          <div class="alert aw" style="margin-top:7px;font-size:.55rem;">⚠ Key stays in your browser only. Never shared.</div>
+        </div>
+
+        <div class="fg">
+          <label class="lbl">Model</label>
+          <select id="modelSel">
+            <optgroup label="── GPT-5.4 · Latest Frontier">
+              <option value="gpt-5.4" selected>GPT-5.4 · Best quality ⭐</option>
+              <option value="gpt-5.4-mini">GPT-5.4 Mini · Fast + strong</option>
+              <option value="gpt-5.4-nano">GPT-5.4 Nano · Cheapest 5.4</option>
+            </optgroup>
+            <optgroup label="── GPT-5 · Previous Frontier">
+              <option value="gpt-5">GPT-5 · Excellent quality</option>
+              <option value="gpt-5-mini">GPT-5 Mini · Cost-efficient</option>
+            </optgroup>
+            <optgroup label="── GPT-4.1 · Stable + Smart">
+              <option value="gpt-4.1">GPT-4.1 · Smartest non-reasoning</option>
+              <option value="gpt-4.1-mini">GPT-4.1 Mini · Faster</option>
+              <option value="gpt-4.1-nano">GPT-4.1 Nano · Fastest 4.1</option>
+            </optgroup>
+            <optgroup label="── GPT-4o · Older / Cheapest">
+              <option value="gpt-4o">GPT-4o · Reliable, widely available</option>
+              <option value="gpt-4o-mini">GPT-4o Mini · Lowest cost</option>
+            </optgroup>
+          </select>
+          <div style="font-size:.55rem;color:var(--dim);margin-top:4px;letter-spacing:.07em;">↳ Higher models = better lead quality. Key tier determines access.</div>
+        </div>
+
+        <hr class="div">
+
+        <div class="fg">
+          <label class="lbl">Services You Offer</label>
+          <div class="cbg">
+            <label class="cb"><input type="checkbox" name="svc" value="Web Design" checked><span>Web Design</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="SEO" checked><span>SEO</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="Custom Web Apps"><span>Custom Web Apps</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="Paid Ads"><span>Paid Ads</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="CRM Implementation"><span>CRM Setup</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="Social Media"><span>Social Media</span></label>
+            <label class="cb"><input type="checkbox" name="svc" value="Content Creation"><span>Content Creation</span></label>
+          </div>
+        </div>
+
+        <hr class="div">
+
+        <div class="fg">
+          <label class="lbl">Target Contractor Type</label>
+          <div class="cbg">
+            <label class="cb"><input type="checkbox" name="ctype" value="Roofing Contractors" checked><span>Roofers</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Insulation Contractors"><span>Insulators</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Spray Foam Insulation Contractors"><span>Spray Foam</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Plumbing Contractors"><span>Plumbers</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="HVAC Contractors"><span>HVAC</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Electrical Contractors"><span>Electricians</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Home Remodeling Contractors"><span>Home Remodeling</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="General Contractors"><span>General Contractors</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Painting Contractors"><span>Painters</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Landscaping Companies"><span>Landscapers</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Concrete &amp; Foundation Contractors"><span>Concrete / Foundation</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Flooring Contractors"><span>Flooring</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Welding &amp; Metal Fabrication Shops"><span>Welders / Metal Fab</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Siding &amp; Exterior Contractors"><span>Siding</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Fence Contractors"><span>Fencing</span></label>
+            <label class="cb"><input type="checkbox" name="ctype" value="Window &amp; Door Contractors"><span>Windows &amp; Doors</span></label>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label class="lbl">Include Cities <span style="color:var(--dim)">(comma separated)</span></label>
+          <input type="text" id="incCity" placeholder="Edmonton, Sherwood Park..." value="Edmonton, Sherwood Park, St. Albert">
+        </div>
+        <div class="fg">
+          <label class="lbl">Include Province / State <span style="color:var(--dim)">(comma separated)</span></label>
+          <input type="text" id="incProv" placeholder="Alberta, BC, Ontario...">
+          <div style="font-size:.55rem;color:var(--dim);margin-top:4px;letter-spacing:.07em;">↳ Use city, province, both, or neither</div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Exclude Cities</label>
+          <input type="text" id="exCity" placeholder="Calgary, Red Deer...">
+        </div>
+        <div class="fg">
+          <label class="lbl">Lead Count: <span id="lcd" style="color:var(--pink)">8</span></label>
+          <input type="range" id="lcount" min="3" max="50" value="8"
+            oninput="document.getElementById('lcd').textContent=this.value">
+          <div class="rl"><span>3</span><span>50</span></div>
+        </div>
+
+        <hr class="div">
+
+        <div class="fg">
+          <label class="lbl" style="color:var(--pink);text-shadow:0 0 5px var(--pink);">◈ My Agency Website <span style="color:var(--dim)">(optional)</span></label>
+          <input type="url" id="mysite" placeholder="https://crispymarketing.ca">
+          <div style="font-size:.55rem;color:var(--dim);margin-top:4px;letter-spacing:.07em;">↳ Adds match likelihood score to every lead</div>
+        </div>
+        <div class="fg">
+          <label class="lbl" style="color:var(--pink);text-shadow:0 0 5px var(--pink);">◈ Agency Context File <span style="color:var(--dim)">(optional)</span></label>
+          <input type="file" id="ctxFile" accept=".pdf,.doc,.docx,.txt" onchange="handleFileSelect(this)">
+          <div style="font-size:.55rem;color:var(--dim);margin-top:4px;letter-spacing:.07em;">↳ PDF, Word, or TXT — enriches AI context</div>
+          <div id="ctxStatus"></div>
+        </div>
+
+        <button class="btn-fire" id="fireBtn" onclick="go()">⚡ CRACK THE LEADS</button>
+      </div>
     </div>
-    <div class="loader-bar"></div>
-    <div class="loading-steps" id="loading-steps">
-      1. Reading your services, trades, and geo.<br>
-      2. Mapping candidates against your ICP and exclusions.<br>
-      3. Scoring fit, checking pixels, and drafting outreach.
+
+    <!-- ═══ RESULTS AREA ═══ -->
+    <div id="results">
+      <div class="empty">
+        <div class="eico">◈</div>
+        <div class="etxt">CONFIGURE CRITERIA & FIRE TO FIND LEADS</div>
+        <div style="font-size:.55rem;color:rgba(200,180,255,.2);margin-top:10px;letter-spacing:.1em;">
+          Mode 1 searches the web in real-time · Mode 2 runs a deep multi-step agent
+        </div>
+      </div>
     </div>
   </div>
 </div>
-
-<div class="modal-backdrop" id="modal-backdrop">
-  <div class="modal">
-    <header class="modal-header">
-      <div>
-        <div class="modal-title" id="modal-title">Business name</div>
-        <div class="modal-subtitle" id="modal-subtitle">Fit breakdown, verification odds, pixels, and cold email draft.</div>
-      </div>
-      <button class="modal-close" id="modal-close-btn">Close</button>
-    </header>
-    <div class="modal-body">
-      <div class="modal-grid">
-        <div>
-          <div class="detail-section-title">Profile</div>
-          <ul class="detail-list" id="modal-profile-list"></ul>
-
-          <div class="detail-section-title" style="margin-top:10px;">Verification & pixels</div>
-          <ul class="detail-list" id="modal-pixel-list"></ul>
-        </div>
-        <div>
-          <div class="detail-section-title">Why you’re the best fit</div>
-          <div id="modal-fit-text"></div>
-
-          <div class="detail-section-title" style="margin-top:10px;">Cold email draft</div>
-          <div class="email-draft" id="modal-email-draft"></div>
-
-          <div class="detail-section-title" style="margin-top:10px;">Alternative angles</div>
-          <div class="alt-leads" id="modal-alt-leads"></div>
-        </div>
-      </div>
-    </div>
-    <footer class="modal-footer">
-      <span class="badge-mode" id="modal-mode-badge">Mode: Agent</span>
-      <button class="btn btn-secondary" id="modal-export-pdf-btn">Export this lead</button>
-    </footer>
-  </div>
-</div>
-
-<div id="pdf-target" class="pdf-target"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-        integrity="sha512-YcsIPVvQ73s2vQR4qzM7gc3KJ2YMBX3BGnZNL8p6v4nZke+6BW6uAG1UoVs4qBQmzk2i0I5rVQWZQhZjH9LU0A=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
-  const MODE_CONTENT = {
-    'agent': {
-      label: 'Agent mode',
-      title: 'Agent · pure reasoning mode',
-      sub: 'Thinks through lead search, scoring, and outreach with no browser tools.',
-      when: [
-        'You want to design ICP and scoring rules for contractors.',
-        'You need cold email templates and offer angles.',
-        'You want speed and low complexity over live verification.'
-      ],
-      limits: [
-        'Treat invented leads as drafts, not CRM‑ready data.',
-        'Pair with a verification pass before serious outreach.'
-      ],
-      apiNote: 'Agent: OpenAI key recommended. BuiltWith optional. Perplexity not required.',
-      needPerplexity: false
-    },
-    'agent-computer': {
-      label: 'Agent + Computer',
-      title: 'Agent + Computer Use · browser‑aware mode',
-      sub: 'Lets the agent drive a browser to inspect real contractor sites for pixels and tags.',
-      when: [
-        'You need Meta Pixel and Google Tag checks on real websites.',
-        'You care about actual funnels, forms, and navigation.',
-        'You’re okay with slower runs for deeper verification.'
-      ],
-      limits: [
-        'Can break if sites block bots or change layout.',
-        'Requires logging and retries in your backend.'
-      ],
-      apiNote: 'Agent + Computer: OpenAI + BuiltWith recommended. Perplexity optional.',
-      needPerplexity: false
-    },
-    'perplexity-openai': {
-      label: 'Perplexity + OpenAI',
-      title: 'Perplexity + OpenAI · hybrid research',
-      sub: 'Perplexity handles live web retrieval; OpenAI synthesizes, scores, and drafts outreach.',
-      when: [
-        'You care about fresh data and citations.',
-        'You’re exploring new cities or verticals.',
-        'You want source‑backed leads you can justify.'
-      ],
-      limits: [
-        'More moving parts than single‑provider modes.',
-        'Quality depends on how you stitch retrieval and synthesis.'
-      ],
-      apiNote: 'Perplexity + OpenAI: Both API keys required. BuiltWith optional for tech intel.',
-      needPerplexity: true
-    },
-    'openai-only': {
-      label: 'OpenAI only',
-      title: 'OpenAI Only · pure generation',
-      sub: 'Everything runs through a single model with no live retrieval or browser.',
-      when: [
-        'You’re focused on messaging, copy, and strategy.',
-        'You verify business details elsewhere.',
-        'You want minimal infra and fast iterations.'
-      ],
-      limits: [
-        'No direct live business or pixel verification.',
-        'Can sound confident on unverified data.'
-      ],
-      apiNote: 'OpenAI Only: Just an OpenAI key needed.',
-      needPerplexity: false
-    },
-    'two-stage': {
-      label: 'Two‑Stage mode',
-      title: 'Two‑Stage · plan then execute',
-      sub: 'First build a search plan, then run the plan and assemble leads.',
-      when: [
-        'You run multi‑city, multi‑service prospecting.',
-        'You want explicit plans you can inspect and tweak.',
-        'You hate opaque one‑shot prompts.'
-      ],
-      limits: [
-        'Longer runs and more state to manage.',
-        'Weak planning cascades into weak execution.'
-      ],
-      apiNote: 'Two‑Stage: Strong planner model + fast executor. Perplexity optional in planning.',
-      needPerplexity: false
-    },
-    'web-search-only': {
-      label: 'Web Search only',
-      title: 'Web Search Only · raw discovery',
-      sub: 'Fires keyword‑level searches and hands you structured candidates to inspect.',
-      when: [
-        'You want quick scans and manual review.',
-        'You are validating new markets or niches.',
-        'You prefer to run verification in a second pass.'
-      ],
-      limits: [
-        'Weakest synthesis compared to Agent modes.',
-        'Pixel checks need a browser or tag API step.'
-      ],
-      apiNote: 'Web Search Only: Perplexity key required. OpenAI optional for summaries.',
-      needPerplexity: true
-    }
-  };
-
-  const modelGrid = document.getElementById('model-grid');
-  const currentModeLabel = document.getElementById('current-mode-label');
-  const explainerTitle = document.getElementById('explainer-title');
-  const explainerSub = document.getElementById('explainer-sub');
-  const explainerWhen = document.getElementById('explainer-when');
-  const explainerLimits = document.getElementById('explainer-limits');
-  const modeNote = document.getElementById('mode-note');
-  const perplexityWrapper = document.getElementById('perplexity-api-wrapper');
-  const stepDot = document.getElementById('step-dot');
-  const stepLabel = document.getElementById('step-label');
-  const formEl = document.getElementById('crackle-form');
-  const range = document.getElementById('search-count');
-  const rangeValue = document.getElementById('range-value');
-  const statusLabel = document.getElementById('status-label');
-  const statusWrapper = document.getElementById('status-wrapper');
-  const resetBtn = document.getElementById('reset-btn');
-  const loadingOverlay = document.getElementById('loading-overlay');
-  const loadingSub = document.getElementById('loading-sub');
-  const loadingSteps = document.getElementById('loading-steps');
-  const resultsPanel = document.getElementById('results-panel');
-  const resultsList = document.getElementById('results-list');
-  const exportPdfBtn = document.getElementById('export-pdf-btn');
-  const pdfTarget = document.getElementById('pdf-target');
-
-  const modalBackdrop = document.getElementById('modal-backdrop');
-  const modalTitle = document.getElementById('modal-title');
-  const modalProfileList = document.getElementById('modal-profile-list');
-  const modalPixelList = document.getElementById('modal-pixel-list');
-  const modalFitText = document.getElementById('modal-fit-text');
-  const modalEmailDraft = document.getElementById('modal-email-draft');
-  const modalAltLeads = document.getElementById('modal-alt-leads');
-  const modalModeBadge = document.getElementById('modal-mode-badge');
-  const modalCloseBtn = document.getElementById('modal-close-btn');
-  const modalExportPdfBtn = document.getElementById('modal-export-pdf-btn');
-
-  let currentMode = 'agent';
-  let currentResults = [];
-
-  range.addEventListener('input', () => {
-    rangeValue.textContent = range.value;
-  });
-
-  modelGrid.addEventListener('click', (e) => {
-    const card = e.target.closest('.model-card');
-    if (!card) return;
-    const mode = card.dataset.mode;
-    setMode(mode);
-  });
-
-  function setMode(mode) {
-    currentMode = mode;
-    document.querySelectorAll('.model-card').forEach(card => {
-      card.classList.toggle('selected', card.dataset.mode === mode);
-    });
-
-    const cfg = MODE_CONTENT[mode];
-    currentModeLabel.textContent = cfg.label;
-    explainerTitle.textContent = cfg.title;
-    explainerSub.textContent = cfg.sub;
-
-    explainerWhen.innerHTML = '';
-    cfg.when.forEach(item => {
-      const li = document.createElement('li');
-      li.textContent = item;
-      explainerWhen.appendChild(li);
-    });
-
-    explainerLimits.innerHTML = '';
-    cfg.limits.forEach(item => {
-      const li = document.createElement('li');
-      li.textContent = item;
-      explainerLimits.appendChild(li);
-    });
-
-    modeNote.textContent = cfg.apiNote;
-    perplexityWrapper.style.display = cfg.needPerplexity ? '' : 'none';
-
-    statusWrapper.classList.remove('error');
-    statusLabel.textContent = `Idle · ${cfg.label} ready.`;
+/* ═══ STARS ═══ */
+(function(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');s.className='star';
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*60}%;opacity:${Math.random()*.5+.1};animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s;`;
+    c.appendChild(s);
   }
+})();
 
-  function buildPromptFromForm({ mode, services, contractors, locationsText, states, excludeCities, website, notes, leadCount }) {
-    const serviceText = services.length ? services.join(', ') : 'web design, SEO, and automation';
-    const contractorText = contractors.length ? contractors.join(', ') : 'roofing and other home service contractors';
-    const locationText = locationsText || states || 'my main service area';
+/* ═══ GLOBALS ═══ */
+let leads=[];
+let currentMode=1;
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-    return `
-You are an expert B2B lead research assistant for a digital marketing agency.
-
-Goal:
-Find ${leadCount} real, high-fit ${contractorText} that would be a strong fit for my agency's services: ${serviceText}.
-
-Geography:
-- Primary locations: ${locationText}
-- Exclude cities: ${excludeCities || 'none specified'}
-- Only return businesses located in the included cities/states (do not drift outside).
-
-My agency:
-- Website: ${website || 'not provided'}
-- Positioning: We help contractors get more profitable jobs with better websites, SEO, and light automation instead of burning money on broad, untracked ads.
-
-ICP & notes:
-${notes || 'Use standard good-fit signals for growing local contractors (steady reviews, clear service pages, evidence of marketing gaps). Avoid obvious spam, lead gen brands, and pure residential-only if not aligned.'}
-
-For each lead, ONLY return businesses that are very likely to be real.
-
-Output format:
-Return a SINGLE top-level JSON object: { "leads": [ {lead1}, {lead2}, ... ] } with NO markdown and NO extra text.
-Each lead object must match this schema exactly:
-
-{
-  "id": "string - unique id",
-  "business_name": "string",
-  "owner": "string or null",
-  "website": "string or null",
-  "email": "string or null",
-  "phone": "string or null",
-  "socials": {
-    "facebook": "string or null",
-    "instagram": "string or null",
-    "linkedin": "string or null",
-    "tiktok": "string or null"
-  },
-  "google_maps": {
-    "place_url": "string or null",
-    "place_id": "string or null",
-    "address": "string or null",
-    "lat": number or null,
-    "lng": number or null
-  },
-  "fit": {
-    "score": number,
-    "score_reason": "string",
-    "match_services": ["string"],
-    "match_signals": ["string"]
-  },
-  "verification": {
-    "is_likely_real_business": number,
-    "confidence_reason": "string",
-    "meta_pixel": {
-      "present": boolean,
-      "checked_urls": ["string"]
-    },
-    "google_tag": {
-      "present": boolean,
-      "gtm_ids": ["string"],
-      "ga_tags": ["string"]
-    }
-  },
-  "email_draft": {
-    "subject": "string",
-    "body": "string"
-  },
-  "alt_angles": ["string"],
-  "raw_sources": {
-    "search_results": ["string"],
-    "builtwith_tech": ["string"]
-  }
+/* ═══ MODE TOGGLE ═══ */
+function setMode(m){
+  currentMode=m;
+  document.getElementById('modeBtn1').classList.toggle('active',m===1);
+  document.getElementById('modeBtn2').classList.toggle('active',m===2);
+  document.getElementById('modeDesc').textContent=m===1
+    ?'GPT + Web Search · Fast real-time reconnaissance'
+    :'Deep Agent · Multi-step web research + verification';
 }
 
-Important:
-- Obey the city/state filters strictly.
-- Do not fabricate impossible URLs or clearly fake data.
-- If some fields are not discoverable, set them to null rather than guessing.
-`.trim();
+/* ═══ HELPERS ═══ */
+function toggleKey(){const i=document.getElementById('apiKey'),b=document.querySelector('.eye');if(i.type==='password'){i.type='text';b.textContent='HIDE';}else{i.type='password';b.textContent='SHOW';}}
+function getServices(){return[...document.querySelectorAll('input[name=svc]:checked')].map(c=>c.value);}
+function getCtypes(){return[...document.querySelectorAll('input[name=ctype]:checked')].map(c=>c.value);}
+function setBtn(s,t){const b=document.getElementById('fireBtn');b.disabled=s;b.textContent=t;}
+function showErr(m){document.getElementById('results').innerHTML=`<div class="panel"><div class="alert ae">${m}</div></div>`;setBtn(false,'⚡ CRACK THE LEADS');}
+function scoreClass(s){return s>=8?'bhi':s>=5?'bmd':'blo';}
+function starsR(r){if(!r)return'';const f=Math.round(r);return'★'.repeat(f)+'☆'.repeat(5-f);}
+function handleFileSelect(inp){const st=document.getElementById('ctxStatus');if(inp.files[0]){st.textContent='✓ '+inp.files[0].name+' ready';st.style.color='var(--green)';}else{st.textContent='';}}
+
+async function extractFileText(){
+  const file=document.getElementById('ctxFile').files[0];
+  if(!file)return'';
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(ext==='txt'){return new Promise(r=>{const fr=new FileReader();fr.onload=e=>r(e.target.result.slice(0,4000));fr.readAsText(file);});}
+  if(ext==='pdf'){
+    try{const ab=await file.arrayBuffer();const pdf=await pdfjsLib.getDocument(ab).promise;
+      let txt='';for(let i=1;i<=Math.min(pdf.numPages,6);i++){const pg=await pdf.getPage(i);const ct=await pg.getTextContent();txt+=ct.items.map(x=>x.str).join(' ')+'\n';}
+      return txt.slice(0,4000);}catch(e){return'';}
   }
+  if(ext==='docx'||ext==='doc'){
+    try{const ab=await file.arrayBuffer();const r=await mammoth.extractRawText({arrayBuffer:ab});return r.value.slice(0,4000);}catch(e){return'';}
+  }
+  return'';
+}
 
-  resetBtn.addEventListener('click', () => {
-    formEl.reset();
-    range.value = 3;
-    rangeValue.textContent = '3';
-    setMode('agent');
-    resultsPanel.style.display = 'none';
-    resultsList.innerHTML = '';
-    currentResults = [];
-    statusWrapper.classList.remove('error');
-    statusLabel.textContent = 'Idle · Waiting to crack the neon grid.';
-    stepDot.dataset.step = '1';
-    stepLabel.textContent = '1 · Configure';
+/* ═══ API HELPERS ═══ */
+async function callResponses(key,model,instructions,input,useSearch){
+  const body={model,instructions,input,temperature:0.45,max_output_tokens:8000,text:{format:{type:'json_object'}}};
+  if(useSearch)body.tools=[{type:'web_search_preview'}];
+  const res=await fetch('https://api.openai.com/v1/responses',{
+    method:'POST',headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify(body)
   });
+  if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
+  const data=await res.json();
+  for(const item of(data.output||[])){
+    if(item.type==='message'){for(const c of(item.content||[])){if(c.type==='output_text')return c.text;}}
+  }
+  throw new Error('No text output in response');
+}
 
-  formEl.addEventListener('submit', async (e) => {
-    e.preventDefault();
+async function callChat(key,model,system,user){
+  const res=await fetch('https://api.openai.com/v1/chat/completions',{
+    method:'POST',headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
+    body:JSON.stringify({model,messages:[{role:'system',content:system},{role:'user',content:user}],temperature:.45,max_tokens:7000,response_format:{type:'json_object'}})
+  });
+  if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
+  const data=await res.json();
+  return data.choices[0].message.content;
+}
 
-    const formData = new FormData(formEl);
-    const services = Array.from(
-      document.querySelectorAll('input[name="services"]:checked')
-    ).map(c => c.value);
-    const contractors = Array.from(
-      document.querySelectorAll('input[name="contractors"]:checked')
-    ).map(c => c.value);
-    const locationsText = formData.get('locationsText') || '';
-    const states = formData.get('states') || '';
-    const excludeCities = formData.get('excludeCities') || '';
-    const website = formData.get('website') || '';
-    const notes = formData.get('notes') || '';
-    const leadCount = parseInt(formData.get('searchCount') || '3', 10);
+function updateLoading(stepText){
+  const el=document.getElementById('loadStep');
+  if(el)el.textContent='⬡ '+stepText;
+}
 
-    const prompt = buildPromptFromForm({
-      mode: currentMode,
-      services,
-      contractors,
-      locationsText,
-      states,
-      excludeCities,
-      website,
-      notes,
-      leadCount
-    });
+/* ═══ SYSTEM PROMPT BUILDER ═══ */
+function buildSystemPrompt(ctypeStr,locEnforced,n,exc,svcs,site,fileCtx,isWebSearch){
+  const excNote=exc?`\nEXCLUDE businesses in: ${exc}.`:'';
+  const siteNote=site?`\nThe digital agency's website is: ${site}. For each lead add "matchScore" (int 1-10) and "matchReason" (1 sentence).`:'';
+  const fileNote=fileCtx?`\n\nAGENCY CONTEXT (from uploaded document):\n${fileCtx}`:'';
+  const searchNote=isWebSearch?'\n\nIMPORTANT: You have web search. Use it to find REAL businesses that actually exist. Search Google, business directories, and local listings. Every lead should be a real company you found online.':'';
+  return `You are a business intelligence analyst generating contractor lead profiles for a digital marketing agency.${fileNote}${searchNote}
 
-    stepDot.dataset.step = '2';
-    stepLabel.textContent = '2 · Running';
-    statusWrapper.classList.remove('error');
-    statusLabel.textContent = 'Searching the neon grid for real, high‑fit businesses…';
-    updateLoadingCopy(currentMode);
-    loadingOverlay.classList.add('visible');
+⚠️ LOCATION RULE — MANDATORY:
+Every single lead MUST be physically located in: ${locEnforced}.
+DO NOT place any business in ${excNote?'the excluded cities or ':''}any other city, state, province, or region.
+If you cannot produce ${n} leads in that location, return FEWER leads. Never substitute a different location.
+Double-check every lead's city and province/state before including it.
 
-    try {
-      const payload = {
-        mode: currentMode,
-        prompt,
-        max_leads: leadCount,
-        client_api_keys: {
-          openai: formData.get('openaiKey') || null,
-          builtwith: formData.get('builtwithKey') || null,
-          perplexity: formData.get('perplexityKey') || null
-        }
-      };
+TASK: Generate up to ${n} contractor leads from these types: ${ctypeStr}. Mix proportionally if multiple types.
 
-      const res = await fetch('/api/crackle/run', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+LEAD CRITERIA:
+- Location: ${locEnforced}${excNote}
+- Revenue range: $500K–$1.5M (established businesses, NOT startups or large enterprises)
+- Evidence of revenue: fleet vehicles, branded trucks, equipment, 5+ years operating, consistent reviews
+- Digital weaknesses present: poor Google ranking, outdated/no website, no blog, weak social, no ads
+- Owner-operated: 1–3 decision-makers, 5–20 employees
+${siteNote}
 
-      if (!res.ok) {
-        const errJson = await res.json().catch(() => ({}));
-        throw new Error(errJson.error || `Backend error ${res.status}`);
+REALISM RULES:
+- Use realistic local phone area codes for the specified location
+- Company names must sound like real local contractor businesses
+- Some businesses WILL have a basic website — do not set all to null
+- Google review counts should be realistic (15–180 range)
+- "realityCheck" must honestly reflect how plausible this lead profile is
+
+Return ONLY a valid JSON object with key "leads". No markdown, no explanation.
+
+Each lead object MUST have exactly these fields:
+{
+  "companyName": string,
+  "ownerName": string,
+  "businessType": string,
+  "city": string,
+  "province": string,
+  "phone": string,
+  "email": string,
+  "website": string or null,
+  "yearsInBusiness": number,
+  "employeeCount": string,
+  "googleReviews": number,
+  "googleRating": number,
+  "revenueSignals": [3-5 strings],
+  "digitalWeaknesses": [3-5 strings],
+  "recommendedServices": [strings from: ${svcs.join(', ')}],
+  "leadScore": number 1-10,
+  "realityCheck": one of ["Likely real — verify on Google Maps","Possibly real — worth checking","AI-estimated — research carefully"],
+  "emailSubject": string,
+  "emailBody": string (3 short personalized paragraphs)${site?',\n  "matchScore": number 1-10,\n  "matchReason": string':''}
+}`;
+}
+
+/* ═══ MAIN GO FUNCTION ═══ */
+async function go(){
+  const key=document.getElementById('apiKey').value.trim();
+  const ctypes=getCtypes();
+  const inc=document.getElementById('incCity').value.trim();
+  const incProv=document.getElementById('incProv').value.trim();
+  const exc=document.getElementById('exCity').value.trim();
+  const n=document.getElementById('lcount').value;
+  const site=document.getElementById('mysite').value.trim();
+  const svcs=getServices();
+  const model=document.getElementById('modelSel').value;
+
+  if(!key)return showErr('⚠ Enter your OpenAI API key to continue.');
+  if(!ctypes.length)return showErr('⚠ Select at least one contractor type.');
+  if(!inc&&!incProv)return showErr('⚠ Add at least one city or province/state.');
+  if(!svcs.length)return showErr('⚠ Select at least one service you offer.');
+
+  setBtn(true,'⚡ SCANNING...');
+  const ctypeStr=ctypes.join(', ');
+  const locNote=[];
+  if(inc)locNote.push(`Cities: ${inc}`);
+  if(incProv)locNote.push(`Province/State: ${incProv}`);
+  const locEnforced=locNote.length?locNote.join(' AND '):'any location';
+  const locLabel=[inc,incProv].filter(Boolean).join(' / ');
+  const fileCtx=await extractFileText();
+  const modeLabel=currentMode===1?'SEARCH':'AGENT';
+
+  document.getElementById('results').innerHTML=`<div class="loading">
+    <div class="licon">◈</div>
+    <div class="ltxt">${currentMode===1?'SCANNING WEB DIRECTORIES':'DEPLOYING DEEP RESEARCH AGENT'}... [${model}]</div>
+    <div class="lbar"><div class="lbarfill"></div></div>
+    <div class="lsteps">
+      ⬡ Mode: ${modeLabel}<br>
+      ⬡ Targeting: ${ctypeStr}<br>
+      ⬡ Location: ${locLabel||'Any'}<br>
+      <span id="loadStep">⬡ ${currentMode===1?'Searching real-time web data...':'Step 1: Discovering businesses...'}</span>
+    </div></div>`;
+
+  const sys=buildSystemPrompt(ctypeStr,locEnforced,n,exc,svcs,site,fileCtx,currentMode===1);
+  const usr=`Generate ${n} contractor leads [${ctypeStr}]. ALL must be in: ${locEnforced}. JSON only.`;
+
+  try{
+    let raw;
+    if(currentMode===1){
+      // ═══ MODE 1: GPT + WEB SEARCH ═══
+      try{
+        raw=await callResponses(key,model,sys,usr,true);
+      }catch(e){
+        // Fallback to Chat Completions if Responses API fails
+        console.warn('Responses API failed, using Chat Completions:',e.message);
+        updateLoading('Fallback: using standard generation...');
+        raw=await callChat(key,model,sys,usr);
       }
+    }else{
+      // ═══ MODE 2: DEEP AGENT ═══
+      try{
+        // Step 1: Discovery via web search
+        updateLoading('Step 1: Searching web for real businesses...');
+        const step1=await callResponses(key,model,
+          `You are a business researcher. Search the web to find REAL ${ctypeStr} businesses in ${locEnforced}. Search Google, Yelp, Yellow Pages, BBB, and local directories. Find up to ${n} actual businesses that currently exist.`,
+          `Search for real ${ctypeStr} in ${locEnforced}. Find actual existing businesses with their real names, websites, phone numbers, addresses, and any Google review data. Return JSON: {"businesses":[{"name":"","website":"","phone":"","address":"","reviews":"","rating":"","notes":""}]}`,
+          true
+        );
+        let businesses=[];
+        try{businesses=JSON.parse(step1).businesses||[];}catch(e){businesses=[];}
 
-      const leads = await res.json(); // valid, verified leads from your server
-      currentResults = mapLeadsToUi(leads, currentMode);
+        if(businesses.length>0){
+          // Step 2: Enrichment
+          updateLoading(`Step 2: Deep scanning ${businesses.length} leads...`);
+          const names=businesses.map(b=>b.name).join(', ');
+          const step2=await callResponses(key,model,
+            `You are enriching business profiles with deep research. Search for detailed information about each business.`,
+            `Research these ${ctypeStr} businesses in ${locEnforced}: ${names}. For each, find: owner/contact name, years in business, employee count, social media presence, website quality, digital marketing gaps, and any additional details. Return JSON: {"enriched":[{"name":"","owner":"","yearsInBusiness":0,"employees":"","website":"","websiteQuality":"","socialMedia":"","digitalGaps":[],"additionalNotes":""}]}`,
+            true
+          );
+          let enriched={};
+          try{enriched=JSON.parse(step2);}catch(e){enriched={};}
 
-      loadingOverlay.classList.remove('visible');
-      stepDot.dataset.step = '3';
-      stepLabel.textContent = '3 · Results';
-      statusLabel.textContent = 'Done · Review your leads, then export.';
-      renderResults(currentResults);
-      resultsPanel.style.display = '';
-    } catch (err) {
-      console.error(err);
-      loadingOverlay.classList.remove('visible');
-      statusWrapper.classList.add('error');
-      statusLabel.textContent = 'Error · ' + (err.message || 'Check your backend or model response.');
+          // Step 3: Final compilation
+          updateLoading('Step 3: Compiling intelligence report...');
+          const compileSys=buildSystemPrompt(ctypeStr,locEnforced,n,exc,svcs,site,fileCtx,false);
+          raw=await callResponses(key,model,compileSys,
+            `Using this VERIFIED web research data, generate the final lead profiles in the exact required JSON format. Incorporate real data where available.\n\nDiscovered businesses: ${JSON.stringify(businesses)}\n\nEnriched data: ${JSON.stringify(enriched.enriched||enriched)}\n\nGenerate the final "leads" JSON now. Prefer real verified data over estimates.`,
+            false
+          );
+        }else{
+          // Fallback if discovery found nothing
+          updateLoading('No results from search, running enhanced generation...');
+          raw=await callResponses(key,model,sys,usr,true);
+        }
+      }catch(e){
+        console.warn('Agent mode error, falling back:',e.message);
+        updateLoading('Fallback: standard generation...');
+        try{raw=await callResponses(key,model,sys,usr,true);}
+        catch(e2){raw=await callChat(key,model,sys,usr);}
+      }
     }
+
+    const parsed=JSON.parse(raw);
+    leads=Array.isArray(parsed)?parsed:(parsed.leads||Object.values(parsed).find(v=>Array.isArray(v))||[]);
+
+    // Location filter
+    if(inc||incProv){
+      const locTokens=[
+        ...inc.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean),
+        ...incProv.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean)
+      ];
+      if(locTokens.length){
+        const excTokens=exc.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
+        const filtered=leads.filter(l=>{
+          const lCity=(l.city||'').toLowerCase();
+          const lProv=(l.province||'').toLowerCase();
+          const locStr=lCity+' '+lProv;
+          if(excTokens.some(e=>lCity.includes(e)))return false;
+          return locTokens.some(t=>locStr.includes(t));
+        });
+        if(filtered.length>0)leads=filtered;
+        if(filtered.length===0)leads=leads.map(l=>({...l,locationFlagged:true}));
+      }
+    }
+    render(leads,site);
+  }catch(err){showErr(`Error: ${err.message}`);}
+  finally{setBtn(false,'⚡ CRACK THE LEADS');}
+}
+
+/* ═══ RENDER LEADS ═══ */
+function render(arr,site){
+  if(!arr.length){document.getElementById('results').innerHTML='<div class="empty"><div class="etxt">No leads returned. Try different criteria.</div></div>';return;}
+  const _ctypes=getCtypes().join(', ')||'Mixed';
+  const _loc=[document.getElementById('incCity').value,document.getElementById('incProv').value].filter(Boolean).join(' / ')||'Any';
+  const model=document.getElementById('modelSel').value;
+  const modeLabel=currentMode===1?'SEARCH':'AGENT';
+  const hasFlag=arr.some(l=>l.locationFlagged);
+
+  let html=`<div class="rhdr"><div><div class="rtitle">⚡ ${arr.length} LEADS CRACKED</div><div class="rsub">${_ctypes} · ${_loc} · ${model} · ${modeLabel} MODE</div></div><div class="rbtns"><button class="btn-c" onclick="exportPDF()">⬇ EXPORT PDF</button><button class="btn-r" onclick="clearAll()">✕ CLEAR</button></div></div>
+  <div class="disclaimer-bar">⚠ These are <strong>${currentMode===1?'web-search-assisted':'agent-researched'} AI lead profiles</strong>. Company names, contacts, and data may need verification. Use the <strong>🔍 Verify</strong> buttons on each card to cross-check before reaching out.${hasFlag?' <strong style="color:var(--amber)"> · Some leads may be outside target location — review carefully.</strong>':''}</div>`;
+
+  arr.forEach((l,i)=>{
+    const sc=scoreClass(l.leadScore);
+    const ws=l.website?(l.website.startsWith('http')?l.website:'https://'+l.website):null;
+    const rcClass=l.realityCheck&&l.realityCheck.includes('Likely')?'rc-hi':l.realityCheck&&l.realityCheck.includes('Possibly')?'rc-md':'rc-lo';
+    const rcLabel=l.realityCheck||'AI-estimated — research carefully';
+    const locWarn=l.locationFlagged?'<span style="font-size:.52rem;color:var(--amber);margin-left:6px;">⚠ location unverified</span>':'';
+
+    html+=`<div class="lcard" id="c${i}"><div class="lchead" onclick="toggle(${i})"><div><div class="cname">${l.companyName}${locWarn}</div><div class="ctype">${l.businessType} · ${l.city}, ${l.province}</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;"><span class="rcheck ${rcClass}" title="${rcLabel}">🔍 ${rcLabel.split('—')[0].trim()}</span><div class="badge ${sc}">LEAD ${l.leadScore}/10</div><span class="chev" id="chev${i}">▼</span></div></div>`;
+
+    html+=`<div class="lcbody" id="b${i}"><div class="igrid"><div class="ii"><label>OWNER</label><div class="val">${l.ownerName||'Owner'}</div></div><div class="ii"><label>PHONE</label><div class="val">${l.phone||'—'}</div></div><div class="ii"><label>EMAIL</label><div class="val">${l.email||'—'}</div></div><div class="ii"><label>WEBSITE</label><div class="val">${ws?`<a href="${ws}" target="_blank">${l.website}</a>`:'<span style="color:var(--pink)">No website</span>'}</div></div><div class="ii"><label>YEARS ACTIVE</label><div class="val">${l.yearsInBusiness||'—'} yrs</div></div><div class="ii"><label>TEAM SIZE</label><div class="val">${l.employeeCount||'—'}</div></div><div class="ii"><label>GOOGLE REVIEWS</label><div class="val"><span class="stars-r">${starsR(l.googleRating)}</span> ${l.googleRating||''} <span style="color:var(--dim)">(${l.googleReviews||0})</span></div></div></div>`;
+
+    // Verify section
+    html+=`<div class="vsec"><div class="vsec-title">🔍 Verify This Lead</div><div class="vlinks"><button class="vbtn" onclick="vOpen('search',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">🌐 Google Search</button><button class="vbtn" onclick="vOpen('maps',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">📍 Google Maps</button><button class="vbtn" onclick="vOpen('listings',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">📋 Listings</button><button class="vbtn" onclick="vOpen('website',this)" data-name="${l.companyName}" data-city="${l.city}" data-prov="${l.province||''}">🖥 Website</button></div><div class="vdisclaim">⚠ Always verify before outreach. AI profiles are estimates.</div></div>`;
+
+    // Revenue signals
+    html+=`<div style="margin-top:14px;"><div class="tags">`;
+    (l.revenueSignals||[]).forEach(s=>{html+=`<span class="tag ts">💰 ${s}</span>`;});
+    html+=`</div></div>`;
+
+    // Digital weaknesses
+    html+=`<div style="margin-top:8px;"><div class="tags">`;
+    (l.digitalWeaknesses||[]).forEach(w=>{html+=`<span class="tag tw">⚠ ${w}</span>`;});
+    html+=`</div></div>`;
+
+    // Recommended services
+    html+=`<div style="margin-top:8px;"><div class="tags">`;
+    (l.recommendedServices||[]).forEach(s=>{html+=`<span class="tag tg">→ ${s}</span>`;});
+    html+=`</div></div>`;
+
+    // Match score
+    if(l.matchScore!==undefined){
+      html+=`<div class="mbox"><div class="mlbl">◈ AGENCY MATCH SCORE</div><div class="mbar"><div class="mbarbg"><div class="mbarfill" style="width:${l.matchScore*10}%"></div></div><div class="mval">${l.matchScore}/10</div></div><div class="mreason">${l.matchReason||''}</div></div>`;
+    }
+
+    // Cold email
+    html+=`<div class="esec"><div class="esubj"><span style="color:var(--dim);font-size:.55rem">SUBJECT: </span>${l.emailSubject||''}</div><div class="ebody">${l.emailBody||''}</div><div class="ebtns"><button class="btn-c" id="cp${i}" onclick="copyEmail(${i})">◈ COPY EMAIL</button><button class="btn-p" onclick="regenEmail(${i})">↺ REGENERATE</button></div></div>`;
+
+    // Outreach tips
+    html+=`<div class="osec"><div class="osec-title">◈ Alternative Outreach Channels</div>`;
+    const tips=[
+      {i:'🔗',ch:'LinkedIn DM',tip:`Find ${l.ownerName} on LinkedIn — connect with a short note. Message 4-5 days later referencing "${(l.digitalWeaknesses||['weak online presence'])[0]}".`},
+      {i:'📞',ch:'Cold Call',tip:`Trades owners respond to direct calls. Lead with a stat about ${l.businessType}s in ${l.city} missing Google page 1.`},
+      {i:'📱',ch:'Meta / Facebook Ads',tip:`Run a hyper-targeted ad in ${l.city} to ${l.businessType} owners with a case study headline.`},
+      {i:'🔍',ch:'Google Ads',tip:`Target the exact searches ${l.businessType}s in ${l.city} rely on for new jobs.`},
+      {i:'🤝',ch:'Local Networking / BNI',tip:`BNI chapters in ${l.city} are goldmines. Contractors trust referrals 10x more than cold outreach.`},
+      {i:'📮',ch:'Direct Mail',tip:`A postcard to ${l.companyName}'s address with a QR code to a free audit stands out.`}
+    ];
+    tips.forEach(t=>{html+=`<div class="otip"><div class="otip-icon">${t.i}</div><div class="otip-inner"><div class="otip-ch">${t.ch}</div><div class="otip-body">${t.tip}</div></div></div>`;});
+    html+=`</div>`;
+
+    html+=`</div></div>`;
   });
 
-  function updateLoadingCopy(mode) {
-    if (mode === 'agent') {
-      loadingSub.textContent = 'Thinking through ICP, scoring, and outreach – no live web calls.';
-      loadingSteps.innerHTML = '1. Parsing your ICP and services.<br>2. Designing lead patterns and filters.<br>3. Drafting fit logic and cold emails.';
-    } else if (mode === 'agent-computer') {
-      loadingSub.textContent = 'Spinning up a browser to inspect real contractor sites.';
-      loadingSteps.innerHTML = '1. Mapping contractors against your geo.<br>2. Visiting sites and scanning for tags & funnels.<br>3. Scoring fit vs your offers.';
-    } else if (mode === 'perplexity-openai') {
-      loadingSub.textContent = 'Querying the live web, then synthesizing and scoring candidates.';
-      loadingSteps.innerHTML = '1. Issuing targeted research queries.<br>2. Merging citations into a lead set.<br>3. Drafting scores, rationale, and outreach.';
-    } else if (mode === 'openai-only') {
-      loadingSub.textContent = 'Letting the model riff on your ICP and messaging.';
-      loadingSteps.innerHTML = '1. Interpreting your targeting notes.<br>2. Imagining high‑fit archetype businesses.<br>3. Writing tailored approaches.';
-    } else if (mode === 'two-stage') {
-      loadingSub.textContent = 'Planning the route, then executing the search.';
-      loadingSteps.innerHTML = '1. Designing a multi‑step search plan.<br>2. Executing against live or cached data.<br>3. Normalizing and scoring leads.';
-    } else {
-      loadingSub.textContent = 'Running web search passes and surfacing candidates.';
-      loadingSteps.innerHTML = '1. Issuing keyword‑level queries.<br>2. Filtering weak or duplicate hits.<br>3. Surfacing clean, inspectable leads.';
+  document.getElementById('results').innerHTML=html;
+  setTimeout(()=>{document.querySelectorAll('.mbarfill').forEach(b=>{const w=b.style.width;b.style.width='0%';requestAnimationFrame(()=>{b.style.width=w;});});},100);
+}
+
+/* ═══ INTERACTIONS ═══ */
+function toggle(i){document.getElementById('b'+i).classList.toggle('open');document.getElementById('chev'+i).classList.toggle('open');}
+function clearAll(){leads=[];document.getElementById('results').innerHTML='<div class="empty"><div class="eico">◈</div><div class="etxt">CONFIGURE CRITERIA & FIRE TO FIND LEADS</div></div>';}
+
+function vOpen(type,btn){
+  const nm=btn.getAttribute('data-name')||'';
+  const cy=btn.getAttribute('data-city')||'';
+  const pr=btn.getAttribute('data-prov')||'';
+  const q=encodeURIComponent(nm+' '+cy+' '+pr);
+  const urls={
+    search:'https://www.google.com/search?q='+q,
+    maps:'https://www.google.com/maps/search/?api=1&query='+q,
+    listings:'https://www.google.com/search?q='+encodeURIComponent(nm+' '+cy)+'+site:facebook.com+OR+site:yellowpages.ca+OR+site:yelp.com',
+    website:'https://www.google.com/search?q='+encodeURIComponent(nm+' '+cy+' official website')
+  };
+  window.open(urls[type],'_blank');
+}
+
+function copyEmail(i){
+  const l=leads[i];
+  navigator.clipboard.writeText(`Subject: ${l.emailSubject}\n\n${l.emailBody}`).then(()=>{
+    const b=document.getElementById('cp'+i);b.textContent='✓ COPIED!';
+    setTimeout(()=>b.textContent='◈ COPY EMAIL',2000);
+  });
+}
+
+async function regenEmail(i){
+  const key=document.getElementById('apiKey').value.trim();
+  if(!key)return alert('API key required');
+  const l=leads[i],model=document.getElementById('modelSel').value;
+  const btn=document.querySelector(`#c${i} .btn-p`);
+  btn.textContent='↺ WRITING...';btn.disabled=true;
+  try{
+    let raw;
+    try{
+      raw=await callResponses(key,model,
+        'Write concise personalized B2B cold emails for a digital marketing agency. Return JSON with keys: emailSubject (string), emailBody (string, 3 short paragraphs).',
+        `New cold email for: ${l.companyName}, owner ${l.ownerName}, ${l.city}. Type: ${l.businessType}. Weaknesses: ${(l.digitalWeaknesses||[]).join(', ')}. Services: ${(l.recommendedServices||[]).join(', ')}.`,
+        false
+      );
+    }catch(e){
+      raw=await callChat(key,model,
+        'Write concise personalized B2B cold emails for a digital marketing agency. Return JSON with keys: emailSubject (string), emailBody (string, 3 short paragraphs).',
+        `New cold email for: ${l.companyName}, owner ${l.ownerName}, ${l.city}. Type: ${l.businessType}. Weaknesses: ${(l.digitalWeaknesses||[]).join(', ')}. Services: ${(l.recommendedServices||[]).join(', ')}.`
+      );
     }
-  }
+    const upd=JSON.parse(raw);
+    leads[i].emailSubject=upd.emailSubject;leads[i].emailBody=upd.emailBody;
+    document.querySelector(`#c${i} .esubj`).innerHTML=`<span style="color:var(--dim);font-size:.55rem">SUBJECT: </span>${upd.emailSubject}`;
+    document.querySelector(`#c${i} .ebody`).textContent=upd.emailBody;
+  }catch(e){alert('Failed: '+e.message);}
+  btn.textContent='↺ REGENERATE';btn.disabled=false;
+}
 
-  function mapLeadsToUi(leads, mode) {
-    const modeLabel = MODE_CONTENT[mode].label;
-    return leads.map((lead, idx) => ({
-      id: lead.id || String(idx + 1),
-      mode,
-      modeLabel,
-      name: lead.business_name,
-      score: lead.fit?.score ?? 0,
-      fitReason: lead.fit?.score_reason || '',
-      realOdds: Math.round((lead.verification?.is_likely_real_business || 0) * 100),
-      website: lead.website || 'n/a',
-      owner: lead.owner || 'n/a',
-      email: lead.email || 'n/a',
-      phone: lead.phone || 'n/a',
-      socials: lead.socials
-        ? Object.values(lead.socials).filter(Boolean).join(', ')
-        : 'n/a',
-      gmap: lead.google_maps?.place_url || 'n/a',
-      metaPixel: lead.verification?.meta_pixel?.present
-        ? 'Meta Pixel detected'
-        : 'Meta Pixel not detected',
-      gtag: lead.verification?.google_tag?.present
-        ? `Google Tag(s): ${[]
-            .concat(lead.verification.google_tag.gtm_ids || [])
-            .concat(lead.verification.google_tag.ga_tags || [])
-            .join(', ')}`
-        : 'Google Tag not detected',
-      altAngles: lead.alt_angles || [],
-      emailDraft: [
-        lead.email_draft?.subject || '',
-        '',
-        lead.email_draft?.body || ''
-      ].join('\n')
-    }));
-  }
+/* ═══ PDF EXPORT ═══ */
+function exportPDF(){
+  if(!leads.length)return;
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),M=14,CW=W-M*2;
+  let y=M;
+  const np=()=>{doc.addPage();doc.setFillColor(255,255,255);doc.rect(0,0,W,H,'F');y=M;};
+  const ck=(n=12)=>{if(y+n>H-M)np();};
 
-  function renderResults(list) {
-    resultsList.innerHTML = '';
-    list.forEach(item => {
-      const card = document.createElement('article');
-      card.className = 'result-card';
-      card.dataset.id = item.id;
-      card.innerHTML = `
-        <div class="result-topline">
-          <div class="result-name">${item.name}</div>
-          <div class="result-score-pill">Fit score: ${item.score}/100</div>
-        </div>
-        <div class="result-meta">
-          <div class="meta-chip">Odds real business: ${item.realOdds}%</div>
-          <div class="meta-chip">Mode: ${item.modeLabel}</div>
-        </div>
-        <div class="result-fit">${item.fitReason}</div>
-      `;
-      card.addEventListener('click', () => openResultModal(item));
-      resultsList.appendChild(card);
+  // Cover page
+  doc.setFillColor(10,0,21);doc.rect(0,0,W,H,'F');
+  doc.setTextColor(0,240,255);doc.setFontSize(28);doc.setFont('courier','bold');
+  doc.text('CRACKLE SIX',W/2,44,{align:'center'});
+  doc.setFontSize(8);doc.setTextColor(255,45,149);
+  doc.text('AGENCY LEAD INTELLIGENCE REPORT',W/2,54,{align:'center'});
+  doc.setFontSize(8);doc.setTextColor(180,160,220);
+  const _ctStr=getCtypes().join(', ')||'Contractors';
+  const _locStr=[document.getElementById('incCity').value,document.getElementById('incProv').value].filter(Boolean).join(' / ')||'Any';
+  const modeLabel=currentMode===1?'SEARCH':'AGENT';
+  let cy=64;
+  doc.text(`Generated: ${new Date().toLocaleDateString('en-CA')}`,W/2,cy,{align:'center'});cy+=7;
+  doc.text(`Mode: ${modeLabel} · Model: ${document.getElementById('modelSel').value}`,W/2,cy,{align:'center'});cy+=7;
+  doc.text(`Types: ${_ctStr}`,W/2,cy,{align:'center'});cy+=7;
+  doc.text(`Location: ${_locStr}`,W/2,cy,{align:'center'});cy+=7;
+  doc.text(`Total Leads: ${leads.length}`,W/2,cy,{align:'center'});
+
+  leads.forEach((l,idx)=>{
+    np();
+    doc.setFillColor(20,20,20);doc.rect(M-2,y-3,CW+4,13,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(12);doc.setFont('courier','bold');
+    doc.text(`${idx+1}. ${l.companyName}`,M,y+5);
+    const sc=l.leadScore>=8?[0,200,100]:l.leadScore>=5?[200,160,0]:[200,50,50];
+    doc.setTextColor(...sc);doc.setFontSize(8);
+    doc.text(`LEAD SCORE: ${l.leadScore}/10`,W-M,y+5,{align:'right'});
+    y+=16;
+
+    const rcPdf=l.realityCheck||'AI-estimated';
+    ck(6);doc.setFontSize(7);doc.setFont('courier','normal');
+    doc.setTextColor(120,80,0);doc.text('VERIFY: google.com/maps/search/'+encodeURIComponent((l.companyName+' '+l.city).slice(0,40)),M,y);y+=5;
+    doc.setTextColor(100,100,100);doc.text('Reality Check: '+rcPdf,M,y);y+=6;
+
+    [['Type',l.businessType],['Location',`${l.city}, ${l.province}`],['Owner',l.ownerName],['Phone',l.phone],['Email',l.email],['Website',l.website||'No website'],['Years Active',`${l.yearsInBusiness} yrs`],['Team Size',l.employeeCount],['Google',`${l.googleRating}★ (${l.googleReviews} reviews)`]].forEach(([k,v])=>{
+      ck(6);doc.setFontSize(8);doc.setFont('courier','normal');
+      doc.setTextColor(90,90,90);doc.text(k+':',M,y);
+      doc.setTextColor(20,20,20);doc.text(String(v||'—'),M+32,y);y+=5.2;
     });
-  }
+    y+=3;
 
-  function openResultModal(item) {
-    modalTitle.textContent = item.name;
-    modalModeBadge.textContent = `Mode: ${item.modeLabel}`;
-    modalProfileList.innerHTML = `
-      <li><strong>Business:</strong> <span>${item.name}</span></li>
-      <li><strong>Owner:</strong> <span>${item.owner}</span></li>
-      <li><strong>Website:</strong> <span>${item.website}</span></li>
-      <li><strong>Email:</strong> <span>${item.email}</span></li>
-      <li><strong>Phone:</strong> <span>${item.phone}</span></li>
-      <li><strong>Socials:</strong> <span>${item.socials}</span></li>
-      <li><strong>Google Maps:</strong> <span>${item.gmap}</span></li>
-      <li><strong>Fit score:</strong> <span>${item.score}/100</span></li>
-      <li><strong>Odds real business:</strong> <span>${item.realOdds}%</span></li>
-    `;
-    modalPixelList.innerHTML = `
-      <li><strong>Meta Pixel:</strong> <span>${item.metaPixel}</span></li>
-      <li><strong>Google Tag:</strong> <span>${item.gtag}</span></li>
-    `;
-    modalFitText.textContent = item.fitReason;
-    modalEmailDraft.textContent = item.emailDraft;
-    modalAltLeads.textContent = item.altAngles.join(' · ');
-    modalBackdrop.classList.add('visible');
-  }
+    ck(18);doc.setTextColor(140,80,0);doc.setFont('courier','bold');doc.setFontSize(8);
+    doc.text('REVENUE SIGNALS:',M,y);y+=5;
+    doc.setFont('courier','normal');doc.setTextColor(100,60,0);
+    (l.revenueSignals||[]).forEach(s=>{ck(5);doc.text('• '+s,M+3,y);y+=4.8;});
+    y+=3;
 
-  modalCloseBtn.addEventListener('click', () => {
-    modalBackdrop.classList.remove('visible');
-  });
+    ck(18);doc.setTextColor(160,0,40);doc.setFont('courier','bold');doc.setFontSize(8);
+    doc.text('DIGITAL WEAKNESSES:',M,y);y+=5;
+    doc.setFont('courier','normal');doc.setTextColor(130,20,50);
+    (l.digitalWeaknesses||[]).forEach(w=>{ck(5);doc.text('• '+w,M+3,y);y+=4.8;});
+    y+=3;
 
-  modalBackdrop.addEventListener('click', (e) => {
-    if (e.target === modalBackdrop) {
-      modalBackdrop.classList.remove('visible');
+    ck(14);doc.setTextColor(0,80,150);doc.setFont('courier','bold');doc.setFontSize(8);
+    doc.text('RECOMMENDED SERVICES:',M,y);y+=5;
+    doc.setFont('courier','normal');doc.setTextColor(20,60,130);
+    doc.splitTextToSize((l.recommendedServices||[]).join(' · '),CW).forEach(line=>{ck(5);doc.text(line,M+3,y);y+=4.8;});
+    y+=3;
+
+    if(l.matchScore!==undefined){
+      ck(14);doc.setTextColor(100,0,180);doc.setFont('courier','bold');doc.setFontSize(8);
+      doc.text(`MATCH SCORE: ${l.matchScore}/10`,M,y);y+=5;
+      doc.setFont('courier','normal');doc.setTextColor(80,20,150);
+      doc.splitTextToSize(l.matchReason||'—',CW).forEach(line=>{ck(5);doc.text(line,M+3,y);y+=4.8;});
+      y+=3;
     }
+
+    ck(22);
+    doc.setFillColor(245,245,245);doc.rect(M-2,y-2,CW+4,6,'F');
+    doc.setTextColor(20,20,20);doc.setFont('courier','bold');doc.setFontSize(8);
+    doc.text('COLD EMAIL DRAFT:',M,y+2);y+=8;
+    doc.setTextColor(40,40,40);doc.setFont('courier','normal');doc.setFontSize(8);
+    doc.text('SUBJECT: '+l.emailSubject,M,y);y+=6;
+    doc.setTextColor(20,20,20);doc.setFontSize(7.5);
+    doc.splitTextToSize(l.emailBody,CW).forEach(line=>{ck(5);doc.text(line,M,y);y+=4.4;});
+    y+=4;
+
+    ck(16);
+    doc.setFillColor(240,240,240);doc.rect(M-2,y-2,CW+4,6,'F');
+    doc.setTextColor(20,20,20);doc.setFont('courier','bold');doc.setFontSize(8);
+    doc.text('OUTREACH STRATEGIES:',M,y+2);y+=8;
+    const tips=[
+      ['LinkedIn DM',`Find ${l.ownerName} on LinkedIn — connect first, pitch later.`],
+      ['Cold Call',`Direct calls work for trades. Lead with a stat about ${l.businessType}s in ${l.city}.`],
+      ['Meta Ads',`Target ${l.businessType} owners in ${l.city} with a case study ad.`],
+      ['Networking',`BNI + contractor associations in ${l.city}. Referrals beat cold outreach.`],
+      ['Direct Mail',`Postcard to ${l.companyName} with a QR code to a free audit.`]
+    ];
+    doc.setFont('courier','normal');doc.setTextColor(30,30,30);doc.setFontSize(7.5);
+    tips.forEach(([ch,tip])=>{
+      ck(8);
+      doc.setFont('courier','bold');doc.setTextColor(0,80,150);doc.text(ch+': ',M+3,y);
+      const chW=doc.getTextWidth(ch+': ');
+      doc.setFont('courier','normal');doc.setTextColor(40,40,40);
+      doc.splitTextToSize(tip,CW-6).forEach((line,li)=>{ck(5);doc.text(line,li===0?M+3+chW:M+6,y);y+=4.4;});
+      y+=1.5;
+    });
   });
 
-  exportPdfBtn.addEventListener('click', () => {
-    if (!currentResults.length) return;
-    buildPdfContent(currentResults);
-    const opt = {
-      margin: 10,
-      filename: 'the-crackle-leads.pdf',
-      image: { type: 'jpeg', quality: 0.95 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] }
-    };
-    html2pdf().set(opt).from(pdfTarget).save();
-  });
-
-  modalExportPdfBtn.addEventListener('click', () => {
-    const name = modalTitle.textContent || 'lead';
-    const item = currentResults.find(r => r.name === name);
-    if (!item) return;
-    buildPdfContent([item]);
-    const safeName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-    const opt = {
-      margin: 10,
-      filename: `crackle-${safeName}.pdf`,
-      image: { type: 'jpeg', quality: 0.95 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] }
-    };
-    html2pdf().set(opt).from(pdfTarget).save();
-  });
-
-  function buildPdfContent(list) {
-    const modeName = MODE_CONTENT[currentMode].label;
-    const html = `
-      <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; color:#111; font-size:12px;">
-        <h1 style="font-size:20px; margin-bottom:4px;">The Crackle – Lead Pack</h1>
-        <div style="font-size:11px; color:#555; margin-bottom:12px;">
-          Mode: ${modeName} · Generated at: ${new Date().toLocaleString()}
-        </div>
-        ${list.map(item => `
-          <div style="border:1px solid #ddd; border-radius:6px; padding:8px 10px; margin-bottom:10px; page-break-inside:avoid;">
-            <h2 style="font-size:15px; margin:0 0 4px;">${item.name}</h2>
-            <div style="font-size:11px; color:#555; margin-bottom:4px;">
-              Fit score: ${item.score}/100 · Odds real business: ${item.realOdds}% · Mode: ${item.modeLabel}
-            </div>
-            <h3 style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#777; margin:6px 0 2px;">Profile</h3>
-            <ul style="margin:0 0 4px 14px; padding:0;">
-              <li><strong>Owner:</strong> ${item.owner}</li>
-              <li><strong>Website:</strong> ${item.website}</li>
-              <li><strong>Email:</strong> ${item.email}</li>
-              <li><strong>Phone:</strong> ${item.phone}</li>
-              <li><strong>Socials:</strong> ${item.socials}</li>
-              <li><strong>Google Maps:</strong> ${item.gmap}</li>
-            </ul>
-            <h3 style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#777; margin:6px 0 2px;">Verification & pixels</h3>
-            <ul style="margin:0 0 4px 14px; padding:0;">
-              <li><strong>Meta Pixel:</strong> ${item.metaPixel}</li>
-              <li><strong>Google Tag:</strong> ${item.gtag}</li>
-            </ul>
-            <h3 style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#777; margin:6px 0 2px;">Why you’re the best fit</h3>
-            <p style="margin:0 0 4px;">${item.fitReason}</p>
-            <h3 style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#777; margin:6px 0 2px;">Cold email draft</h3>
-            <pre style="margin:0 0 4px; white-space:pre-wrap; font-size:11px;">${item.emailDraft}</pre>
-            <h3 style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#777; margin:6px 0 2px;">Alternative angles</h3>
-            <ul style="margin:0 0 4px 14px; padding:0;">
-              ${item.altAngles.map(a => `<li>${a}</li>`).join('')}
-            </ul>
-          </div>
-        `).join('')}
-      </div>
-    `;
-    pdfTarget.innerHTML = html;
-  }
-
-  setMode('agent');
+  doc.save(`CRACKLE6_Leads_${new Date().toISOString().split('T')[0]}.pdf`);
+}
 </script>
 </body>
 </html>
