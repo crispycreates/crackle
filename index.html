@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚡ CRACKLE SIX — Agency Lead Intelligence</title>
+<title>⚡ CRACKLE SEVEN — Agency Lead Intelligence</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -61,18 +61,7 @@ body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;
   inset 0 0 20px rgba(0,240,255,0.01);}
 .ptitle{font-family:'Orbitron',sans-serif;font-size:.58rem;letter-spacing:.22em;color:var(--cyan);
   text-transform:uppercase;margin-bottom:16px;padding-bottom:9px;
-  border-bottom:1px solid rgba(0,240,255,0.15);text-shadow:0 0 6px var(--cyan);}
-
-/* ═══ MODE TOGGLE ═══ */
-.mode-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;}
-.mode-btn{padding:14px 10px;background:rgba(0,0,0,.4);border:1px solid rgba(0,240,255,.15);
-  color:var(--dim);font-family:'Orbitron',sans-serif;font-size:.62rem;letter-spacing:.14em;
-  cursor:pointer;border-radius:8px;transition:all .3s;display:flex;flex-direction:column;align-items:center;gap:5px;}
-.mode-btn .mi{font-size:1.3rem;}
-.mode-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,240,255,.06);
-  box-shadow:0 0 20px rgba(0,240,255,.18),inset 0 0 14px rgba(0,240,255,.04);text-shadow:0 0 8px var(--cyan);}
-.mode-btn:hover:not(.active){border-color:rgba(0,240,255,.35);color:rgba(200,180,255,.7);}
-.mode-desc{font-size:.56rem;color:var(--dim);letter-spacing:.1em;margin-bottom:14px;text-align:center;min-height:14px;}
+  border-bottom:1px solid rgba(0,240,255,0.15);text-shadow:0 0 6px var(--cyan);}.mode-desc{font-size:.56rem;color:var(--dim);letter-spacing:.1em;margin-bottom:14px;text-align:center;min-height:14px;}
 
 /* ═══ FORM ELEMENTS ═══ */
 .fg{margin-bottom:16px;}
@@ -269,9 +258,9 @@ input[type=file]::file-selector-button{background:transparent;border:1px solid r
 <div class="wrap">
   <div class="hdr">
     <div class="logo">⚡ CRACKLE</div>
-    <div class="logo-six">S I X</div>
+    <div class="logo-six">S E V E N</div>
     <div class="sub">// AGENCY LEAD INTELLIGENCE SYSTEM · CRISPY MEDIA //</div>
-    <div class="ver">v 6.0</div>
+    <div class="ver">v 7.0</div>
   </div>
 
   <div class="mgrid">
@@ -280,16 +269,7 @@ input[type=file]::file-selector-button{background:transparent;border:1px solid r
       <div class="panel">
         <div class="ptitle">◈ System Configuration</div>
 
-        <!-- MODE TOGGLE -->
-        <div class="mode-toggle">
-          <button class="mode-btn active" id="modeBtn1" onclick="setMode(1)">
-            <span class="mi">⚡</span>SEARCH
-          </button>
-          <button class="mode-btn" id="modeBtn2" onclick="setMode(2)">
-            <span class="mi">🤖</span>AGENT
-          </button>
-        </div>
-        <div class="mode-desc" id="modeDesc">GPT + Web Search · Fast real-time reconnaissance</div>
+
 
         <div class="fg">
           <label class="lbl">OpenAI API Key</label>
@@ -299,31 +279,15 @@ input[type=file]::file-selector-button{background:transparent;border:1px solid r
           </div>
           <div class="alert aw" style="margin-top:7px;font-size:.55rem;">⚠ Key stays in your browser only. Never shared.</div>
         </div>
-
         <div class="fg">
-          <label class="lbl">Model</label>
-          <select id="modelSel">
-            <optgroup label="── GPT-5.4 · Latest Frontier">
-              <option value="gpt-5.4" selected>GPT-5.4 · Best quality ⭐</option>
-              <option value="gpt-5.4-mini">GPT-5.4 Mini · Fast + strong</option>
-              <option value="gpt-5.4-nano">GPT-5.4 Nano · Cheapest 5.4</option>
-            </optgroup>
-            <optgroup label="── GPT-5 · Previous Frontier">
-              <option value="gpt-5">GPT-5 · Excellent quality</option>
-              <option value="gpt-5-mini">GPT-5 Mini · Cost-efficient</option>
-            </optgroup>
-            <optgroup label="── GPT-4.1 · Stable + Smart">
-              <option value="gpt-4.1">GPT-4.1 · Smartest non-reasoning</option>
-              <option value="gpt-4.1-mini">GPT-4.1 Mini · Faster</option>
-              <option value="gpt-4.1-nano">GPT-4.1 Nano · Fastest 4.1</option>
-            </optgroup>
-            <optgroup label="── GPT-4o · Older / Cheapest">
-              <option value="gpt-4o">GPT-4o · Reliable, widely available</option>
-              <option value="gpt-4o-mini">GPT-4o Mini · Lowest cost</option>
-            </optgroup>
-          </select>
-          <div style="font-size:.55rem;color:var(--dim);margin-top:4px;letter-spacing:.07em;">↳ Higher models = better lead quality. Key tier determines access.</div>
+          <label class="lbl" style="color:var(--gold);text-shadow:0 0 5px var(--gold);">◈ Google Places API Key</label>
+          <div class="rel">
+            <input type="password" id="placesKey" placeholder="AIza..." />
+            <button class="eye" onclick="togglePlacesKey()">SHOW</button>
+          </div>
+          <div class="alert aw" style="margin-top:7px;font-size:.55rem;">⚠ Needs Places API (New) enabled in Google Cloud Console.</div>
         </div>
+
 
         <hr class="div">
 
@@ -408,7 +372,7 @@ input[type=file]::file-selector-button{background:transparent;border:1px solid r
         <div class="eico">◈</div>
         <div class="etxt">CONFIGURE CRITERIA & FIRE TO FIND LEADS</div>
         <div style="font-size:.55rem;color:rgba(200,180,255,.2);margin-top:10px;letter-spacing:.1em;">
-          Mode 1 searches the web in real-time · Mode 2 runs a deep multi-step agent
+          Google Places finds real businesses · GPT-4o enriches with web intelligence
         </div>
       </div>
     </div>
@@ -428,21 +392,12 @@ input[type=file]::file-selector-button{background:transparent;border:1px solid r
 
 /* ═══ GLOBALS ═══ */
 let leads=[];
-let currentMode=1;
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-/* ═══ MODE TOGGLE ═══ */
-function setMode(m){
-  currentMode=m;
-  document.getElementById('modeBtn1').classList.toggle('active',m===1);
-  document.getElementById('modeBtn2').classList.toggle('active',m===2);
-  document.getElementById('modeDesc').textContent=m===1
-    ?'GPT + Web Search · Fast real-time reconnaissance'
-    :'Deep Agent · Multi-step web research + verification';
-}
 
 /* ═══ HELPERS ═══ */
 function toggleKey(){const i=document.getElementById('apiKey'),b=document.querySelector('.eye');if(i.type==='password'){i.type='text';b.textContent='HIDE';}else{i.type='password';b.textContent='SHOW';}}
+function togglePlacesKey(){const i=document.getElementById('placesKey'),b=document.querySelectorAll('.eye')[1];if(i.type==='password'){i.type='text';b.textContent='HIDE';}else{i.type='password';b.textContent='SHOW';}}
 function getServices(){return[...document.querySelectorAll('input[name=svc]:checked')].map(c=>c.value);}
 function getCtypes(){return[...document.querySelectorAll('input[name=ctype]:checked')].map(c=>c.value);}
 function setBtn(s,t){const b=document.getElementById('fireBtn');b.disabled=s;b.textContent=t;}
@@ -528,6 +483,17 @@ REALISM RULES:
 - Google review counts should be realistic (15–180 range)
 - "realityCheck" must honestly reflect how plausible this lead profile is
 
+OWNER NAME RULES:
+- Use web search to find the real owner or operator name for each business
+- If you cannot find a real name after searching, set "ownerName" to "Can't Find Name"
+- NEVER invent or guess a name — only use what you actually find
+
+EMAIL RULES:
+- Use web search to find the real contact email — check their website contact page, Facebook, Google Business, directories
+- The real email may be a Gmail, Hotmail, or other provider (e.g. leonsroofing@gmail.com) — use whatever you actually find
+- NEVER fabricate an email in the format firstname@companyname.com or info@companyname.com unless you confirmed it exists
+- If no real email is found after searching, set "email" to null — do not guess
+
 Return ONLY a valid JSON object with key "leads". No markdown, no explanation.
 
 Each lead object MUST have exactly these fields:
@@ -554,9 +520,24 @@ Each lead object MUST have exactly these fields:
 }`;
 }
 
+/* ═══ GOOGLE PLACES API ═══ */
+async function placesTextSearch(placesKey, query){
+  const url='https://places.googleapis.com/v1/places:searchText';
+  const res=await fetch(url,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-Goog-Api-Key':placesKey,
+      'X-Goog-FieldMask':'places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.businessStatus,places.types'},
+    body:JSON.stringify({textQuery:query,maxResultCount:10})
+  });
+  if(!res.ok){const e=await res.json();throw new Error('Places API: '+(e.error?.message||res.status));}
+  const data=await res.json();
+  return data.places||[];
+}
+
 /* ═══ MAIN GO FUNCTION ═══ */
 async function go(){
   const key=document.getElementById('apiKey').value.trim();
+  const placesKey=document.getElementById('placesKey').value.trim();
   const ctypes=getCtypes();
   const inc=document.getElementById('incCity').value.trim();
   const incProv=document.getElementById('incProv').value.trim();
@@ -564,9 +545,9 @@ async function go(){
   const n=document.getElementById('lcount').value;
   const site=document.getElementById('mysite').value.trim();
   const svcs=getServices();
-  const model=document.getElementById('modelSel').value;
 
   if(!key)return showErr('⚠ Enter your OpenAI API key to continue.');
+  if(!placesKey)return showErr('⚠ Enter your Google Places API key to continue.');
   if(!ctypes.length)return showErr('⚠ Select at least one contractor type.');
   if(!inc&&!incProv)return showErr('⚠ Add at least one city or province/state.');
   if(!svcs.length)return showErr('⚠ Select at least one service you offer.');
@@ -579,88 +560,88 @@ async function go(){
   const locEnforced=locNote.length?locNote.join(' AND '):'any location';
   const locLabel=[inc,incProv].filter(Boolean).join(' / ');
   const fileCtx=await extractFileText();
-  const modeLabel=currentMode===1?'SEARCH':'AGENT';
 
   document.getElementById('results').innerHTML=`<div class="loading">
     <div class="licon">◈</div>
-    <div class="ltxt">${currentMode===1?'SCANNING WEB DIRECTORIES':'DEPLOYING DEEP RESEARCH AGENT'}... [${model}]</div>
+    <div class="ltxt">GOOGLE PLACES → GPT-4o INTELLIGENCE PIPELINE</div>
     <div class="lbar"><div class="lbarfill"></div></div>
     <div class="lsteps">
-      ⬡ Mode: ${modeLabel}<br>
+      ⬡ Mode: PLACES + WEB SEARCH<br>
       ⬡ Targeting: ${ctypeStr}<br>
       ⬡ Location: ${locLabel||'Any'}<br>
-      <span id="loadStep">⬡ ${currentMode===1?'Searching real-time web data...':'Step 1: Discovering businesses...'}</span>
+      <span id="loadStep">⬡ Step 1: Querying Google Places API...</span>
     </div></div>`;
 
-  const sys=buildSystemPrompt(ctypeStr,locEnforced,n,exc,svcs,site,fileCtx,currentMode===1);
-  const usr=`Generate ${n} contractor leads [${ctypeStr}]. ALL must be in: ${locEnforced}. JSON only.`;
-
   try{
+    // ── STEP 1: Google Places discovery ──────────────────────────────────────
+    updateLoading('Step 1: Querying Google Places for real businesses...');
+    const allPlaces=[];
+    const locationStr=[...inc.split(',').map(x=>x.trim()),...incProv.split(',').map(x=>x.trim())].filter(Boolean).join(', ');
+
+    for(const ctype of ctypes){
+      const queries=[`${ctype} in ${locationStr}`];
+      for(const q of queries){
+        try{
+          const results=await placesTextSearch(placesKey,q);
+          allPlaces.push(...results);
+        }catch(e){console.warn('Places query failed:',q,e.message);}
+      }
+    }
+
+    // Deduplicate by place id
+    const seen=new Set();
+    const uniquePlaces=allPlaces.filter(p=>{if(seen.has(p.id))return false;seen.add(p.id);return true;});
+
+    updateLoading(`Step 1 complete: ${uniquePlaces.length} real businesses found via Google Places`);
+
+    if(uniquePlaces.length===0){
+      throw new Error('Google Places returned 0 results. Check your API key has Places API (New) enabled and your location is valid.');
+    }
+
+    // Format Places data for GPT
+    const placesContext=uniquePlaces.map(p=>({
+      name:p.displayName?.text||'Unknown',
+      address:p.formattedAddress||'',
+      phone:p.nationalPhoneNumber||'',
+      website:p.websiteUri||null,
+      rating:p.rating||null,
+      reviewCount:p.userRatingCount||0,
+      status:p.businessStatus||'',
+      types:(p.types||[]).join(', ')
+    }));
+
+    // ── STEP 2: GPT-4o with web search enriches the Places data ─────────────
+    updateLoading('Step 2: GPT-4o web search enriching lead intelligence...');
+    const sys=buildSystemPrompt(ctypeStr,locEnforced,n,exc,svcs,site,fileCtx,true);
+    const usr=`Google Places API found these REAL businesses: ${JSON.stringify(placesContext,null,2)}\n\nUsing this verified real data as your foundation, enrich each business with web search — search specifically for the real owner name and real contact email (could be Gmail etc.) for each business, plus digital weaknesses, revenue signals, and generate cold emails. If owner name cannot be found set it to "Can't Find Name". If email cannot be found leave it null — never fabricate an email address. Return the top ${n} as the final leads JSON. Prioritize businesses that match the contractor types and location.`;
+
     let raw;
-    if(currentMode===1){
-      // ═══ MODE 1: GPT + WEB SEARCH ═══
-      try{
-        raw=await callResponses(key,model,sys,usr,true);
-      }catch(e){
-        // Fallback to Chat Completions if Responses API fails
-        console.warn('Responses API failed, using Chat Completions:',e.message);
-        updateLoading('Fallback: using standard generation...');
-        raw=await callChat(key,model,sys,usr);
-      }
-    }else{
-      // ═══ MODE 2: DEEP AGENT ═══
-      try{
-        // Step 1: Discovery via web search
-        updateLoading('Step 1: Searching web for real businesses...');
-        const step1=await callResponses(key,model,
-          `You are a business researcher. Search the web to find REAL ${ctypeStr} businesses in ${locEnforced}. Search Google, Yelp, Yellow Pages, BBB, and local directories. Find up to ${n} actual businesses that currently exist.`,
-          `Search for real ${ctypeStr} in ${locEnforced}. Find actual existing businesses with their real names, websites, phone numbers, addresses, and any Google review data. Return JSON: {"businesses":[{"name":"","website":"","phone":"","address":"","reviews":"","rating":"","notes":""}]}`,
-          true
-        );
-        let businesses=[];
-        try{businesses=JSON.parse(step1).businesses||[];}catch(e){businesses=[];}
-
-        if(businesses.length>0){
-          // Step 2: Enrichment
-          updateLoading(`Step 2: Deep scanning ${businesses.length} leads...`);
-          const names=businesses.map(b=>b.name).join(', ');
-          const step2=await callResponses(key,model,
-            `You are enriching business profiles with deep research. Search for detailed information about each business.`,
-            `Research these ${ctypeStr} businesses in ${locEnforced}: ${names}. For each, find: owner/contact name, years in business, employee count, social media presence, website quality, digital marketing gaps, and any additional details. Return JSON: {"enriched":[{"name":"","owner":"","yearsInBusiness":0,"employees":"","website":"","websiteQuality":"","socialMedia":"","digitalGaps":[],"additionalNotes":""}]}`,
-            true
-          );
-          let enriched={};
-          try{enriched=JSON.parse(step2);}catch(e){enriched={};}
-
-          // Step 3: Final compilation
-          updateLoading('Step 3: Compiling intelligence report...');
-          const compileSys=buildSystemPrompt(ctypeStr,locEnforced,n,exc,svcs,site,fileCtx,false);
-          raw=await callResponses(key,model,compileSys,
-            `Using this VERIFIED web research data, generate the final lead profiles in the exact required JSON format. Incorporate real data where available.\n\nDiscovered businesses: ${JSON.stringify(businesses)}\n\nEnriched data: ${JSON.stringify(enriched.enriched||enriched)}\n\nGenerate the final "leads" JSON now. Prefer real verified data over estimates.`,
-            false
-          );
-        }else{
-          // Fallback if discovery found nothing
-          updateLoading('No results from search, running enhanced generation...');
-          raw=await callResponses(key,model,sys,usr,true);
-        }
-      }catch(e){
-        console.warn('Agent mode error, falling back:',e.message);
-        updateLoading('Fallback: standard generation...');
-        try{raw=await callResponses(key,model,sys,usr,true);}
-        catch(e2){raw=await callChat(key,model,sys,usr);}
-      }
+    try{
+      raw=await callResponses(key,'gpt-4o',sys,usr,true);
+    }catch(e){
+      updateLoading('Fallback: GPT-4o without search...');
+      raw=await callChat(key,'gpt-4o',sys,usr);
     }
 
     const parsed=JSON.parse(raw);
     leads=Array.isArray(parsed)?parsed:(parsed.leads||Object.values(parsed).find(v=>Array.isArray(v))||[]);
 
+    // Inject real Places data into leads where matched
+    leads=leads.map(l=>{
+      const match=placesContext.find(p=>p.name.toLowerCase().includes(l.companyName?.toLowerCase().split(' ')[0]||'__'));
+      if(match){
+        if(match.phone&&!l.phone)l.phone=match.phone;
+        if(match.website&&!l.website)l.website=match.website;
+        if(match.rating)l.googleRating=match.rating;
+        if(match.reviewCount)l.googleReviews=match.reviewCount;
+        l.placesVerified=true;
+      }
+      return l;
+    });
+
     // Location filter
     if(inc||incProv){
-      const locTokens=[
-        ...inc.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean),
-        ...incProv.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean)
-      ];
+      const locTokens=[...inc.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean),...incProv.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean)];
       if(locTokens.length){
         const excTokens=exc.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
         const filtered=leads.filter(l=>{
@@ -684,12 +665,13 @@ function render(arr,site){
   if(!arr.length){document.getElementById('results').innerHTML='<div class="empty"><div class="etxt">No leads returned. Try different criteria.</div></div>';return;}
   const _ctypes=getCtypes().join(', ')||'Mixed';
   const _loc=[document.getElementById('incCity').value,document.getElementById('incProv').value].filter(Boolean).join(' / ')||'Any';
-  const model=document.getElementById('modelSel').value;
-  const modeLabel=currentMode===1?'SEARCH':'AGENT';
+  const model='GPT-4o';
+  const modeLabel='PLACES+AI';
   const hasFlag=arr.some(l=>l.locationFlagged);
+  const hasVerified=arr.some(l=>l.placesVerified);
 
-  let html=`<div class="rhdr"><div><div class="rtitle">⚡ ${arr.length} LEADS CRACKED</div><div class="rsub">${_ctypes} · ${_loc} · ${model} · ${modeLabel} MODE</div></div><div class="rbtns"><button class="btn-c" onclick="exportPDF()">⬇ EXPORT PDF</button><button class="btn-r" onclick="clearAll()">✕ CLEAR</button></div></div>
-  <div class="disclaimer-bar">⚠ These are <strong>${currentMode===1?'web-search-assisted':'agent-researched'} AI lead profiles</strong>. Company names, contacts, and data may need verification. Use the <strong>🔍 Verify</strong> buttons on each card to cross-check before reaching out.${hasFlag?' <strong style="color:var(--amber)"> · Some leads may be outside target location — review carefully.</strong>':''}</div>`;
+  let html=`<div class="rhdr"><div><div class="rtitle">⚡ ${arr.length} LEADS CRACKED</div><div class="rsub">${_ctypes} · ${_loc} · ${model} · ${modeLabel}${hasVerified?` · <span style="color:var(--green)">✓ Google Places Verified</span>`:''}</div></div><div class="rbtns"><button class="btn-c" onclick="exportPDF()">⬇ EXPORT PDF</button><button class="btn-r" onclick="clearAll()">✕ CLEAR</button></div></div>
+  <div class="disclaimer-bar">⚠ These are <strong>Google Places + GPT-4o AI lead profiles</strong>. Company names, contacts, and data may need verification. Use the <strong>🔍 Verify</strong> buttons on each card to cross-check before reaching out.${hasFlag?' <strong style="color:var(--amber)"> · Some leads may be outside target location — review carefully.</strong>':''}</div>`;
 
   arr.forEach((l,i)=>{
     const sc=scoreClass(l.leadScore);
@@ -697,8 +679,9 @@ function render(arr,site){
     const rcClass=l.realityCheck&&l.realityCheck.includes('Likely')?'rc-hi':l.realityCheck&&l.realityCheck.includes('Possibly')?'rc-md':'rc-lo';
     const rcLabel=l.realityCheck||'AI-estimated — research carefully';
     const locWarn=l.locationFlagged?'<span style="font-size:.52rem;color:var(--amber);margin-left:6px;">⚠ location unverified</span>':'';
+    const placesTag=l.placesVerified?'<span style="font-size:.52rem;color:var(--green);margin-left:6px;">✓ Google Places</span>':'';
 
-    html+=`<div class="lcard" id="c${i}"><div class="lchead" onclick="toggle(${i})"><div><div class="cname">${l.companyName}${locWarn}</div><div class="ctype">${l.businessType} · ${l.city}, ${l.province}</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;"><span class="rcheck ${rcClass}" title="${rcLabel}">🔍 ${rcLabel.split('—')[0].trim()}</span><div class="badge ${sc}">LEAD ${l.leadScore}/10</div><span class="chev" id="chev${i}">▼</span></div></div>`;
+    html+=`<div class="lcard" id="c${i}"><div class="lchead" onclick="toggle(${i})"><div><div class="cname">${l.companyName}${locWarn}${placesTag}</div><div class="ctype">${l.businessType} · ${l.city}, ${l.province}</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;"><span class="rcheck ${rcClass}" title="${rcLabel}">🔍 ${rcLabel.split('—')[0].trim()}</span><div class="badge ${sc}">LEAD ${l.leadScore}/10</div><span class="chev" id="chev${i}">▼</span></div></div>`;
 
     html+=`<div class="lcbody" id="b${i}"><div class="igrid"><div class="ii"><label>OWNER</label><div class="val">${l.ownerName||'Owner'}</div></div><div class="ii"><label>PHONE</label><div class="val">${l.phone||'—'}</div></div><div class="ii"><label>EMAIL</label><div class="val">${l.email||'—'}</div></div><div class="ii"><label>WEBSITE</label><div class="val">${ws?`<a href="${ws}" target="_blank">${l.website}</a>`:'<span style="color:var(--pink)">No website</span>'}</div></div><div class="ii"><label>YEARS ACTIVE</label><div class="val">${l.yearsInBusiness||'—'} yrs</div></div><div class="ii"><label>TEAM SIZE</label><div class="val">${l.employeeCount||'—'}</div></div><div class="ii"><label>GOOGLE REVIEWS</label><div class="val"><span class="stars-r">${starsR(l.googleRating)}</span> ${l.googleRating||''} <span style="color:var(--dim)">(${l.googleReviews||0})</span></div></div></div>`;
 
@@ -727,19 +710,6 @@ function render(arr,site){
 
     // Cold email
     html+=`<div class="esec"><div class="esubj"><span style="color:var(--dim);font-size:.55rem">SUBJECT: </span>${l.emailSubject||''}</div><div class="ebody">${l.emailBody||''}</div><div class="ebtns"><button class="btn-c" id="cp${i}" onclick="copyEmail(${i})">◈ COPY EMAIL</button><button class="btn-p" onclick="regenEmail(${i})">↺ REGENERATE</button></div></div>`;
-
-    // Outreach tips
-    html+=`<div class="osec"><div class="osec-title">◈ Alternative Outreach Channels</div>`;
-    const tips=[
-      {i:'🔗',ch:'LinkedIn DM',tip:`Find ${l.ownerName} on LinkedIn — connect with a short note. Message 4-5 days later referencing "${(l.digitalWeaknesses||['weak online presence'])[0]}".`},
-      {i:'📞',ch:'Cold Call',tip:`Trades owners respond to direct calls. Lead with a stat about ${l.businessType}s in ${l.city} missing Google page 1.`},
-      {i:'📱',ch:'Meta / Facebook Ads',tip:`Run a hyper-targeted ad in ${l.city} to ${l.businessType} owners with a case study headline.`},
-      {i:'🔍',ch:'Google Ads',tip:`Target the exact searches ${l.businessType}s in ${l.city} rely on for new jobs.`},
-      {i:'🤝',ch:'Local Networking / BNI',tip:`BNI chapters in ${l.city} are goldmines. Contractors trust referrals 10x more than cold outreach.`},
-      {i:'📮',ch:'Direct Mail',tip:`A postcard to ${l.companyName}'s address with a QR code to a free audit stands out.`}
-    ];
-    tips.forEach(t=>{html+=`<div class="otip"><div class="otip-icon">${t.i}</div><div class="otip-inner"><div class="otip-ch">${t.ch}</div><div class="otip-body">${t.tip}</div></div></div>`;});
-    html+=`</div>`;
 
     html+=`</div></div>`;
   });
@@ -777,7 +747,7 @@ function copyEmail(i){
 async function regenEmail(i){
   const key=document.getElementById('apiKey').value.trim();
   if(!key)return alert('API key required');
-  const l=leads[i],model=document.getElementById('modelSel').value;
+  const l=leads[i],model='gpt-4o';
   const btn=document.querySelector(`#c${i} .btn-p`);
   btn.textContent='↺ WRITING...';btn.disabled=true;
   try{
@@ -815,16 +785,16 @@ function exportPDF(){
   // Cover page
   doc.setFillColor(10,0,21);doc.rect(0,0,W,H,'F');
   doc.setTextColor(0,240,255);doc.setFontSize(28);doc.setFont('courier','bold');
-  doc.text('CRACKLE SIX',W/2,44,{align:'center'});
+  doc.text('CRACKLE SEVEN',W/2,44,{align:'center'});
   doc.setFontSize(8);doc.setTextColor(255,45,149);
   doc.text('AGENCY LEAD INTELLIGENCE REPORT',W/2,54,{align:'center'});
   doc.setFontSize(8);doc.setTextColor(180,160,220);
   const _ctStr=getCtypes().join(', ')||'Contractors';
   const _locStr=[document.getElementById('incCity').value,document.getElementById('incProv').value].filter(Boolean).join(' / ')||'Any';
-  const modeLabel=currentMode===1?'SEARCH':'AGENT';
+  const modeLabel='PLACES+AI';
   let cy=64;
   doc.text(`Generated: ${new Date().toLocaleDateString('en-CA')}`,W/2,cy,{align:'center'});cy+=7;
-  doc.text(`Mode: ${modeLabel} · Model: ${document.getElementById('modelSel').value}`,W/2,cy,{align:'center'});cy+=7;
+  doc.text('Mode: PLACES → GPT-4o · Web Search',W/2,cy,{align:'center'});cy+=7;
   doc.text(`Types: ${_ctStr}`,W/2,cy,{align:'center'});cy+=7;
   doc.text(`Location: ${_locStr}`,W/2,cy,{align:'center'});cy+=7;
   doc.text(`Total Leads: ${leads.length}`,W/2,cy,{align:'center'});
@@ -887,26 +857,6 @@ function exportPDF(){
     doc.splitTextToSize(l.emailBody,CW).forEach(line=>{ck(5);doc.text(line,M,y);y+=4.4;});
     y+=4;
 
-    ck(16);
-    doc.setFillColor(240,240,240);doc.rect(M-2,y-2,CW+4,6,'F');
-    doc.setTextColor(20,20,20);doc.setFont('courier','bold');doc.setFontSize(8);
-    doc.text('OUTREACH STRATEGIES:',M,y+2);y+=8;
-    const tips=[
-      ['LinkedIn DM',`Find ${l.ownerName} on LinkedIn — connect first, pitch later.`],
-      ['Cold Call',`Direct calls work for trades. Lead with a stat about ${l.businessType}s in ${l.city}.`],
-      ['Meta Ads',`Target ${l.businessType} owners in ${l.city} with a case study ad.`],
-      ['Networking',`BNI + contractor associations in ${l.city}. Referrals beat cold outreach.`],
-      ['Direct Mail',`Postcard to ${l.companyName} with a QR code to a free audit.`]
-    ];
-    doc.setFont('courier','normal');doc.setTextColor(30,30,30);doc.setFontSize(7.5);
-    tips.forEach(([ch,tip])=>{
-      ck(8);
-      doc.setFont('courier','bold');doc.setTextColor(0,80,150);doc.text(ch+': ',M+3,y);
-      const chW=doc.getTextWidth(ch+': ');
-      doc.setFont('courier','normal');doc.setTextColor(40,40,40);
-      doc.splitTextToSize(tip,CW-6).forEach((line,li)=>{ck(5);doc.text(line,li===0?M+3+chW:M+6,y);y+=4.4;});
-      y+=1.5;
-    });
   });
 
   doc.save(`CRACKLE6_Leads_${new Date().toISOString().split('T')[0]}.pdf`);
